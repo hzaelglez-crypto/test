@@ -1,663 +1,669 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WorkBook App – v0.1</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WorkBook App – v0.1</title>
 
-<style>
-  :root{
-    --bg-main:#07152b;
-    --bg-card:#0b1f3a;
-    --bg-card-soft:#0f2544;
-    --accent-green:#00c853;
-    --accent-amber:#ffb300;
-    --accent-red:#ff1744;
-    --accent-blue:#29b6f6;
-    --accent-grey:#cfd8dc;
-    --text-main:#ffffff;
-    --text-soft:#c5cae9;
-    --text-muted:#90a4ae;
-    --border-soft:#1c3357;
-    --btn-green:#00c853;
-    --btn-orange:#ff9100;
-    --btn-grey:#455a64;
-  }
+  <style>
+    :root{
+      --bg-main:#07152b;
+      --bg-card:#0b1f3a;
+      --bg-card-soft:#0f2544;
+      --accent-green:#00c853;
+      --accent-amber:#ffb300;
+      --accent-red:#ff1744;
+      --accent-blue:#29b6f6;
+      --accent-grey:#cfd8dc;
+      --text-main:#ffffff;
+      --text-soft:#c5cae9;
+      --text-muted:#90a4ae;
+      --border-soft:#1c3357;
+      --btn-green:#00c853;
+      --btn-orange:#ff9100;
+      --btn-grey:#455a64;
+    }
 
-  *{
-    box-sizing:border-box;
-  }
+    *{
+      box-sizing:border-box;
+    }
 
-  body{
-    margin:0;
-    background:var(--bg-main);
-    font-family:Arial, sans-serif;
-    color:var(--text-main);
-  }
+    body{
+      margin:0;
+      background:var(--bg-main);
+      font-family:Arial, sans-serif;
+      color:var(--text-main);
+    }
 
-  /* Top Bar */
-  .topbar{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:60px;
-    background:var(--bg-card);
-    border-bottom:1px solid var(--border-soft);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
-    font-size:18px;
-    font-weight:bold;
-    z-index:100;
-  }
+    /* Top Bar */
+    .topbar{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:60px;
+      background:var(--bg-card);
+      border-bottom:1px solid var(--border-soft);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 20px;
+      font-size:18px;
+      font-weight:bold;
+      z-index:100;
+    }
 
-  .topbar-title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
+    .topbar-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
 
-  .topbar-pill{
-    font-size:12px;
-    padding:3px 8px;
-    border-radius:999px;
-    background:rgba(41,182,246,0.1);
-    border:1px solid var(--accent-blue);
-    color:var(--accent-blue);
-    font-weight:normal;
-  }
+    .topbar-pill{
+      font-size:12px;
+      padding:3px 8px;
+      border-radius:999px;
+      background:rgba(41,182,246,0.1);
+      border:1px solid var(--accent-blue);
+      color:var(--accent-blue);
+      font-weight:normal;
+    }
 
-  /* Subnav */
-  .subnav{
-    position:fixed;
-    top:60px;
-    left:0;
-    width:100%;
-    background:var(--bg-main);
-    border-bottom:1px solid var(--border-soft);
-    padding:6px 12px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    z-index:90;
-  }
+    /* Subnav */
+    .subnav{
+      position:fixed;
+      top:60px;
+      left:0;
+      width:100%;
+      background:var(--bg-main);
+      border-bottom:1px solid var(--border-soft);
+      padding:6px 12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      z-index:90;
+    }
 
-  .subnav a{
-    text-decoration:none;
-    font-size:13px;
-    padding:6px 10px;
-    border-radius:999px;
-    border:1px solid var(--border-soft);
-    color:var(--text-soft);
-    background:rgba(11,31,58,0.9);
-    cursor:pointer;
-  }
+    .subnav a{
+      text-decoration:none;
+      font-size:13px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border-soft);
+      color:var(--text-soft);
+      background:rgba(11,31,58,0.9);
+      cursor:pointer;
+    }
 
-  .subnav a:hover{
-    border-color:var(--accent-blue);
-    color:var(--accent-blue);
-  }
+    .subnav a:hover{
+      border-color:var(--accent-blue);
+      color:var(--accent-blue);
+    }
 
-  .subnav a.primary{
-    border-color:var(--accent-blue);
-    color:var(--accent-blue);
-  }
+    .subnav a.primary{
+      border-color:var(--accent-blue);
+      color:var(--accent-blue);
+    }
 
-  /* Generic layout */
-  .page{
-    margin-top:108px; /* 60 topbar + 48 subnav aprox */
-    padding:16px 16px 32px 16px;
-    max-width:1320px;
-    margin-left:auto;
-    margin-right:auto;
-  }
+    /* Generic layout */
+    .page{
+      margin-top:108px; /* 60 topbar + ~48 subnav */
+      padding:16px 16px 32px 16px;
+      max-width:1320px;
+      margin-left:auto;
+      margin-right:auto;
+    }
 
-  .section{
-    margin-top:20px;
-  }
+    .section{
+      margin-top:20px;
+    }
 
-  .section h2{
-    font-size:20px;
-    margin:0 0 10px 0;
-    color:var(--accent-blue);
-  }
+    .section h2{
+      font-size:20px;
+      margin:0 0 10px 0;
+      color:var(--accent-blue);
+    }
 
-  .section-desc{
-    font-size:13px;
-    color:var(--text-muted);
-    margin-bottom:10px;
-  }
+    .section-desc{
+      font-size:13px;
+      color:var(--text-muted);
+      margin-bottom:10px;
+    }
 
-  /* Cards */
-  .card{
-    background:var(--bg-card-soft);
-    padding:16px;
-    border-radius:10px;
-    border:1px solid var(--border-soft);
-  }
+    /* Cards */
+    .card{
+      background:var(--bg-card-soft);
+      padding:16px;
+      border-radius:10px;
+      border:1px solid var(--border-soft);
+    }
 
-  .card h3{
-    margin:0 0 8px 0;
-    font-size:16px;
-    color:var(--accent-blue);
-  }
+    .card h3{
+      margin:0 0 8px 0;
+      font-size:16px;
+      color:var(--accent-blue);
+    }
 
-  .value{
-    font-size:24px;
-    font-weight:bold;
-    margin-top:6px;
-  }
+    .value{
+      font-size:24px;
+      font-weight:bold;
+      margin-top:6px;
+    }
 
-  .green{color:var(--accent-green);}
-  .amber{color:var(--accent-amber);}
-  .red{color:var(--accent-red);}
+    .green{color:var(--accent-green);}
+    .amber{color:var(--accent-amber);}
+    .red{color:var(--accent-red);}
 
-  .grid-2{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
-    gap:16px;
-  }
+    .grid-2{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+      gap:16px;
+    }
 
-  .grid-3{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
-    gap:16px;
-  }
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+    }
 
-  /* Tables */
-  .table-wrapper{
-    overflow:auto;
-    border-radius:8px;
-    border:1px solid var(--border-soft);
-  }
+    .grid-4{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:16px;
+    }
 
-  table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:12px;
-  }
+    /* Tables */
+    .table-wrapper{
+      overflow:auto;
+      border-radius:8px;
+      border:1px solid var(--border-soft);
+    }
 
-  thead{
-    background:var(--bg-card);
-  }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
 
-  th, td{
-    padding:6px 8px;
-    text-align:left;
-    border-bottom:1px solid #102545;
-  }
+    thead{
+      background:var(--bg-card);
+    }
 
-  th{
-    color:var(--text-soft);
-    font-weight:bold;
-  }
+    th, td{
+      padding:6px 8px;
+      text-align:left;
+      border-bottom:1px solid #102545;
+    }
 
-  tr:nth-child(even) td{
-    background:#0c1b33;
-  }
+    th{
+      color:var(--text-soft);
+      font-weight:bold;
+    }
 
-  .tag{
-    display:inline-block;
-    padding:2px 6px;
-    border-radius:999px;
-    font-size:11px;
-    border:1px solid var(--border-soft);
-    color:var(--text-soft);
-  }
+    tr:nth-child(even) td{
+      background:#0c1b33;
+    }
 
-  .tag.ok{border-color:var(--accent-green);color:var(--accent-green);}
-  .tag.warn{border-color:var(--accent-amber);color:var(--accent-amber);}
-  .tag.bad{border-color:var(--accent-red);color:var(--accent-red);}
+    .tag{
+      display:inline-block;
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid var(--border-soft);
+      color:var(--text-soft);
+    }
 
-  /* Buttons */
-  .btn-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-top:10px;
-  }
+    .tag.ok{border-color:var(--accent-green);color:var(--accent-green);}
+    .tag.warn{border-color:var(--accent-amber);color:var(--accent-amber);}
+    .tag.bad{border-color:var(--accent-red);color:var(--accent-red);}
 
-  .btn{
-    font-size:12px;
-    padding:6px 10px;
-    border-radius:6px;
-    border:none;
-    cursor:pointer;
-    background:var(--btn-grey);
-    color:#fff;
-  }
+    /* Buttons */
+    .btn-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
 
-  .btn-green{background:var(--btn-green);}
-  .btn-orange{background:var(--btn-orange);}
-  .btn-red{background:var(--accent-red);}
+    .btn{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:6px;
+      border:none;
+      cursor:pointer;
+      background:var(--btn-grey);
+      color:#fff;
+    }
 
-  .btn:disabled{
-    opacity:0.5;
-    cursor:default;
-  }
+    .btn-green{background:var(--btn-green);}
+    .btn-orange{background:var(--btn-orange);}
+    .btn-red{background:var(--accent-red);}
 
-  /* Fake chart area */
-  .chart-placeholder{
-    height:180px;
-    border-radius:8px;
-    border:1px dashed #234;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:12px;
-    color:var(--text-muted);
-    margin-top:8px;
-  }
+    .btn:disabled{
+      opacity:0.5;
+      cursor:default;
+    }
 
-  @media(max-width:600px){
-    .topbar{font-size:15px;}
-  }
-</style>
+    /* Fake chart area */
+    .chart-placeholder{
+      height:180px;
+      border-radius:8px;
+      border:1px dashed #234;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      color:var(--text-muted);
+      margin-top:8px;
+    }
+
+    @media(max-width:600px){
+      .topbar{font-size:15px;}
+    }
+  </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="topbar-title">
-    <span>WorkBook App</span>
-    <span class="topbar-pill">v0.1 · Layout</span>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title">
+      <span>WorkBook App</span>
+      <span class="topbar-pill">v0.1 · Layout</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-soft);">
+      Modo diseño · Sin lógica aún
+    </div>
   </div>
-  <div style="font-size:12px;color:var(--text-soft);">
-    Modo diseño · Sin lógica aún
+
+  <!-- SUBNAV -->
+  <div class="subnav">
+    <a href="#dashboard" class="primary">Dashboard</a>
+    <a href="#timestudy">Timestudy</a>
+    <a href="#capacity">Capacity</a>
+    <a href="#stability">Stability</a>
+    <a href="#constraints">Constraints</a>
+    <a href="#actions">Action Plan</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#report">Report</a>
   </div>
-</div>
 
-<!-- SUBNAV -->
-<div class="subnav">
-  <a href="#dashboard" class="primary">Dashboard</a>
-  <a href="#timestudy">Timestudy</a>
-  <a href="#capacity">Capacity</a>
-  <a href="#stability">Stability</a>
-  <a href="#constraints">Constraints</a>
-  <a href="#actions">Action Plan</a>
-  <a href="#evidence">Evidence</a>
-  <a href="#report">Report</a>
-</div>
+  <!-- PAGE CONTENT -->
+  <div class="page">
 
-<!-- PAGE CONTENT -->
-<div class="page">
-
-  <!-- DASHBOARD -->
-  <section id="dashboard" class="section">
-    <h2>Dashboard – Overview</h2>
-    <div class="section-desc">
-      Resumen ejecutivo del proceso: capacidad, cuellos de botella, variabilidad y avance de acciones.
-    </div>
-    <div class="grid-4 grid-2">
-      <div class="card">
-        <h3>Capacidad Requerida vs Demostrada</h3>
-        <div class="value amber">--%</div>
-        <div class="section-desc">Objetivo: ≥ 100% sostenido.</div>
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="section">
+      <h2>Dashboard – Overview</h2>
+      <div class="section-desc">
+        Resumen ejecutivo del proceso: capacidad, cuellos de botella, variabilidad y avance de acciones.
       </div>
-      <div class="card">
-        <h3>Bottleneck Actual</h3>
-        <div class="value red">OP --</div>
-        <div class="section-desc">Estación con menor capacidad efectiva.</div>
-      </div>
-      <div class="card">
-        <h3>Variabilidad del Proceso</h3>
-        <div class="value green">--%</div>
-        <div class="section-desc">Basado en Std Dev / Promedio de CT.</div>
-      </div>
-      <div class="card">
-        <h3>Acciones Abiertas</h3>
-        <div class="value amber">--</div>
-        <div class="section-desc">Plan de acción para cerrar gaps y riesgos.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TIMESTUDY -->
-  <section id="timestudy" class="section">
-    <h2>Timestudy – Datos de Ciclo</h2>
-    <div class="section-desc">
-      Captura y análisis de tiempos de ciclo por estación. Aquí llegarán los datos crudos (importados o cargados manualmente).
-    </div>
-
-    <div class="grid-3">
-      <div class="card">
-        <h3>Resumen Global</h3>
-        <div class="section-desc">
-          Vista rápida de muestras, CT promedio, mediana y variabilidad.
+      <div class="grid-4">
+        <div class="card">
+          <h3>Capacidad Requerida vs Demostrada</h3>
+          <div class="value amber">--%</div>
+          <div class="section-desc">Objetivo: ≥ 100% sostenido.</div>
         </div>
-        <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
-          <li>Muestras totales: --</li>
-          <li>CT promedio global: -- s</li>
-          <li>Mediana global: -- s</li>
-          <li>Std Dev global: -- s</li>
-        </ul>
-        <div class="btn-row">
-          <button class="btn btn-grey" disabled>Importar datos (próximamente)</button>
-          <button class="btn btn-orange" disabled>Carga manual</button>
+        <div class="card">
+          <h3>Bottleneck Actual</h3>
+          <div class="value red">OP --</div>
+          <div class="section-desc">Estación con menor capacidad efectiva.</div>
+        </div>
+        <div class="card">
+          <h3>Variabilidad del Proceso</h3>
+          <div class="value green">--%</div>
+          <div class="section-desc">Basado en Std Dev / Promedio de CT.</div>
+        </div>
+        <div class="card">
+          <h3>Acciones Abiertas</h3>
+          <div class="value amber">--</div>
+          <div class="section-desc">Plan de acción para cerrar gaps y riesgos.</div>
         </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h3>Validación de Tamaño de Muestra</h3>
-        <div class="section-desc">
-          Evaluación de si la muestra es suficiente para el nivel de confianza requerido.
+    <!-- TIMESTUDY -->
+    <section id="timestudy" class="section">
+      <h2>Timestudy – Datos de Ciclo</h2>
+      <div class="section-desc">
+        Captura y análisis de tiempos de ciclo por estación. Aquí llegarán los datos crudos (importados o cargados manualmente).
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>Resumen Global</h3>
+          <div class="section-desc">
+            Vista rápida de muestras, CT promedio, mediana y variabilidad.
+          </div>
+          <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
+            <li>Muestras totales: --</li>
+            <li>CT promedio global: -- s</li>
+            <li>Mediana global: -- s</li>
+            <li>Std Dev global: -- s</li>
+          </ul>
+          <div class="btn-row">
+            <button class="btn btn-grey" disabled>Importar datos (próximamente)</button>
+            <button class="btn btn-orange" disabled>Carga manual</button>
+          </div>
         </div>
-        <p style="font-size:12px;color:var(--text-muted);margin:0;">
-          Muestras: -- / -- · Error estimado: ±--% (95%)<br>
-          Estado: <span class="tag warn">Solo referencia</span>
-        </p>
-        <div class="chart-placeholder">
-          Aquí irá una gráfica simple de error vs tamaño de muestra.
+
+        <div class="card">
+          <h3>Validación de Tamaño de Muestra</h3>
+          <div class="section-desc">
+            Evaluación de si la muestra es suficiente para el nivel de confianza requerido.
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin:0;">
+            Muestras: -- / -- · Error estimado: ±--% (95%)<br>
+            Estado: <span class="tag warn">Solo referencia</span>
+          </p>
+          <div class="chart-placeholder">
+            Aquí irá una gráfica simple de error vs tamaño de muestra.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Distribución de CT</h3>
+          <div class="section-desc">
+            Histograma o boxplot para visualizar la dispersión del tiempo de ciclo.
+          </div>
+          <div class="chart-placeholder">
+            Placeholder – Histograma de CT
+          </div>
         </div>
       </div>
 
-      <div class="card">
-        <h3>Distribución de CT</h3>
-        <div class="section-desc">
-          Histograma o boxplot para visualizar la dispersión del tiempo de ciclo.
-        </div>
-        <div class="chart-placeholder">
-          Placeholder – Histograma de CT
+      <div style="margin-top:16px;">
+        <div class="card">
+          <h3>Detalle por Estación</h3>
+          <div class="section-desc">
+            Vista tabular de los indicadores estadísticos por operación/estación.
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Estación</th>
+                  <th>CT Mín (s)</th>
+                  <th>CT Máx (s)</th>
+                  <th>CT Prom (s)</th>
+                  <th>Mediana (s)</th>
+                  <th>Std Dev (s)</th>
+                  <th>Muestras</th>
+                  <th>Comentario</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>OP --</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td>Sin datos aún.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div style="margin-top:16px;">
-      <div class="card">
-        <h3>Detalle por Estación</h3>
-        <div class="section-desc">
-          Vista tabular de los indicadores estadísticos por operación/estación.
+    </section>
+
+    <!-- CAPACITY -->
+    <section id="capacity" class="section">
+      <h2>Capacity – Capacidad Operativa</h2>
+      <div class="section-desc">
+        Comparativo de capacidad por estación contra el requerimiento del cliente, y detección del cuello de botella.
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Resumen de Capacidad</h3>
+          <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
+            <li>Rate requerido: -- UPH</li>
+            <li>Capacidad demostrada: -- UPH</li>
+            <li>Gap global: -- UPH</li>
+            <li>Turnos evaluados: --</li>
+          </ul>
+          <div class="btn-row">
+            <button class="btn btn-green" disabled>Recalcular capacidad</button>
+            <button class="btn btn-grey" disabled>Ver escenarios</button>
+          </div>
         </div>
+
+        <div class="card">
+          <h3>Bottleneck & Escenarios</h3>
+          <p style="font-size:12px;margin:0;">
+            Bottleneck actual: <strong>OP --</strong><br>
+            Capacidad en bottleneck: -- UPH<br>
+            Requerido: -- UPH<br>
+            Estado: <span class="tag bad">No cumple</span>
+          </p>
+          <div class="chart-placeholder">
+            Placeholder – Gráfica barras Capacidad vs Requerido por estación.
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="card">
+          <h3>Detalle por Estación</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Estación</th>
+                  <th>CT Prom (s)</th>
+                  <th>Capacidad (UPH)</th>
+                  <th>Requerido (UPH)</th>
+                  <th>Gap</th>
+                  <th>Riesgo</th>
+                  <th>Comentario</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>OP --</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td>--</td>
+                  <td><span class="tag warn">Medio</span></td>
+                  <td>Sin datos aún.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- STABILITY -->
+    <section id="stability" class="section">
+      <h2>Stability – Estabilidad Operativa</h2>
+      <div class="section-desc">
+        Evaluación cualitativa de estabilidad por área: mano de obra, documentación, entrenamiento, flujo de material, equipos, calidad, mantenimiento y seguridad.
+      </div>
+
+      <div class="card">
+        <h3>Checklist por Área</h3>
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Estación</th>
-                <th>CT Mín (s)</th>
-                <th>CT Máx (s)</th>
-                <th>CT Prom (s)</th>
-                <th>Mediana (s)</th>
-                <th>Std Dev (s)</th>
-                <th>Muestras</th>
+                <th>Área</th>
+                <th>Nivel</th>
+                <th>Indicador</th>
                 <th>Comentario</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>OP --</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>Sin datos aún.</td>
+                <td>Operadores</td>
+                <td><span class="tag ok">Alta</span></td>
+                <td>Rotación, habilidades, ausentismo.</td>
+                <td>Sin evaluación aún.</td>
+              </tr>
+              <tr>
+                <td>Documentación</td>
+                <td><span class="tag warn">Media</span></td>
+                <td>WI, estándares, cambios recientes.</td>
+                <td>Sin evaluación aún.</td>
+              </tr>
+              <tr>
+                <td>Mantenimiento</td>
+                <td><span class="tag bad">Baja</span></td>
+                <td>PM, breakdowns, MTTR, MTBF.</td>
+                <td>Sin evaluación aún.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
 
-  </section>
+    </section>
 
-  <!-- CAPACITY -->
-  <section id="capacity" class="section">
-    <h2>Capacity – Capacidad Operativa</h2>
-    <div class="section-desc">
-      Comparativo de capacidad por estación contra el requerimiento del cliente, y detección del cuello de botella.
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <h3>Resumen de Capacidad</h3>
-        <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
-          <li>Rate requerido: -- UPH</li>
-          <li>Capacidad demostrada: -- UPH</li>
-          <li>Gap global: -- UPH</li>
-          <li>Turnos evaluados: --</li>
-        </ul>
-        <div class="btn-row">
-          <button class="btn btn-green" disabled>Recalcular capacidad</button>
-          <button class="btn btn-grey" disabled>Ver escenarios</button>
-        </div>
+    <!-- CONSTRAINTS -->
+    <section id="constraints" class="section">
+      <h2>Constraints – Restricciones Críticas</h2>
+      <div class="section-desc">
+        Registro de restricciones de máquina, método, material y mano de obra que afectan la capacidad y estabilidad del proceso.
       </div>
 
       <div class="card">
-        <h3>Bottleneck & Escenarios</h3>
+        <h3>Listado de Restricciones</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Restricción</th>
+                <th>Tipo</th>
+                <th>Impacto</th>
+                <th>Vínculo</th>
+                <th>Comentario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>--</td>
+                <td>Máquina / Método / Material / MO</td>
+                <td><span class="tag bad">Alto</span></td>
+                <td>OP -- / Bottleneck</td>
+                <td>Sin detalle aún.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-orange" disabled>Nueva restricción</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ACTION PLAN -->
+    <section id="actions" class="section">
+      <h2>Action Plan – Plan de Acción</h2>
+      <div class="section-desc">
+        Acciones para cerrar gaps de capacidad, variabilidad, estabilidad y restricciones identificadas.
+      </div>
+
+      <div class="card">
+        <h3>Acciones por Estado</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Acción</th>
+                <th>Responsable</th>
+                <th>Fecha Compromiso</th>
+                <th>Estado</th>
+                <th>Comentario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>--</td>
+                <td>--</td>
+                <td>--</td>
+                <td><span class="tag warn">Pendiente</span></td>
+                <td>Sin detalle aún.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-green" disabled>Nueva acción</button>
+          <button class="btn btn-grey" disabled>Filtrar por responsable</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- EVIDENCE -->
+    <section id="evidence" class="section">
+      <h2>Evidence – Evidencia</h2>
+      <div class="section-desc">
+        Administración de evidencia visual y documental que respalda hallazgos, restricciones y cierres de acciones.
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>Resumen de Evidencia</h3>
+          <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
+            <li>Fotos: --</li>
+            <li>Documentos: --</li>
+            <li>Videos: --</li>
+          </ul>
+          <div class="btn-row">
+            <button class="btn btn-orange" disabled>Agregar evidencia</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Galería (placeholder)</h3>
+          <div class="chart-placeholder">
+            Aquí irá la galería de fotos con vista ampliada.
+          </div>
+        </div>
+        <div class="card">
+          <h3>Vinculación</h3>
+          <div class="section-desc">
+            Evidencia asociada a estaciones, restricciones o acciones.
+          </div>
+          <div class="chart-placeholder">
+            Placeholder – Mapa simple de evidencias vinculadas.
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- REPORT -->
+    <section id="report" class="section">
+      <h2>Report – Reporte Final</h2>
+      <div class="section-desc">
+        Generación del reporte final consolidado con datos de todas las secciones: timestudy, capacidad, estabilidad, restricciones, acciones y evidencia.
+      </div>
+
+      <div class="card">
+        <h3>Generador de Reporte</h3>
         <p style="font-size:12px;margin:0;">
-          Bottleneck actual: <strong>OP --</strong><br>
-          Capacidad en bottleneck: -- UPH<br>
-          Requerido: -- UPH<br>
-          Estado: <span class="tag bad">No cumple</span>
+          Desde aquí se podrá generar un reporte en PDF, PPT o HTML con el resumen ejecutivo y el detalle técnico.
         </p>
-        <div class="chart-placeholder">
-          Placeholder – Gráfica barras Capacidad vs Requerido por estación.
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top:16px;">
-      <div class="card">
-        <h3>Detalle por Estación</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Estación</th>
-                <th>CT Prom (s)</th>
-                <th>Capacidad (UPH)</th>
-                <th>Requerido (UPH)</th>
-                <th>Gap</th>
-                <th>Riesgo</th>
-                <th>Comentario</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>OP --</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td><span class="tag warn">Medio</span></td>
-                <td>Sin datos aún.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- STABILITY -->
-  <section id="stability" class="section">
-    <h2>Stability – Estabilidad Operativa</h2>
-    <div class="section-desc">
-      Evaluación cualitativa de estabilidad por área: mano de obra, documentación, entrenamiento, flujo de material, equipos, calidad, mantenimiento y seguridad.
-    </div>
-
-    <div class="card">
-      <h3>Checklist por Área</h3>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Área</th>
-              <th>Nivel</th>
-              <th>Indicador</th>
-              <th>Comentario</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Operadores</td>
-              <td><span class="tag ok">Alta</span></td>
-              <td>Rotación, habilidades, ausentismo.</td>
-              <td>Sin evaluación aún.</td>
-            </tr>
-            <tr>
-              <td>Documentación</td>
-              <td><span class="tag warn">Media</span></td>
-              <td>WI, estándares, cambios recientes.</td>
-              <td>Sin evaluación aún.</td>
-            </tr>
-            <tr>
-              <td>Mantenimiento</td>
-              <td><span class="tag bad">Baja</span></td>
-              <td>PM, breakdowns, MTTR, MTBF.</td>
-              <td>Sin evaluación aún.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- CONSTRAINTS -->
-  <section id="constraints" class="section">
-    <h2>Constraints – Restricciones Críticas</h2>
-    <div class="section-desc">
-      Registro de restricciones de máquina, método, material y mano de obra que afectan la capacidad y estabilidad del proceso.
-    </div>
-
-    <div class="card">
-      <h3>Listado de Restricciones</h3>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Restricción</th>
-              <th>Tipo</th>
-              <th>Impacto</th>
-              <th>Vínculo</th>
-              <th>Comentario</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>--</td>
-              <td>Máquina / Método / Material / MO</td>
-              <td><span class="tag bad">Alto</span></td>
-              <td>OP -- / Bottleneck</td>
-              <td>Sin detalle aún.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-orange" disabled>Nueva restricción</button>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- ACTION PLAN -->
-  <section id="actions" class="section">
-    <h2>Action Plan – Plan de Acción</h2>
-    <div class="section-desc">
-      Acciones para cerrar gaps de capacidad, variabilidad, estabilidad y restricciones identificadas.
-    </div>
-
-    <div class="card">
-      <h3>Acciones por Estado</h3>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Acción</th>
-              <th>Responsable</th>
-              <th>Fecha Compromiso</th>
-              <th>Estado</th>
-              <th>Comentario</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>--</td>
-              <td>--</td>
-              <td>--</td>
-              <td><span class="tag warn">Pendiente</span></td>
-              <td>Sin detalle aún.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-green" disabled>Nueva acción</button>
-        <button class="btn btn-grey" disabled>Filtrar por responsable</button>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- EVIDENCE -->
-  <section id="evidence" class="section">
-    <h2>Evidence – Evidencia</h2>
-    <div class="section-desc">
-      Administración de evidencia visual y documental que respalda hallazgos, restricciones y cierres de acciones.
-    </div>
-
-    <div class="grid-3">
-      <div class="card">
-        <h3>Resumen de Evidencia</h3>
-        <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
-          <li>Fotos: --</li>
-          <li>Documentos: --</li>
-          <li>Videos: --</li>
-        </ul>
-        <div class="btn-row">
-          <button class="btn btn-orange" disabled>Agregar evidencia</button>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Galería (placeholder)</h3>
-        <div class="chart-placeholder">
-          Aquí irá la galería de fotos con vista ampliada.
-        </div>
-      </div>
-      <div class="card">
-        <h3>Vinculación</h3>
-        <div class="section-desc">
-          Evidencia asociada a estaciones, restricciones o acciones.
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn btn-green" disabled>Generar PDF</button>
+          <button class="btn btn-grey" disabled>Generar PPT</button>
+          <button class="btn btn-grey" disabled>Exportar HTML</button>
         </div>
         <div class="chart-placeholder">
-          Placeholder – Mapa simple de evidencias vinculadas.
+          Placeholder – Vista previa del resumen ejecutivo.
         </div>
       </div>
-    </div>
 
-  </section>
+    </section>
 
-  <!-- REPORT -->
-  <section id="report" class="section">
-    <h2>Report – Reporte Final</h2>
-    <div class="section-desc">
-      Generación del reporte final consolidado con datos de todas las secciones: timestudy, capacidad, estabilidad, restricciones, acciones y evidencia.
-    </div>
-
-    <div class="card">
-      <h3>Generador de Reporte</h3>
-      <p style="font-size:12px;margin:0;">
-        Desde aquí se podrá generar un reporte en PDF, PPT o HTML con el resumen ejecutivo y el detalle técnico.
-      </p>
-      <div class="btn-row" style="margin-top:10px;">
-        <button class="btn btn-green" disabled>Generar PDF</button>
-        <button class="btn btn-grey" disabled>Generar PPT</button>
-        <button class="btn btn-grey" disabled>Exportar HTML</button>
-      </div>
-      <div class="chart-placeholder">
-        Placeholder – Vista previa del resumen ejecutivo.
-      </div>
-    </div>
-
-  </section>
-
-</div>
+  </div>
 
 </body>
 </html>
