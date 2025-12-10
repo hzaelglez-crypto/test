@@ -35,7 +35,6 @@
       color:var(--text-main);
     }
 
-    /* Top Bar */
     .topbar{
       position:fixed;
       top:0;
@@ -69,7 +68,6 @@
       font-weight:normal;
     }
 
-    /* Subnav */
     .subnav{
       position:fixed;
       top:60px;
@@ -105,9 +103,8 @@
       color:var(--accent-blue);
     }
 
-    /* Generic layout */
     .page{
-      margin-top:108px; /* 60 topbar + ~48 subnav */
+      margin-top:108px;
       padding:16px 16px 32px 16px;
       max-width:1320px;
       margin-left:auto;
@@ -130,7 +127,6 @@
       margin-bottom:10px;
     }
 
-    /* Cards */
     .card{
       background:var(--bg-card-soft);
       padding:16px;
@@ -172,7 +168,6 @@
       gap:16px;
     }
 
-    /* Tables */
     .table-wrapper{
       overflow:auto;
       border-radius:8px;
@@ -217,7 +212,6 @@
     .tag.warn{border-color:var(--accent-amber);color:var(--accent-amber);}
     .tag.bad{border-color:var(--accent-red);color:var(--accent-red);}
 
-    /* Buttons */
     .btn-row{
       display:flex;
       flex-wrap:wrap;
@@ -244,7 +238,6 @@
       cursor:default;
     }
 
-    /* Fake chart area */
     .chart-placeholder{
       height:180px;
       border-radius:8px;
@@ -264,7 +257,6 @@
 </head>
 <body>
 
-  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-title">
       <span>WorkBook App</span>
@@ -275,7 +267,6 @@
     </div>
   </div>
 
-  <!-- SUBNAV -->
   <div class="subnav">
     <a href="#dashboard" class="primary">Dashboard</a>
     <a href="#timestudy">Timestudy</a>
@@ -287,10 +278,8 @@
     <a href="#report">Report</a>
   </div>
 
-  <!-- PAGE CONTENT -->
   <div class="page">
 
-    <!-- DASHBOARD -->
     <section id="dashboard" class="section">
       <h2>Dashboard – Overview</h2>
       <div class="section-desc">
@@ -320,11 +309,10 @@
       </div>
     </section>
 
-    <!-- TIMESTUDY -->
     <section id="timestudy" class="section">
       <h2>Timestudy – Datos de Ciclo</h2>
       <div class="section-desc">
-        Captura y análisis de tiempos de ciclo por estación. Aquí llegarán los datos crudos (importados o cargados manualmente).
+        Captura y análisis de tiempos de ciclo por estación.
       </div>
 
       <div class="grid-3">
@@ -409,11 +397,10 @@
 
     </section>
 
-    <!-- CAPACITY -->
     <section id="capacity" class="section">
       <h2>Capacity – Capacidad Operativa</h2>
       <div class="section-desc">
-        Comparativo de capacidad por estación contra el requerimiento del cliente, y detección del cuello de botella.
+        Comparativo de capacidad por estación contra el requerimiento del cliente.
       </div>
 
       <div class="grid-2">
@@ -479,11 +466,10 @@
 
     </section>
 
-    <!-- STABILITY -->
     <section id="stability" class="section">
       <h2>Stability – Estabilidad Operativa</h2>
       <div class="section-desc">
-        Evaluación cualitativa de estabilidad por área: mano de obra, documentación, entrenamiento, flujo de material, equipos, calidad, mantenimiento y seguridad.
+        Evaluación cualitativa de estabilidad por área.
       </div>
 
       <div class="card">
@@ -524,11 +510,10 @@
 
     </section>
 
-    <!-- CONSTRAINTS -->
     <section id="constraints" class="section">
       <h2>Constraints – Restricciones Críticas</h2>
       <div class="section-desc">
-        Registro de restricciones de máquina, método, material y mano de obra que afectan la capacidad y estabilidad del proceso.
+        Registro de restricciones que afectan capacidad y estabilidad.
       </div>
 
       <div class="card">
@@ -562,11 +547,10 @@
 
     </section>
 
-    <!-- ACTION PLAN -->
     <section id="actions" class="section">
       <h2>Action Plan – Plan de Acción</h2>
       <div class="section-desc">
-        Acciones para cerrar gaps de capacidad, variabilidad, estabilidad y restricciones identificadas.
+        Acciones para cerrar gaps de capacidad, variabilidad, estabilidad y restricciones.
       </div>
 
       <div class="card">
@@ -601,11 +585,10 @@
 
     </section>
 
-    <!-- EVIDENCE -->
     <section id="evidence" class="section">
       <h2>Evidence – Evidencia</h2>
       <div class="section-desc">
-        Administración de evidencia visual y documental que respalda hallazgos, restricciones y cierres de acciones.
+        Administración de evidencia visual y documental.
       </div>
 
       <div class="grid-3">
@@ -639,17 +622,16 @@
 
     </section>
 
-    <!-- REPORT -->
     <section id="report" class="section">
       <h2>Report – Reporte Final</h2>
       <div class="section-desc">
-        Generación del reporte final consolidado con datos de todas las secciones: timestudy, capacidad, estabilidad, restricciones, acciones y evidencia.
+        Generación del reporte final consolidado.
       </div>
 
       <div class="card">
         <h3>Generador de Reporte</h3>
         <p style="font-size:12px;margin:0;">
-          Desde aquí se podrá generar un reporte en PDF, PPT o HTML con el resumen ejecutivo y el detalle técnico.
+          Desde aquí se podrá generar un reporte en PDF, PPT o HTML.
         </p>
         <div class="btn-row" style="margin-top:10px;">
           <button class="btn btn-green" disabled>Generar PDF</button>
