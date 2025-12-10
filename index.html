@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WorkBook App – v0.1</title>
+  <title>WorkBook App – v0.2</title>
 
   <style>
     :root{
@@ -66,6 +66,29 @@
       border:1px solid var(--accent-blue);
       color:var(--accent-blue);
       font-weight:normal;
+    }
+
+    .lang-toggle{
+      display:flex;
+      gap:4px;
+      align-items:center;
+      font-size:12px;
+      color:var(--text-soft);
+    }
+
+    .lang-btn{
+      border-radius:999px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card-soft);
+      color:var(--text-soft);
+      padding:2px 8px;
+      font-size:11px;
+      cursor:pointer;
+    }
+
+    .lang-btn.active{
+      border-color:var(--accent-blue);
+      color:var(--accent-blue);
     }
 
     .subnav{
@@ -250,6 +273,41 @@
       margin-top:8px;
     }
 
+    .form-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+      align-items:flex-end;
+    }
+
+    .form-field{
+      display:flex;
+      flex-direction:column;
+      flex:1 1 120px;
+      min-width:120px;
+    }
+
+    .form-label{
+      font-size:11px;
+      color:var(--text-soft);
+      margin-bottom:2px;
+    }
+
+    .form-input{
+      padding:6px 8px;
+      border-radius:6px;
+      border:1px solid var(--border-soft);
+      background:#07152b;
+      color:var(--text-main);
+      font-size:12px;
+    }
+
+    .form-input:focus{
+      outline:none;
+      border-color:var(--accent-blue);
+    }
+
     @media(max-width:600px){
       .topbar{font-size:15px;}
     }
@@ -257,137 +315,200 @@
 </head>
 <body>
 
+  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-title">
-      <span>WorkBook App</span>
-      <span class="topbar-pill">v0.1 · Layout</span>
+      <span data-es="WorkBook App" data-en="WorkBook App">WorkBook App</span>
+      <span class="topbar-pill" data-es="v0.2 · Layout + Captura" data-en="v0.2 · Layout + Input">
+        v0.2 · Layout + Captura
+      </span>
     </div>
-    <div style="font-size:12px;color:var(--text-soft);">
-      Modo diseño · Sin lógica aún
+    <div class="lang-toggle">
+      <span data-es="Idioma" data-en="Language">Idioma</span>
+      <button class="lang-btn active" data-lang-btn="es">ES</button>
+      <button class="lang-btn" data-lang-btn="en">EN</button>
     </div>
   </div>
 
+  <!-- SUBNAV -->
   <div class="subnav">
-    <a href="#dashboard" class="primary">Dashboard</a>
-    <a href="#timestudy">Timestudy</a>
-    <a href="#capacity">Capacity</a>
-    <a href="#stability">Stability</a>
-    <a href="#constraints">Constraints</a>
-    <a href="#actions">Action Plan</a>
-    <a href="#evidence">Evidence</a>
-    <a href="#report">Report</a>
+    <a href="#dashboard" class="primary" data-es="Dashboard" data-en="Dashboard">Dashboard</a>
+    <a href="#timestudy" data-es="Timestudy" data-en="Timestudy">Timestudy</a>
+    <a href="#capacity" data-es="Capacidad" data-en="Capacity">Capacidad</a>
+    <a href="#stability" data-es="Estabilidad" data-en="Stability">Estabilidad</a>
+    <a href="#constraints" data-es="Restricciones" data-en="Constraints">Restricciones</a>
+    <a href="#actions" data-es="Plan de Acción" data-en="Action Plan">Plan de Acción</a>
+    <a href="#evidence" data-es="Evidencia" data-en="Evidence">Evidencia</a>
+    <a href="#report" data-es="Reporte" data-en="Report">Reporte</a>
   </div>
 
+  <!-- PAGE -->
   <div class="page">
 
+    <!-- DASHBOARD -->
     <section id="dashboard" class="section">
-      <h2>Dashboard – Overview</h2>
-      <div class="section-desc">
+      <h2 data-es="Dashboard – Overview" data-en="Dashboard – Overview">Dashboard – Overview</h2>
+      <div class="section-desc" data-es="Resumen ejecutivo del proceso: capacidad, cuellos de botella, variabilidad y avance de acciones."
+           data-en="Executive overview: capacity, bottleneck, variability and action-plan progress.">
         Resumen ejecutivo del proceso: capacidad, cuellos de botella, variabilidad y avance de acciones.
       </div>
       <div class="grid-4">
         <div class="card">
-          <h3>Capacidad Requerida vs Demostrada</h3>
-          <div class="value amber">--%</div>
-          <div class="section-desc">Objetivo: ≥ 100% sostenido.</div>
+          <h3 data-es="Capacidad Requerida vs Demostrada" data-en="Required vs Demonstrated Capacity">
+            Capacidad Requerida vs Demostrada
+          </h3>
+          <div class="value amber" id="db-capacity">--%</div>
+          <div class="section-desc" data-es="Objetivo: ≥ 100% sostenido." data-en="Target: ≥ 100% sustained.">
+            Objetivo: ≥ 100% sostenido.
+          </div>
         </div>
         <div class="card">
-          <h3>Bottleneck Actual</h3>
-          <div class="value red">OP --</div>
-          <div class="section-desc">Estación con menor capacidad efectiva.</div>
+          <h3 data-es="Bottleneck Actual" data-en="Current Bottleneck">Bottleneck Actual</h3>
+          <div class="value red" id="db-bottleneck">OP --</div>
+          <div class="section-desc" data-es="Estación con menor capacidad efectiva."
+               data-en="Station with lowest effective capacity.">
+            Estación con menor capacidad efectiva.
+          </div>
         </div>
         <div class="card">
-          <h3>Variabilidad del Proceso</h3>
-          <div class="value green">--%</div>
-          <div class="section-desc">Basado en Std Dev / Promedio de CT.</div>
+          <h3 data-es="Variabilidad del Proceso" data-en="Process Variability">Variabilidad del Proceso</h3>
+          <div class="value green" id="db-variability">--%</div>
+          <div class="section-desc" data-es="Basado en Std Dev / Promedio de CT."
+               data-en="Based on CT Std Dev / Mean.">
+            Basado en Std Dev / Promedio de CT.
+          </div>
         </div>
         <div class="card">
-          <h3>Acciones Abiertas</h3>
-          <div class="value amber">--</div>
-          <div class="section-desc">Plan de acción para cerrar gaps y riesgos.</div>
+          <h3 data-es="Acciones Abiertas" data-en="Open Actions">Acciones Abiertas</h3>
+          <div class="value amber" id="db-actions">--</div>
+          <div class="section-desc" data-es="Plan de acción para cerrar gaps y riesgos."
+               data-en="Action plan to close gaps and risks.">
+            Plan de acción para cerrar gaps y riesgos.
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- TIMESTUDY -->
     <section id="timestudy" class="section">
-      <h2>Timestudy – Datos de Ciclo</h2>
-      <div class="section-desc">
-        Captura y análisis de tiempos de ciclo por estación.
+      <h2 data-es="Timestudy – Datos de Ciclo" data-en="Timestudy – Cycle Time Data">
+        Timestudy – Datos de Ciclo
+      </h2>
+      <div class="section-desc"
+           data-es="Captura y análisis de tiempos de ciclo por estación. Aquí se registran las muestras manuales."
+           data-en="Capture and analysis of cycle times by station. Manual samples are recorded here.">
+        Captura y análisis de tiempos de ciclo por estación. Aquí se registran las muestras manuales.
       </div>
 
       <div class="grid-3">
+        <!-- Resumen -->
         <div class="card">
-          <h3>Resumen Global</h3>
-          <div class="section-desc">
+          <h3 data-es="Resumen Global" data-en="Global Summary">Resumen Global</h3>
+          <div class="section-desc"
+               data-es="Vista rápida de muestras, CT promedio, mediana y variabilidad."
+               data-en="Quick view of samples, mean CT, median and variability.">
             Vista rápida de muestras, CT promedio, mediana y variabilidad.
           </div>
           <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
-            <li>Muestras totales: --</li>
-            <li>CT promedio global: -- s</li>
-            <li>Mediana global: -- s</li>
-            <li>Std Dev global: -- s</li>
+            <li><span data-es="Muestras totales:" data-en="Total samples:">Muestras totales:</span>
+              <span id="ts-total-samples">0</span></li>
+            <li><span data-es="CT promedio global:" data-en="Global mean CT:">CT promedio global:</span>
+              <span id="ts-mean">--</span> s</li>
+            <li><span data-es="Mediana global:" data-en="Global median:">Mediana global:</span>
+              <span id="ts-median">--</span> s</li>
+            <li><span data-es="Std Dev global:" data-en="Global Std Dev:">Std Dev global:</span>
+              <span id="ts-std">--</span> s</li>
           </ul>
-          <div class="btn-row">
-            <button class="btn btn-grey" disabled>Importar datos (próximamente)</button>
-            <button class="btn btn-orange" disabled>Carga manual</button>
-          </div>
         </div>
 
+        <!-- Captura manual -->
         <div class="card">
-          <h3>Validación de Tamaño de Muestra</h3>
-          <div class="section-desc">
-            Evaluación de si la muestra es suficiente para el nivel de confianza requerido.
+          <h3 data-es="Captura manual de muestras" data-en="Manual sample entry">Captura manual de muestras</h3>
+          <div class="section-desc"
+               data-es="Registra una muestra por vez: estación, tiempo de ciclo y comentario opcional."
+               data-en="Register one sample at a time: station, cycle time and optional note.">
+            Registra una muestra por vez: estación, tiempo de ciclo y comentario opcional.
           </div>
-          <p style="font-size:12px;color:var(--text-muted);margin:0;">
-            Muestras: -- / -- · Error estimado: ±--% (95%)<br>
-            Estado: <span class="tag warn">Solo referencia</span>
-          </p>
-          <div class="chart-placeholder">
-            Aquí irá una gráfica simple de error vs tamaño de muestra.
-          </div>
+
+          <form id="ts-form">
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label" for="ts-station"
+                       data-es="Estación / Station" data-en="Station">
+                  Estación / Station
+                </label>
+                <input id="ts-station" class="form-input" type="text" required
+                       placeholder="OP10, OP20, etc." />
+              </div>
+              <div class="form-field">
+                <label class="form-label" for="ts-ct"
+                       data-es="Tiempo de ciclo (s)" data-en="Cycle time (s)">
+                  Tiempo de ciclo (s)
+                </label>
+                <input id="ts-ct" class="form-input" type="number" step="0.01" min="0" required
+                       placeholder="ej. 12.34" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label" for="ts-note"
+                       data-es="Comentario (opcional)" data-en="Comment (optional)">
+                  Comentario (opcional)
+                </label>
+                <input id="ts-note" class="form-input" type="text" placeholder="-" />
+              </div>
+              <button type="submit" class="btn btn-orange"
+                      data-es="Agregar muestra" data-en="Add sample">
+                Agregar muestra
+              </button>
+            </div>
+          </form>
         </div>
 
+        <!-- Placeholder de gráfica -->
         <div class="card">
-          <h3>Distribución de CT</h3>
-          <div class="section-desc">
-            Histograma o boxplot para visualizar la dispersión del tiempo de ciclo.
+          <h3 data-es="Distribución de CT" data-en="CT Distribution">Distribución de CT</h3>
+          <div class="section-desc"
+               data-es="Más adelante se integrará un histograma o boxplot con los datos capturados."
+               data-en="Later a histogram or boxplot will be added with captured data.">
+            Más adelante se integrará un histograma o boxplot con los datos capturados.
           </div>
-          <div class="chart-placeholder">
+          <div class="chart-placeholder"
+               data-es="Placeholder – Histograma de CT"
+               data-en="Placeholder – CT histogram">
             Placeholder – Histograma de CT
           </div>
         </div>
       </div>
 
+      <!-- Tabla por estación -->
       <div style="margin-top:16px;">
         <div class="card">
-          <h3>Detalle por Estación</h3>
-          <div class="section-desc">
-            Vista tabular de los indicadores estadísticos por operación/estación.
+          <h3 data-es="Detalle por Estación" data-en="Per-station detail">Detalle por Estación</h3>
+          <div class="section-desc"
+               data-es="Indicadores estadísticos por operación/estación calculados con las muestras capturadas."
+               data-en="Statistical indicators per operation/station based on captured samples.">
+            Indicadores estadísticos por operación/estación calculados con las muestras capturadas.
           </div>
           <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
-                  <th>Estación</th>
-                  <th>CT Mín (s)</th>
-                  <th>CT Máx (s)</th>
-                  <th>CT Prom (s)</th>
-                  <th>Mediana (s)</th>
-                  <th>Std Dev (s)</th>
-                  <th>Muestras</th>
-                  <th>Comentario</th>
+                  <th data-es="Estación" data-en="Station">Estación</th>
+                  <th data-es="CT Mín (s)" data-en="Min CT (s)">CT Mín (s)</th>
+                  <th data-es="CT Máx (s)" data-en="Max CT (s)">CT Máx (s)</th>
+                  <th data-es="CT Prom (s)" data-en="Mean CT (s)">CT Prom (s)</th>
+                  <th data-es="Mediana (s)" data-en="Median (s)">Mediana (s)</th>
+                  <th data-es="Std Dev (s)" data-en="Std Dev (s)">Std Dev (s)</th>
+                  <th data-es="Muestras" data-en="Samples">Muestras</th>
+                  <th data-es="Comentario" data-en="Comment">Comentario</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="ts-detail-body">
                 <tr>
-                  <td>OP --</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td>Sin datos aún.</td>
+                  <td colspan="8" style="text-align:center;color:var(--text-muted);">
+                    No hay muestras capturadas todavía.
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -397,173 +518,156 @@
 
     </section>
 
+    <!-- Las demás secciones siguen siendo layout por ahora -->
+
     <section id="capacity" class="section">
-      <h2>Capacity – Capacidad Operativa</h2>
-      <div class="section-desc">
+      <h2 data-es="Capacity – Capacidad Operativa" data-en="Capacity – Operational Capacity">
+        Capacity – Capacidad Operativa
+      </h2>
+      <div class="section-desc"
+           data-es="Comparativo de capacidad por estación contra el requerimiento del cliente."
+           data-en="Station capacity vs customer requirement.">
         Comparativo de capacidad por estación contra el requerimiento del cliente.
       </div>
 
       <div class="grid-2">
         <div class="card">
-          <h3>Resumen de Capacidad</h3>
+          <h3 data-es="Resumen de Capacidad" data-en="Capacity summary">Resumen de Capacidad</h3>
           <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
-            <li>Rate requerido: -- UPH</li>
-            <li>Capacidad demostrada: -- UPH</li>
-            <li>Gap global: -- UPH</li>
-            <li>Turnos evaluados: --</li>
+            <li><span data-es="Rate requerido:" data-en="Required rate:">Rate requerido:</span> -- UPH</li>
+            <li><span data-es="Capacidad demostrada:" data-en="Demonstrated capacity:">Capacidad demostrada:</span> -- UPH</li>
+            <li><span data-es="Gap global:" data-en="Global gap:">Gap global:</span> -- UPH</li>
+            <li><span data-es="Turnos evaluados:" data-en="Shifts evaluated:">Turnos evaluados:</span> --</li>
           </ul>
-          <div class="btn-row">
-            <button class="btn btn-green" disabled>Recalcular capacidad</button>
-            <button class="btn btn-grey" disabled>Ver escenarios</button>
-          </div>
         </div>
 
         <div class="card">
-          <h3>Bottleneck & Escenarios</h3>
+          <h3 data-es="Bottleneck & Escenarios" data-en="Bottleneck & Scenarios">Bottleneck & Escenarios</h3>
           <p style="font-size:12px;margin:0;">
-            Bottleneck actual: <strong>OP --</strong><br>
-            Capacidad en bottleneck: -- UPH<br>
-            Requerido: -- UPH<br>
-            Estado: <span class="tag bad">No cumple</span>
+            <span data-es="Bottleneck actual:" data-en="Current bottleneck:">Bottleneck actual:</span>
+            <strong id="cap-bottleneck">OP --</strong><br>
+            <span data-es="Capacidad en bottleneck:" data-en="Bottleneck capacity:">Capacidad en bottleneck:</span> -- UPH<br>
+            <span data-es="Requerido:" data-en="Required:">Requerido:</span> -- UPH<br>
+            <span data-es="Estado:" data-en="Status:">Estado:</span> <span class="tag bad" data-es="No cumple" data-en="Does not comply">No cumple</span>
           </p>
-          <div class="chart-placeholder">
-            Placeholder – Gráfica barras Capacidad vs Requerido por estación.
+          <div class="chart-placeholder"
+               data-es="Placeholder – Capacidad vs Requerido por estación"
+               data-en="Placeholder – Capacity vs Required per station">
+            Placeholder – Capacidad vs Requerido por estación
           </div>
         </div>
       </div>
-
-      <div style="margin-top:16px;">
-        <div class="card">
-          <h3>Detalle por Estación</h3>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Estación</th>
-                  <th>CT Prom (s)</th>
-                  <th>Capacidad (UPH)</th>
-                  <th>Requerido (UPH)</th>
-                  <th>Gap</th>
-                  <th>Riesgo</th>
-                  <th>Comentario</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>OP --</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td>--</td>
-                  <td><span class="tag warn">Medio</span></td>
-                  <td>Sin datos aún.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
     </section>
 
     <section id="stability" class="section">
-      <h2>Stability – Estabilidad Operativa</h2>
-      <div class="section-desc">
+      <h2 data-es="Stability – Estabilidad Operativa" data-en="Stability – Operational Stability">
+        Stability – Estabilidad Operativa
+      </h2>
+      <div class="section-desc"
+           data-es="Evaluación cualitativa de estabilidad por área."
+           data-en="Qualitative stability assessment by area.">
         Evaluación cualitativa de estabilidad por área.
       </div>
 
       <div class="card">
-        <h3>Checklist por Área</h3>
+        <h3 data-es="Checklist por Área" data-en="Area checklist">Checklist por Área</h3>
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Área</th>
-                <th>Nivel</th>
-                <th>Indicador</th>
-                <th>Comentario</th>
+                <th data-es="Área" data-en="Area">Área</th>
+                <th data-es="Nivel" data-en="Level">Nivel</th>
+                <th data-es="Indicador" data-en="Indicator">Indicador</th>
+                <th data-es="Comentario" data-en="Comment">Comentario</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Operadores</td>
-                <td><span class="tag ok">Alta</span></td>
-                <td>Rotación, habilidades, ausentismo.</td>
-                <td>Sin evaluación aún.</td>
+                <td data-es="Operadores" data-en="Operators">Operadores</td>
+                <td><span class="tag ok" data-es="Alta" data-en="High">Alta</span></td>
+                <td data-es="Rotación, habilidades, ausentismo."
+                    data-en="Turnover, skills, absenteeism.">Rotación, habilidades, ausentismo.</td>
+                <td data-es="Sin evaluación aún." data-en="Not evaluated yet.">Sin evaluación aún.</td>
               </tr>
               <tr>
-                <td>Documentación</td>
-                <td><span class="tag warn">Media</span></td>
-                <td>WI, estándares, cambios recientes.</td>
-                <td>Sin evaluación aún.</td>
+                <td data-es="Documentación" data-en="Documentation">Documentación</td>
+                <td><span class="tag warn" data-es="Media" data-en="Medium">Media</span></td>
+                <td data-es="WI, estándares, cambios recientes."
+                    data-en="WI, standards, recent changes.">WI, estándares, cambios recientes.</td>
+                <td data-es="Sin evaluación aún." data-en="Not evaluated yet.">Sin evaluación aún.</td>
               </tr>
               <tr>
-                <td>Mantenimiento</td>
-                <td><span class="tag bad">Baja</span></td>
-                <td>PM, breakdowns, MTTR, MTBF.</td>
-                <td>Sin evaluación aún.</td>
+                <td data-es="Mantenimiento" data-en="Maintenance">Mantenimiento</td>
+                <td><span class="tag bad" data-es="Baja" data-en="Low">Baja</span></td>
+                <td data-es="PM, breakdowns, MTTR, MTBF."
+                    data-en="PM, breakdowns, MTTR, MTBF.">PM, breakdowns, MTTR, MTBF.</td>
+                <td data-es="Sin evaluación aún." data-en="Not evaluated yet.">Sin evaluación aún.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-
     </section>
 
     <section id="constraints" class="section">
-      <h2>Constraints – Restricciones Críticas</h2>
-      <div class="section-desc">
+      <h2 data-es="Constraints – Restricciones Críticas" data-en="Constraints – Critical Restrictions">
+        Constraints – Restricciones Críticas
+      </h2>
+      <div class="section-desc"
+           data-es="Registro de restricciones que afectan capacidad y estabilidad."
+           data-en="Log of restrictions impacting capacity and stability.">
         Registro de restricciones que afectan capacidad y estabilidad.
       </div>
 
       <div class="card">
-        <h3>Listado de Restricciones</h3>
+        <h3 data-es="Listado de Restricciones" data-en="Constraints list">Listado de Restricciones</h3>
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Restricción</th>
-                <th>Tipo</th>
-                <th>Impacto</th>
-                <th>Vínculo</th>
-                <th>Comentario</th>
+                <th data-es="Restricción" data-en="Constraint">Restricción</th>
+                <th data-es="Tipo" data-en="Type">Tipo</th>
+                <th data-es="Impacto" data-en="Impact">Impacto</th>
+                <th data-es="Vínculo" data-en="Linked to">Vínculo</th>
+                <th data-es="Comentario" data-en="Comment">Comentario</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>--</td>
-                <td>Máquina / Método / Material / MO</td>
-                <td><span class="tag bad">Alto</span></td>
+                <td data-es="Máquina / Método / Material / MO"
+                    data-en="Machine / Method / Material / Labor">Máquina / Método / Material / MO</td>
+                <td><span class="tag bad" data-es="Alto" data-en="High">Alto</span></td>
                 <td>OP -- / Bottleneck</td>
-                <td>Sin detalle aún.</td>
+                <td data-es="Sin detalle aún." data-en="No details yet.">Sin detalle aún.</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div class="btn-row">
-          <button class="btn btn-orange" disabled>Nueva restricción</button>
-        </div>
       </div>
-
     </section>
 
     <section id="actions" class="section">
-      <h2>Action Plan – Plan de Acción</h2>
-      <div class="section-desc">
+      <h2 data-es="Action Plan – Plan de Acción" data-en="Action Plan">
+        Action Plan – Plan de Acción
+      </h2>
+      <div class="section-desc"
+           data-es="Acciones para cerrar gaps de capacidad, variabilidad, estabilidad y restricciones."
+           data-en="Actions to close gaps in capacity, variability, stability and constraints.">
         Acciones para cerrar gaps de capacidad, variabilidad, estabilidad y restricciones.
       </div>
 
       <div class="card">
-        <h3>Acciones por Estado</h3>
+        <h3 data-es="Acciones por Estado" data-en="Actions by status">Acciones por Estado</h3>
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Acción</th>
-                <th>Responsable</th>
-                <th>Fecha Compromiso</th>
-                <th>Estado</th>
-                <th>Comentario</th>
+                <th data-es="Acción" data-en="Action">Acción</th>
+                <th data-es="Responsable" data-en="Owner">Responsable</th>
+                <th data-es="Fecha Compromiso" data-en="Due date">Fecha Compromiso</th>
+                <th data-es="Estado" data-en="Status">Estado</th>
+                <th data-es="Comentario" data-en="Comment">Comentario</th>
               </tr>
             </thead>
             <tbody>
@@ -571,81 +675,223 @@
                 <td>--</td>
                 <td>--</td>
                 <td>--</td>
-                <td><span class="tag warn">Pendiente</span></td>
-                <td>Sin detalle aún.</td>
+                <td><span class="tag warn" data-es="Pendiente" data-en="Pending">Pendiente</span></td>
+                <td data-es="Sin detalle aún." data-en="No details yet.">Sin detalle aún.</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div class="btn-row">
-          <button class="btn btn-green" disabled>Nueva acción</button>
-          <button class="btn btn-grey" disabled>Filtrar por responsable</button>
-        </div>
       </div>
-
     </section>
 
     <section id="evidence" class="section">
-      <h2>Evidence – Evidencia</h2>
-      <div class="section-desc">
+      <h2 data-es="Evidence – Evidencia" data-en="Evidence">
+        Evidence – Evidencia
+      </h2>
+      <div class="section-desc"
+           data-es="Administración de evidencia visual y documental."
+           data-en="Management of visual and documentary evidence.">
         Administración de evidencia visual y documental.
       </div>
 
       <div class="grid-3">
         <div class="card">
-          <h3>Resumen de Evidencia</h3>
+          <h3 data-es="Resumen de Evidencia" data-en="Evidence summary">Resumen de Evidencia</h3>
           <ul style="font-size:12px;margin:0 0 0 16px;padding:0;">
-            <li>Fotos: --</li>
-            <li>Documentos: --</li>
-            <li>Videos: --</li>
+            <li data-es="Fotos: --" data-en="Pictures: --">Fotos: --</li>
+            <li data-es="Documentos: --" data-en="Documents: --">Documentos: --</li>
+            <li data-es="Videos: --" data-en="Videos: --">Videos: --</li>
           </ul>
-          <div class="btn-row">
-            <button class="btn btn-orange" disabled>Agregar evidencia</button>
+        </div>
+        <div class="card">
+          <h3 data-es="Galería (placeholder)" data-en="Gallery (placeholder)">Galería (placeholder)</h3>
+          <div class="chart-placeholder"
+               data-es="Aquí irá la galería de fotos."
+               data-en="Picture gallery will be shown here.">
+            Aquí irá la galería de fotos.
           </div>
         </div>
         <div class="card">
-          <h3>Galería (placeholder)</h3>
-          <div class="chart-placeholder">
-            Aquí irá la galería de fotos con vista ampliada.
-          </div>
-        </div>
-        <div class="card">
-          <h3>Vinculación</h3>
-          <div class="section-desc">
+          <h3 data-es="Vinculación" data-en="Linking">Vinculación</h3>
+          <div class="section-desc"
+               data-es="Evidencia asociada a estaciones, restricciones o acciones."
+               data-en="Evidence linked to stations, constraints or actions.">
             Evidencia asociada a estaciones, restricciones o acciones.
           </div>
-          <div class="chart-placeholder">
-            Placeholder – Mapa simple de evidencias vinculadas.
+          <div class="chart-placeholder"
+               data-es="Placeholder – Mapa de evidencias vinculadas"
+               data-en="Placeholder – Evidence link map">
+            Placeholder – Mapa de evidencias vinculadas
           </div>
         </div>
       </div>
-
     </section>
 
     <section id="report" class="section">
-      <h2>Report – Reporte Final</h2>
-      <div class="section-desc">
-        Generación del reporte final consolidado.
+      <h2 data-es="Report – Reporte Final" data-en="Report – Final Report">
+        Report – Reporte Final
+      </h2>
+      <div class="section-desc"
+           data-es="Aquí se generará el reporte consolidado."
+           data-en="The consolidated report will be generated here.">
+        Aquí se generará el reporte consolidado.
       </div>
 
       <div class="card">
-        <h3>Generador de Reporte</h3>
-        <p style="font-size:12px;margin:0;">
-          Desde aquí se podrá generar un reporte en PDF, PPT o HTML.
+        <h3 data-es="Generador de Reporte" data-en="Report generator">Generador de Reporte</h3>
+        <p style="font-size:12px;margin:0;"
+           data-es="Próximamente: exportación a PDF, PPT y HTML."
+           data-en="Coming soon: export to PDF, PPT and HTML.">
+          Próximamente: exportación a PDF, PPT y HTML.
         </p>
-        <div class="btn-row" style="margin-top:10px;">
-          <button class="btn btn-green" disabled>Generar PDF</button>
-          <button class="btn btn-grey" disabled>Generar PPT</button>
-          <button class="btn btn-grey" disabled>Exportar HTML</button>
-        </div>
-        <div class="chart-placeholder">
-          Placeholder – Vista previa del resumen ejecutivo.
+        <div class="chart-placeholder"
+             data-es="Placeholder – Vista previa del resumen ejecutivo"
+             data-en="Placeholder – Executive summary preview">
+          Placeholder – Vista previa del resumen ejecutivo
         </div>
       </div>
-
     </section>
 
   </div>
 
+  <script>
+    // ---------- Estado de muestras ----------
+    const samples = []; // {station, ct, note}
+
+    function parseNumber(value){
+      if(typeof value !== 'string') return NaN;
+      const v = value.replace(',', '.');
+      return parseFloat(v);
+    }
+
+    function computeStats(arr){
+      const n = arr.length;
+      if(!n) return {n:0, mean:null, median:null, std:null, min:null, max:null};
+
+      const sorted = [...arr].sort((a,b)=>a-b);
+      const min = sorted[0];
+      const max = sorted[sorted.length-1];
+      const sum = arr.reduce((a,b)=>a+b,0);
+      const mean = sum / n;
+      let median;
+      if(n % 2 === 1){
+        median = sorted[(n-1)/2];
+      }else{
+        median = (sorted[n/2 -1] + sorted[n/2]) / 2;
+      }
+      let variance = 0;
+      if(n > 1){
+        variance = arr.reduce((acc,x)=>acc+Math.pow(x-mean,2),0)/(n-1);
+      }
+      const std = Math.sqrt(variance);
+      return {n, mean, median, std, min, max};
+    }
+
+    function updateTimestudyViews(){
+      const totalSamplesEl = document.getElementById('ts-total-samples');
+      const meanEl = document.getElementById('ts-mean');
+      const medianEl = document.getElementById('ts-median');
+      const stdEl = document.getElementById('ts-std');
+      const tbody = document.getElementById('ts-detail-body');
+
+      if(!samples.length){
+        totalSamplesEl.textContent = '0';
+        meanEl.textContent = '--';
+        medianEl.textContent = '--';
+        stdEl.textContent = '--';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);">No hay muestras capturadas todavía.</td></tr>';
+        return;
+      }
+
+      // Global stats
+      const allCT = samples.map(s=>s.ct);
+      const g = computeStats(allCT);
+      totalSamplesEl.textContent = g.n;
+      meanEl.textContent = g.mean.toFixed(2);
+      medianEl.textContent = g.median.toFixed(2);
+      stdEl.textContent = g.std.toFixed(2);
+
+      // Per station
+      const byStation = {};
+      samples.forEach(s=>{
+        if(!byStation[s.station]) byStation[s.station] = [];
+        byStation[s.station].push(s.ct);
+      });
+
+      const rows = [];
+      Object.keys(byStation).sort().forEach(station=>{
+        const stStats = computeStats(byStation[station]);
+        rows.push(
+          `<tr>
+            <td>${station}</td>
+            <td>${stStats.min.toFixed(2)}</td>
+            <td>${stStats.max.toFixed(2)}</td>
+            <td>${stStats.mean.toFixed(2)}</td>
+            <td>${stStats.median.toFixed(2)}</td>
+            <td>${stStats.std.toFixed(2)}</td>
+            <td>${stStats.n}</td>
+            <td>-</td>
+          </tr>`
+        );
+      });
+
+      tbody.innerHTML = rows.join('');
+    }
+
+    document.getElementById('ts-form').addEventListener('submit', function(ev){
+      ev.preventDefault();
+      const stationInput = document.getElementById('ts-station');
+      const ctInput = document.getElementById('ts-ct');
+      const noteInput = document.getElementById('ts-note');
+
+      const station = stationInput.value.trim();
+      const ct = parseNumber(ctInput.value);
+      const note = noteInput.value.trim();
+
+      if(!station || isNaN(ct) || ct <= 0){
+        alert('Revisa estación y tiempo de ciclo.');
+        return;
+      }
+
+      samples.push({station, ct, note});
+      stationInput.value = '';
+      ctInput.value = '';
+      noteInput.value = '';
+
+      updateTimestudyViews();
+    });
+
+    // ---------- Sistema bilingüe ----------
+    let currentLang = 'es';
+
+    function applyLanguage(lang){
+      currentLang = lang;
+      const elements = document.querySelectorAll('[data-es]');
+      elements.forEach(el=>{
+        const text = el.getAttribute(`data-${lang}`);
+        if(text !== null){
+          el.textContent = text;
+        }
+      });
+      const placeholders = document.querySelectorAll('[data-es-placeholder]');
+      placeholders.forEach(el=>{
+        const ph = el.getAttribute(`data-${lang}-placeholder`);
+        if(ph !== null){
+          el.setAttribute('placeholder', ph);
+        }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === lang);
+      });
+    }
+
+    document.querySelectorAll('[data-lang-btn]').forEach(btn=>{
+      btn.addEventListener('click', ()=>applyLanguage(btn.getAttribute('data-lang-btn')));
+    });
+
+    // Init
+    applyLanguage('es');
+  </script>
 </body>
 </html>
