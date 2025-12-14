@@ -348,6 +348,7 @@
         </div>
       </div>
     </div>
+
     <!-- ✅ ENFOQUE ESTADÍSTICO -->
     <div class="section-card">
       <div class="section-title" data-i18n="section.statsFocus">Stat Focus</div>
@@ -592,6 +593,7 @@
   const wbNextConstraint = document.getElementById('wbNextConstraint');
   const wbConstraintNote = document.getElementById('wbConstraintNote');
   const methodGuideText = document.getElementById('methodGuideText');
+
   /* ===== i18n ===== */
   const i18n = {
     en:{
@@ -898,9 +900,6 @@
   }
 
   // ✅ Auto-crear/actualizar WB row desde lo que estás midiendo (proceso/estación)
-  // - Hours toma Hours/Day
-  // - Contract toma Contract (pcs/day)
-  // - Yield toma Efficiency% (mapeado a Q% por default)
   function ensureWbRowForOperation(opName){
     const op = (opName||'').trim();
     if(!op) return;
@@ -921,7 +920,6 @@
     if(!isFinite(parseFloat(row.hours)) || parseFloat(row.hours) <= 0) row.hours = globalHours;
     if(!isFinite(parseFloat(row.contractPcd)) || parseFloat(row.contractPcd) <= 0) row.contractPcd = globalContract;
 
-    // Si Q está en default (100) o vacío, lo jalamos de Efficiency% (Yield)
     if(!isFinite(parseFloat(row.oeeQ)) || parseFloat(row.oeeQ) <= 0 || parseFloat(row.oeeQ) === 100){
       row.oeeQ = globalYieldPct;
     }
@@ -932,7 +930,6 @@
   function addLap(manualData){
     const {proc,mode}=ensureDefaults();
 
-    // ✅ Siempre amarramos WB a la estación/proceso que estás midiendo
     ensureWbRowForOperation(proc);
 
     const status='', note='';
@@ -1101,6 +1098,7 @@
 
     return {cls, text: head + tail};
   }
+
   function updateSemaphores(){
     const groups=groupByProcess();
     const {proc,mode}=ensureDefaults();
@@ -1352,9 +1350,6 @@
       const st=calcStats(arr);
       if(!st) return;
 
-      const recN = sampleReqN(st.cv);
-      const errPct = estErrorPct(st.cv, st.n);
-
       const capCur = capFromCt(st.median,view,hours,days)*(eff/100);
       const capPot = capFromCt(st.p10,view,hours,days)*(eff/100);
       const capWst = capFromCt(st.p90,view,hours,days)*(eff/100);
@@ -1381,23 +1376,22 @@
       }
 
       let note='';
+      const recN = sampleReqN(st.cv);
       const ratio=st.n/recN;
       if(ratio<0.6) note = currentLang==='es' ? 'Muestra chica: no te cases.' : 'Tiny sample: don’t marry it.';
       else if(st.cv>0.20) note = currentLang==='es' ? 'Alta variación: hay fantasmas.' : 'High variation: ghosts here.';
       else if(isFinite(pctVs) && pctVs<100) note = currentLang==='es' ? 'No alcanza contrato.' : 'Below contract.';
       else note = currentLang==='es' ? 'Se ve sano.' : 'Looks healthy.';
 
+      // ✅ Opción B: misma línea EXACTA que arriba (no más versión “a mano”)
+      const sLine = buildSampleLine(st);
+
       const tr=document.createElement('tr');
       tr.innerHTML=`
         <td>${proc}</td>
         <td>${mode}</td>
         <td>${st.n}</td>
-        <td style="text-align:left">
-          ${currentLang==='es'
-            ? `Tamaño de muestra: ${st.n} / ${recN} · Error estimado: ±${errPct.toFixed(1)}% (95%)`
-            : `Sample size: ${st.n} / ${recN} · Est. error: ±${errPct.toFixed(1)}% (95%)`
-          }
-        </td>
+        <td style="text-align:left">${sLine.text}</td>
         <td>${formatSecs(st.std)}</td>
         <td>${(st.cv*100).toFixed(1)}</td>
         <td>${formatSecs(st.median)}</td>
@@ -1442,7 +1436,6 @@
     return best;
   }
 
-  // ✅ OEE correcto y capado: 0..1 (0%..100%)
   function computeOeePct(row){
     const a = clamp(parseFloat(row.oeeA),0,100)/100;
     const p = clamp(parseFloat(row.oeeP),0,100)/100;
@@ -1534,7 +1527,6 @@
     wbRows.forEach((row,idx)=>{
       const gross = computeGrossMinutes(row);
       const lunch = computeLunchMinutes(row);
-      const udtMin = computeUdtMinutes(row);
       const net = computeNetMinutes(row);
 
       const oee = computeOeePct(row);
@@ -1823,7 +1815,6 @@ Constraint
     const maxSeq = wbRows.reduce((m,x)=>Math.max(m, parseFloat(x.seq)||0), 0);
     r.seq = (maxSeq||0) + 10;
     r.operation = (processInput.value||'').trim() || '';
-    // defaults from measurement setup
     r.hours = clamp(parseFloat(hInput.value)||8,1,24);
     r.contractPcd = Math.max(0, parseFloat(pcdInput.value)||0);
     r.oeeQ = clamp(parseFloat(effInput.value)||100,0,100);
