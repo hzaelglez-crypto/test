@@ -908,7 +908,59 @@
     }
   };
 
-  let currentLang = localStorage.getItem('taktlabLang') || 'en';
+  // =========================
+  // ✅ AUTOSAVE TOTAL (State Keys)
+  // =========================
+  const TL_STATE_KEY = 'taktlab_state_v3_full';   // laps + settings + wb + lang
+  const WB_KEY = 'taktlabWB_v2_sync';             // legacy compatibility
+  const LANG_KEY = 'taktlabLang';                // legacy compatibility
+
+  function safeJsonParse(raw){
+    try{ return JSON.parse(raw); }catch(e){ return null; }
+  }
+
+  // ✅ debounce to avoid saving 50 times per second
+  let _saveTimer = null;
+  function scheduleSaveAll(){
+    if(_saveTimer) clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(()=>{ saveAllNow(); }, 120);
+  }
+
+  function buildStateSnapshot(){
+    return {
+      v: 3,
+      ts: Date.now(),
+      lang: currentLang,
+      settings: {
+        processName: (processInput.value||'').toString(),
+        mode: (modeSelect.value||'CT'),
+        efficiency: (effInput.value||''),
+        contractPcd: (pcdInput.value||''),
+        hoursPerDay: (hInput.value||''),
+        daysPerWeek: (dInput.value||''),
+        capView: (capViewSel.value||'hour')
+      },
+      laps: Array.isArray(laps) ? laps : [],
+      nextId: (isFinite(nextId)?nextId:1),
+      wbRows: Array.isArray(wbRows) ? wbRows : []
+    };
+  }
+
+  function saveAllNow(){
+    const snap = buildStateSnapshot();
+    try{ localStorage.setItem(TL_STATE_KEY, JSON.stringify(snap)); }catch(e){}
+    // legacy mirrors (so no pierdes WB si cambias versión)
+    try{ localStorage.setItem(WB_KEY, JSON.stringify(snap.wbRows || [])); }catch(e){}
+    try{ localStorage.setItem(LANG_KEY, currentLang); }catch(e){}
+  }
+
+  function clearAllSaved(){
+    try{ localStorage.removeItem(TL_STATE_KEY); }catch(e){}
+    try{ localStorage.removeItem(WB_KEY); }catch(e){}
+    try{ localStorage.removeItem(LANG_KEY); }catch(e){}
+  }
+
+  let currentLang = localStorage.getItem(LANG_KEY) || 'en';
   function t(key){ return (i18n[currentLang] && i18n[currentLang][key]) || i18n.en[key] || key; }
 
   function applyTranslations(){
@@ -923,18 +975,18 @@
     });
   }
   function updateLangButtons(){ langButtons.forEach(b=>b.classList.toggle('active', b.dataset.lang === currentLang)); }
+
   function setLanguage(lang){
     currentLang = (lang==='es') ? 'es' : 'en';
-    localStorage.setItem('taktlabLang', currentLang);
+    try{ localStorage.setItem(LANG_KEY, currentLang); }catch(e){}
     document.documentElement.lang = currentLang;
     updateLangButtons();
     applyTranslations();
     btnStart.textContent = running ? t('btn.pause') : t('btn.start');
     renderAll();
+    scheduleSaveAll();
   }
   langButtons.forEach(btn=>btn.addEventListener('click',()=>setLanguage(btn.dataset.lang)));
-
-  const WB_KEY = 'taktlabWB_v2_sync';
 
   function clamp(n,min,max){ n = isFinite(n)?n:0; return Math.min(Math.max(n,min),max); }
 
@@ -1146,6 +1198,7 @@
       contractPcd: globalContract,
       contractAuto: true,
 
+      lunchMin: 0,
       changeoverMin: 0,
       cleanMin: 0,
       maintMin: 0,
@@ -1172,6 +1225,7 @@
   let wbRows = [];
 
   function loadWB(){
+    // legacy loader (kept)
     try{
       const raw = localStorage.getItem(WB_KEY);
       if(!raw){ wbRows=[]; return; }
@@ -1179,7 +1233,10 @@
       wbRows = Array.isArray(parsed) ? parsed : [];
     }catch(e){ wbRows=[]; }
   }
-  function saveWB(){ try{ localStorage.setItem(WB_KEY, JSON.stringify(wbRows)); }catch(e){} }
+  function saveWB(){
+    try{ localStorage.setItem(WB_KEY, JSON.stringify(wbRows)); }catch(e){}
+    scheduleSaveAll();
+  }
 
   function applyGlobalToRow(row){
     const gHours = clamp(parseFloat(hInput.value)||8,1,24);
@@ -1224,6 +1281,7 @@
       const {t1,t2,total}=manualData;
       laps.push({id:nextId++,process:proc,mode,status,note,t1,t2,total});
       renderAll();
+      scheduleSaveAll();
       return;
     }
     const seconds=Math.max(elapsed/1000,0);
@@ -1232,6 +1290,7 @@
       elapsed=0; startTime=performance.now();
       updateDisplay(); pendingT1=null; updateSplitClocks();
       renderAll();
+      scheduleSaveAll();
       return;
     }
     if(pendingT1===null){
@@ -1245,6 +1304,7 @@
       elapsed=0; startTime=performance.now();
       updateDisplay(); updateSplitClocks();
       renderAll();
+      scheduleSaveAll();
     }
   }
 
@@ -1259,14 +1319,22 @@
   });
 
   btnReset.addEventListener('click',()=>{
+    if(!confirm(currentLang==='es'
+      ? '¿Reset TOTAL? Borra laps, WB y configuración guardada.'
+      : 'TOTAL reset? This will delete laps, WB and saved settings.'
+    )) return;
+
     pause();
     elapsed=0; updateDisplay();
     laps=[]; nextId=1; pendingT1=null;
+    wbRows=[];
+    // clear storage
+    clearAllSaved();
     updateSplitClocks();
     renderAll();
   });
 
-  modeSelect.addEventListener('change',()=>{ pendingT1=null; updateSplitClocks(); });
+  modeSelect.addEventListener('change',()=>{ pendingT1=null; updateSplitClocks(); scheduleSaveAll(); });
 
   // =========================
   // ✅ PART 2 CONTINUES BELOW
@@ -1502,6 +1570,7 @@
           row.ctWstManual = parse2(wstIn);
           row.ctPotManual = parse2(potIn);
           saveWB(); renderAll();
+          scheduleSaveAll();
         });
 
         const bRelink=document.createElement('button');
@@ -1515,6 +1584,7 @@
             row.opAutoKey = gKey;
             row.operation = gOp;
             saveWB(); renderAll();
+            scheduleSaveAll();
           }
         });
 
@@ -1524,6 +1594,7 @@
         bDel.addEventListener('click',()=>{
           wbRows = wbRows.filter(r=>r.id!==row.id);
           saveWB(); renderAll();
+          scheduleSaveAll();
         });
 
         c.appendChild(bEdit);
@@ -1534,8 +1605,8 @@
         tr.appendChild(c);
       }
 
-      inpCell(row.seq,'wb-inp',v=>{ row.seq=parseFloat(v)||0; saveWB(); renderWB(); },'number','1',0,null,'slim');
-      chkCell(row.enabled,(v)=>{ row.enabled=!!v; saveWB(); renderAll(); });
+      inpCell(row.seq,'wb-inp',v=>{ row.seq=parseFloat(v)||0; saveWB(); renderWB(); scheduleSaveAll(); },'number','1',0,null,'slim');
+      chkCell(row.enabled,(v)=>{ row.enabled=!!v; saveWB(); renderAll(); scheduleSaveAll(); });
 
       inpCell(row.operation,'wb-inp wide',v=>{
         row.operation = (v||'').toString().trim();
@@ -1543,40 +1614,41 @@
         row.opAutoKey = normOp(row.operation);
         saveWB();
         renderAll();
+        scheduleSaveAll();
       },'text',null,null,null,'wide');
 
-      inpCell(row.operators,'wb-inp',v=>{ row.operators=clamp(parseFloat(v)||0,0,999); saveWB(); renderAll(); },'number','1',0,999);
-      inpCell(row.shifts,'wb-inp',v=>{ row.shifts=clamp(parseFloat(v)||1,1,10); saveWB(); renderAll(); },'number','1',1,10);
-      inpCell(row.hours,'wb-inp',v=>{ row.hours=clamp(parseFloat(v)||8,1,24); row.hoursAuto=false; saveWB(); renderAll(); },'number','.5',1,24);
+      inpCell(row.operators,'wb-inp',v=>{ row.operators=clamp(parseFloat(v)||0,0,999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999);
+      inpCell(row.shifts,'wb-inp',v=>{ row.shifts=clamp(parseFloat(v)||1,1,10); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',1,10);
+      inpCell(row.hours,'wb-inp',v=>{ row.hours=clamp(parseFloat(v)||8,1,24); row.hoursAuto=false; saveWB(); renderAll(); scheduleSaveAll(); },'number','.5',1,24);
 
-      inpCell(row.machines,'wb-inp',v=>{ row.machines=clamp(parseFloat(v)||1,1,999); saveWB(); renderAll(); },'number','1',1,999);
-      inpCell(row.contractPcd,'wb-inp',v=>{ row.contractPcd=clamp(parseFloat(v)||0,0,99999); row.contractAuto=false; saveWB(); renderAll(); },'number','1',0,99999);
+      inpCell(row.machines,'wb-inp',v=>{ row.machines=clamp(parseFloat(v)||1,1,999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',1,999);
+      inpCell(row.contractPcd,'wb-inp',v=>{ row.contractPcd=clamp(parseFloat(v)||0,0,99999); row.contractAuto=false; saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,99999);
 
       td(formatUnits(gGross));
-      inpCell(row.lunchMin||0,'wb-inp',v=>{ row.lunchMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); },'number','1',0,999999);
-      inpCell(row.changeoverMin||0,'wb-inp',v=>{ row.changeoverMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); },'number','1',0,999999);
-      inpCell(row.cleanMin||0,'wb-inp',v=>{ row.cleanMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); },'number','1',0,999999);
-      inpCell(row.maintMin||0,'wb-inp',v=>{ row.maintMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); },'number','1',0,999999);
-      inpCell(row.otherMin||0,'wb-inp',v=>{ row.otherMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); },'number','1',0,999999);
+      inpCell(row.lunchMin||0,'wb-inp',v=>{ row.lunchMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
+      inpCell(row.changeoverMin||0,'wb-inp',v=>{ row.changeoverMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
+      inpCell(row.cleanMin||0,'wb-inp',v=>{ row.cleanMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
+      inpCell(row.maintMin||0,'wb-inp',v=>{ row.maintMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
+      inpCell(row.otherMin||0,'wb-inp',v=>{ row.otherMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
 
-      inpCell(row.sharedMin||0,'wb-inp',v=>{ row.sharedMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); },'number','1',0,999999);
+      inpCell(row.sharedMin||0,'wb-inp',v=>{ row.sharedMin=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
 
-      inpCell(row.udtValue||0,'wb-inp',v=>{ row.udtValue=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); },'number','1',0,999999);
+      inpCell(row.udtValue||0,'wb-inp',v=>{ row.udtValue=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
       selCell(row.udtUnit||'min_day',[
         {value:'min_day', label:(currentLang==='es'?'min/día':'min/day')},
         {value:'min_shift', label:(currentLang==='es'?'min/turno':'min/shift')},
         {value:'min_hour', label:(currentLang==='es'?'min/hora':'min/hour')},
         {value:'pct', label:(currentLang==='es'?'% de brutos':'% gross')}
-      ],v=>{ row.udtUnit=v; saveWB(); renderAll(); });
+      ],v=>{ row.udtUnit=v; saveWB(); renderAll(); scheduleSaveAll(); });
 
       td(formatUnits(net));
 
-      inpCell(row.scrapPct||0,'wb-inp',v=>{ row.scrapPct=clamp(parseFloat(v)||0,0,99.99); saveWB(); renderAll(); },'number','.1',0,99.99);
+      inpCell(row.scrapPct||0,'wb-inp',v=>{ row.scrapPct=clamp(parseFloat(v)||0,0,99.99); saveWB(); renderAll(); scheduleSaveAll(); },'number','.1',0,99.99);
       td(pct(y*100,1));
 
-      inpCell(row.oeeA||100,'wb-inp',v=>{ row.oeeA=clamp(parseFloat(v)||0,0,100); saveWB(); renderAll(); },'number','1',0,100);
-      inpCell(row.oeeP||100,'wb-inp',v=>{ row.oeeP=clamp(parseFloat(v)||0,0,100); saveWB(); renderAll(); },'number','1',0,100);
-      inpCell(row.oeeQ||100,'wb-inp',v=>{ row.oeeQ=clamp(parseFloat(v)||0,0,100); row.qAuto=false; saveWB(); renderAll(); },'number','1',0,100);
+      inpCell(row.oeeA||100,'wb-inp',v=>{ row.oeeA=clamp(parseFloat(v)||0,0,100); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,100);
+      inpCell(row.oeeP||100,'wb-inp',v=>{ row.oeeP=clamp(parseFloat(v)||0,0,100); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,100);
+      inpCell(row.oeeQ||100,'wb-inp',v=>{ row.oeeQ=clamp(parseFloat(v)||0,0,100); row.qAuto=false; saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,100);
       td(pct(oee,1));
 
       td(isFinite(cur)?formatSecs(cur):'-');
@@ -1638,6 +1710,7 @@
     wbRows.push(r);
     saveWB();
     renderAll();
+    scheduleSaveAll();
   });
 
   btnWbClear.addEventListener('click',()=>{
@@ -1645,6 +1718,7 @@
     wbRows = [];
     saveWB();
     renderAll();
+    scheduleSaveAll();
   });
 
   function renderRaw(){
@@ -1689,6 +1763,7 @@
 
         ensureWbRowForOperation(l.process);
         renderAll();
+        scheduleSaveAll();
       });
       tdEdit.appendChild(bEdit);
       tr.appendChild(tdEdit);
@@ -1700,6 +1775,7 @@
       bDel.addEventListener('click',()=>{
         laps = laps.filter(x=>x.id!==l.id);
         renderAll();
+        scheduleSaveAll();
       });
       tdDel.appendChild(bDel);
       tr.appendChild(tdDel);
@@ -2141,9 +2217,10 @@
     renderWB();
     renderCharts();
     methodGuideText.textContent = buildMethodGuide();
+    scheduleSaveAll();
   }
 
-  processInput.addEventListener('input', ()=>{});
+  processInput.addEventListener('input', ()=>{ scheduleSaveAll(); });
   processInput.addEventListener('blur', ()=>{
     const op = (processInput.value||'').trim();
     ensureWbRowForOperation(op);
@@ -2158,11 +2235,49 @@
   });
 
   [effInput, pcdInput, hInput, dInput, capViewSel, modeSelect].forEach(el=>{
-    el.addEventListener('input', renderAll);
-    el.addEventListener('change', renderAll);
+    el.addEventListener('input', ()=>{ renderAll(); });
+    el.addEventListener('change', ()=>{ renderAll(); });
   });
 
-  loadWB();
+  // =========================
+  // ✅ RESTORE FULL STATE (if exists)
+  // =========================
+  function restoreStateIfAny(){
+    const raw = localStorage.getItem(TL_STATE_KEY);
+    const st = raw ? safeJsonParse(raw) : null;
+    if(!st || typeof st !== 'object') return false;
+
+    // language first
+    if(st.lang){ currentLang = (st.lang==='es')?'es':'en'; }
+
+    // settings
+    const s = st.settings || {};
+    if(typeof s.processName === 'string') processInput.value = s.processName;
+    if(typeof s.mode === 'string') modeSelect.value = (s.mode==='MLD')?'MLD':'CT';
+    if(s.efficiency !== undefined) effInput.value = s.efficiency;
+    if(s.contractPcd !== undefined) pcdInput.value = s.contractPcd;
+    if(s.hoursPerDay !== undefined) hInput.value = s.hoursPerDay;
+    if(s.daysPerWeek !== undefined) dInput.value = s.daysPerWeek;
+    if(typeof s.capView === 'string') capViewSel.value = s.capView;
+
+    // laps
+    if(Array.isArray(st.laps)) laps = st.laps;
+    if(isFinite(st.nextId)) nextId = st.nextId;
+
+    // WB
+    if(Array.isArray(st.wbRows)) wbRows = st.wbRows;
+
+    // force timer safe state
+    running=false; elapsed=0; pendingT1=null;
+
+    return true;
+  }
+
+  const restored = restoreStateIfAny();
+  if(!restored){
+    loadWB(); // fallback legacy
+  }
+
   updateLangButtons();
   applyTranslations();
   btnStart.textContent = running ? t('btn.pause') : t('btn.start');
@@ -2174,6 +2289,7 @@
   updateDisplay();
   updateSplitClocks();
   renderAll();
+  saveAllNow(); // ensure current snapshot exists immediately
 
 })();
 </script>
