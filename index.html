@@ -253,6 +253,7 @@
   .btn-small-reset{background:rgba(255,51,85,.92);border-color:rgba(255,51,85,.92);color:#fff;}
   .btn-small-wbadd{background:rgba(255,255,255,.06);color:var(--text-soft);}
   .btn-small-wbclear{background:rgba(255,51,85,.12);border-color:rgba(255,51,85,.35);color:#ffd0da;}
+  .btn-small-wbcopy{background:rgba(57,189,245,.14);border-color:rgba(57,189,245,.35);color:#d9f4ff;}
 
   .subsection-title{margin-top:10px;font-size:.82rem;font-weight:700;color:var(--text-soft);}
   .footer-note{margin-top:10px;font-size:.65rem;color:var(--text-muted);text-align:right;}
@@ -531,6 +532,7 @@
 
       <div class="btn-row-secondary" style="margin-top:8px;">
         <button class="btn-small btn-small-wbadd" id="btnWbAdd" data-i18n="btn.wbAdd">+ Add Operation</button>
+        <button class="btn-small btn-small-wbcopy" id="btnWbCopy" data-i18n="btn.wbCopy">Copy WB</button>
         <button class="btn-small btn-small-wbclear" id="btnWbClear" data-i18n="btn.wbClear">Clear WB</button>
       </div>
 
@@ -743,6 +745,7 @@
 
   const wbBody = document.getElementById('wbBody');
   const btnWbAdd = document.getElementById('btnWbAdd');
+  const btnWbCopy = document.getElementById('btnWbCopy');
   const btnWbClear = document.getElementById('btnWbClear');
   const wbConstraint = document.getElementById('wbConstraint');
   const wbNextConstraint = document.getElementById('wbNextConstraint');
@@ -818,6 +821,7 @@
       'footer.note':'Created by Roberto González – Contact: hzaelglez@gmail.com',
 
       'btn.wbAdd':'+ Add Operation',
+      'btn.wbCopy':'Copy WB',
       'btn.wbClear':'Clear WB',
       'wb.enabled':'On',
       'wb.operation':'Operation',
@@ -889,6 +893,7 @@
       'footer.note':'Creado por Roberto González – Contacto: hzaelglez@gmail.com',
 
       'btn.wbAdd':'+ Agregar operación',
+      'btn.wbCopy':'Copiar WB',
       'btn.wbClear':'Borrar WB',
       'wb.enabled':'On',
       'wb.operation':'Operación',
@@ -1354,43 +1359,49 @@
     return (A/100)*(P/100)*(Q/100)*100;
   }
 
+  // ✅ UPDATED: Unplanned DT scales with #Machines; Shifts do NOT affect gross minutes
   function udtToMinPerDay(row){
     const v = clamp(parseFloat(row.udtValue)||0,0,999999);
     const u = row.udtUnit || 'min_day';
-    if(u==='min_day') return v;
-    if(u==='min_shift') return v * (clamp(parseFloat(row.shifts)||1,1,10));
-    if(u==='min_hour') return v * (clamp(parseFloat(row.hours)||8,1,24)) * (clamp(parseFloat(row.shifts)||1,1,10));
+    const hours = clamp(parseFloat(row.hours)||8,1,24);
+    const machines = clamp(parseFloat(row.machines)||1,1,999);
+
+    if(u==='min_day')  return v * machines;          // per-machine
+    if(u==='min_shift')return v * machines;          // shifts ignored (still per-machine)
+    if(u==='min_hour') return v * hours * machines;  // per-machine-hour
     if(u==='pct') {
-      const gross = grossMinPerDay(row);
+      const gross = grossMinPerDay(row);             // already includes machines
       return gross*(v/100);
     }
-    return v;
+    return v * machines;
   }
 
+  // ✅ UPDATED: Shifts do NOT affect Gross minutes
   function grossMinPerDay(row){
     const hours = clamp(parseFloat(row.hours)||8,1,24);
-    const shifts = clamp(parseFloat(row.shifts)||1,1,10);
     const machines = clamp(parseFloat(row.machines)||1,1,999);
-    return hours*60*shifts*machines;
+    return hours*60*machines;
   }
 
+  // ✅ UPDATED: Lunch/Changeover/Mtto/5S/Other scale with #Machines
   function plannedLossMin(row){
+    const machines = clamp(parseFloat(row.machines)||1,1,999);
     return (
       clamp(parseFloat(row.lunchMin)||0,0,999999) +
       clamp(parseFloat(row.changeoverMin)||0,0,999999) +
       clamp(parseFloat(row.cleanMin)||0,0,999999) +
       clamp(parseFloat(row.maintMin)||0,0,999999) +
       clamp(parseFloat(row.otherMin)||0,0,999999)
-    );
+    ) * machines;
   }
 
+  // ✅ UPDATED: Net uses already-scaled planned losses; Shared stays as-is (global)
   function netMinPerDay(row){
     const gross = grossMinPerDay(row);
-    const lunch = clamp(parseFloat(row.lunchMin)||0,0,999999);
-    const pl = plannedLossMin(row);
+    const pl = plannedLossMin(row); // includes machines
     const shared = clamp(parseFloat(row.sharedMin)||0,0,999999);
-    const udtMin = udtToMinPerDay(row);
-    const used = lunch + (pl - lunch) + shared + udtMin;
+    const udtMin = udtToMinPerDay(row); // includes machines per rules
+    const used = pl + shared + udtMin;
     const net = gross - used;
     return Math.max(net,0);
   }
@@ -1784,9 +1795,10 @@
       wbNextConstraint.className = 'badge badge-warn';
     }
 
+    // ✅ UPDATED NOTE (your rule)
     wbConstraintNote.textContent = (currentLang==='es'
-      ? 'Restricción = filas activas (On) con contrato > 0, usando Cap@OEE vs Contrato.'
-      : 'Constraint = active rows (On) with contract > 0, using Cap@OEE vs Contract.'
+      ? 'Notas WB: Gross min/día = Hours×60×#Machines (Turnos NO afectan Gross). Lunch/Changeover/5S/Mtto/Unplanned se interpretan por máquina y se multiplican por #Machines. Restricción = filas On con contrato>0 usando Cap@OEE vs Contrato.'
+      : 'WB notes: Gross min/day = Hours×60×#Machines (Shifts do NOT affect Gross). Lunch/Changeover/5S/Maint/Unplanned are per-machine and scale by #Machines. Constraint = On rows with contract>0 using Cap@OEE vs Contract.'
     );
   }
 
@@ -1804,6 +1816,77 @@
     saveWB();
     renderAll();
     scheduleSaveAll();
+  });
+
+  function copyText(text){
+    navigator.clipboard.writeText(text).catch(()=>{});
+  }
+
+  // ✅ NEW: Copy WB button (TSV, Excel-friendly)
+  btnWbCopy.addEventListener('click',()=>{
+    const header = [
+      'On','Operation','Operators','Shifts','Hours','#Machines','Contract_pcs_day',
+      'Gross_min_day','Lunch_min_day','Changeover','5S_Clean','Maintenance','Other',
+      'Shared_min_day','UDT_value','UDT_unit','Net_min_day',
+      'Scrap_pct','Yield_pct','A_pct','P_pct','Q_pct','OEE_pct',
+      'CT_Current_s','CT_Worst_s','CT_Potential_s','CT_OEE_s',
+      'Cap100_day','CapOEE_day','VsContract_pct','InputReq_forContract'
+    ].join('\t');
+
+    const lines = [header];
+
+    wbRows.forEach(r=>{
+      const enabled = r.enabled?1:0;
+      const gGross = grossMinPerDay(r);
+      const net = netMinPerDay(r);
+      const y = yieldFromScrap(r);
+      const oee = computeOEE(r);
+      const {cur,wst,pot} = ctForRow(r);
+      const {cap100, capOee, ctOee} = capPerDayFromRow(r);
+      const contract = clamp(parseFloat(r.contractPcd)||0,0,999999);
+      const vs = contract>0 ? (capOee/contract*100) : NaN;
+      const inputReq = (contract>0 && isFinite(capOee) && capOee>0)
+        ? (contract / Math.max(y,0.0001))
+        : NaN;
+
+      const row = [
+        enabled,
+        (r.operation||'').replace(/\t/g,' '),
+        (r.operators??''),
+        (r.shifts??''),
+        (r.hours??''),
+        (r.machines??''),
+        (r.contractPcd??''),
+        Math.round(gGross),
+        (r.lunchMin??0),
+        (r.changeoverMin??0),
+        (r.cleanMin??0),
+        (r.maintMin??0),
+        (r.otherMin??0),
+        (r.sharedMin??0),
+        (r.udtValue??0),
+        (r.udtUnit||'min_day'),
+        Math.round(net),
+        (r.scrapPct??0),
+        (isFinite(y)?(y*100).toFixed(1):''),
+        (r.oeeA??''),
+        (r.oeeP??''),
+        (r.oeeQ??''),
+        (isFinite(oee)?oee.toFixed(1):''),
+        (isFinite(cur)?formatSecs(cur):''),
+        (isFinite(wst)?formatSecs(wst):''),
+        (isFinite(pot)?formatSecs(pot):''),
+        (isFinite(ctOee)?formatSecs(ctOee):''),
+        (isFinite(cap100)?Math.round(cap100):''),
+        (isFinite(capOee)?Math.round(capOee):''),
+        (isFinite(vs)?vs.toFixed(0):''),
+        (isFinite(inputReq)?Math.round(inputReq):'')
+      ].join('\t');
+
+      lines.push(row);
+    });
+
+    copyText(lines.join('\n'));
   });
 
   function renderRaw(){
@@ -2225,10 +2308,6 @@
   }
   chartSelect.addEventListener('change', renderCharts);
   window.addEventListener('resize', ()=>{ renderCharts(); });
-
-  function copyText(text){
-    navigator.clipboard.writeText(text).catch(()=>{});
-  }
 
   btnCopyAll.addEventListener('click',()=>{
     const view=capViewSel.value;
