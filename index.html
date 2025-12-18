@@ -11,10 +11,11 @@
     --bg-card:#0b1f3a;
     --bg-card-soft:#0f2544;
 
-    --accent-green:#00c853;
-    --accent-amber:#ffb300;
-    --accent-red:#ff1744;
-    --accent-blue:#29b6f6;
+    /* toned-down accents (more pro, less neon) */
+    --accent-green:#18c97a;
+    --accent-amber:#f2c14e;
+    --accent-red:#ff3355;
+    --accent-blue:#39bdf5;
     --accent-grey:#cfd8dc;
 
     --text-main:#ffffff;
@@ -22,18 +23,18 @@
     --text-muted:#90a4ae;
     --border-soft:#1c3357;
 
-    --btn-green:#00c853;
-    --btn-orange:#ff9100;
+    --btn-green:#18c97a;
+    --btn-orange:#f2a93b;
     --btn-grey:#455a64;
 
-    --badge-green:#004d40;
-    --badge-red:#b71c1c;
-    --badge-amber:#ff8f00;
+    /* subtler badges */
+    --badge-green:rgba(24,201,122,.16);
+    --badge-red:rgba(255,51,85,.16);
+    --badge-amber:rgba(242,193,78,.16);
 
-    /* WB sticky sizing (fixes “can’t edit” overlay) */
-    --wb-seq-w:62px;
-    --wb-on-w:50px;
-    --wb-op-w:190px;
+    /* WB sticky sizing (Seq removed) */
+    --wb-on-w:56px;
+    --wb-op-w:210px;
   }
 
   *{box-sizing:border-box;}
@@ -68,12 +69,12 @@
 
   .logo-circle{
     width:38px;height:38px;border-radius:50%;
-    border:2px solid var(--accent-grey);
+    border:2px solid rgba(207,216,220,.65);
     display:flex;align-items:center;justify-content:center;
   }
   .logo-gear{
     width:22px;height:22px;border-radius:50%;
-    border:2px solid var(--accent-grey);
+    border:2px solid rgba(207,216,220,.65);
     position:relative;
   }
   .logo-gear::before{
@@ -81,7 +82,7 @@
     position:absolute;
     inset:4px;
     border-radius:50%;
-    border:2px solid var(--accent-green);
+    border:2px solid rgba(24,201,122,.9);
     border-right-color:transparent;
     border-bottom-color:transparent;
     transform-origin:50% 50%;
@@ -99,7 +100,7 @@
     background:rgba(2,11,26,.6);color:var(--text-soft);
     font-size:.7rem;padding:4px 8px;cursor:pointer;min-width:34px;
   }
-  .lang-btn.active{background:var(--accent-blue);color:#fff;border-color:var(--accent-blue);font-weight:600;}
+  .lang-btn.active{background:rgba(57,189,245,.95);color:#fff;border-color:rgba(57,189,245,.95);font-weight:700;}
 
   .timer-card{
     background:var(--bg-card);
@@ -149,8 +150,8 @@
     letter-spacing:.04em;
     color:#fff;
   }
-  .split-pill.t1{ border-color: rgba(41,182,246,.35); }
-  .split-pill.t2{ border-color: rgba(255,179,0,.35); }
+  .split-pill.t1{ border-color: rgba(57,189,245,.30); }
+  .split-pill.t2{ border-color: rgba(242,193,78,.28); }
 
   .info-stack{ display:flex; flex-direction:column; gap:6px; margin:0 0 8px; }
   .info-line{
@@ -159,28 +160,28 @@
     line-height:1.25;
   }
   .sample-neutral{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);color:var(--text-soft);}
-  .sample-good{background:rgba(0,200,83,.13);border-color:rgba(0,200,83,.55);color:#c8e6c9;}
-  .sample-warn{background:rgba(255,193,7,.12);border-color:rgba(255,193,7,.55);color:#ffe082;}
-  .sample-bad{background:rgba(244,67,54,.13);border-color:rgba(244,67,54,.60);color:#ffab91;}
+  .sample-good{background:rgba(24,201,122,.12);border-color:rgba(24,201,122,.45);color:#d9ffe9;}
+  .sample-warn{background:rgba(242,193,78,.10);border-color:rgba(242,193,78,.40);color:#fff4d3;}
+  .sample-bad{background:rgba(255,51,85,.10);border-color:rgba(255,51,85,.42);color:#ffd0da;}
 
   .btn-row-main{display:flex;gap:10px;margin-bottom:2px;}
   .btn{
     border:none;border-radius:16px;padding:10px 12px;
-    font-size:.9rem;font-weight:600;cursor:pointer;color:#fff;
+    font-size:.9rem;font-weight:700;cursor:pointer;color:#06101f;
     box-shadow:0 4px 10px rgba(0,0,0,.4);flex:1;
     transition:transform .04s ease, box-shadow .04s ease, background .15s;
     touch-action:manipulation;
   }
   .btn:active{transform:translateY(1px);box-shadow:0 1px 4px rgba(0,0,0,.5);}
-  .btn-start{background:var(--btn-green);}
-  .btn-lap{background:var(--btn-orange);}
+  .btn-start{background:rgba(24,201,122,.95); color:#051018;}
+  .btn-lap{background:rgba(242,169,59,.95); color:#0b0b0b;}
 
   .flash{animation:flash-bg .12s ease-out;}
   @keyframes flash-bg{ from{background:rgba(255,255,255,.18);} to{background:transparent;} }
 
   .content-section{margin-top:8px;}
 
-  /* ✅ Subtle section theming (no clown shirt) */
+  /* ✅ Subtle section theming */
   .section-card{
     background:var(--bg-card);
     border-radius:18px;
@@ -197,21 +198,21 @@
     border-radius:999px;
     background:rgba(255,255,255,.06);
   }
-  .section-card[data-accent="blue"]::before{ background:rgba(41,182,246,.35); }
-  .section-card[data-accent="green"]::before{ background:rgba(0,200,83,.30); }
-  .section-card[data-accent="amber"]::before{ background:rgba(255,179,0,.30); }
-  .section-card[data-accent="red"]::before{ background:rgba(255,23,68,.25); }
-  .section-card[data-accent="grey"]::before{ background:rgba(207,216,220,.22); }
+  .section-card[data-accent="blue"]::before{ background:rgba(57,189,245,.26); }
+  .section-card[data-accent="green"]::before{ background:rgba(24,201,122,.22); }
+  .section-card[data-accent="amber"]::before{ background:rgba(242,193,78,.22); }
+  .section-card[data-accent="red"]::before{ background:rgba(255,51,85,.20); }
+  .section-card[data-accent="grey"]::before{ background:rgba(207,216,220,.18); }
 
-  .section-title{font-size:1.0rem;font-weight:700;margin-bottom:6px;}
+  .section-title{font-size:1.0rem;font-weight:750;margin-bottom:6px;}
 
   .mode-row{
     display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;
     font-size:.78rem;color:var(--text-soft);
   }
   .mode-row select,.mode-row input{
-    background:#020b1a;border-radius:8px;border:1px solid var(--border-soft);
-    padding:4px 8px;color:var(--text-soft);font-size:.78rem;min-width:70px;
+    background:#020b1a;border-radius:10px;border:1px solid var(--border-soft);
+    padding:5px 10px;color:var(--text-soft);font-size:.78rem;min-width:70px;
   }
   .mode-row input[type="number"]{width:78px;}
 
@@ -224,36 +225,36 @@
   }
   th:first-child,td:first-child{text-align:left;}
   th{
-    color:var(--text-soft);font-weight:600;background:rgba(255,255,255,.02);
+    color:var(--text-soft);font-weight:650;background:rgba(255,255,255,.02);
     position:sticky;top:0;z-index:5;
   }
   tbody tr:nth-child(even){background:rgba(255,255,255,.02);}
 
   .badge{
-    display:inline-block;padding:2px 6px;border-radius:999px;
-    font-size:.68rem;border:1px solid transparent;
+    display:inline-block;padding:2px 8px;border-radius:999px;
+    font-size:.68rem;border:1px solid rgba(255,255,255,.12);
   }
-  .badge-good{background:var(--badge-green);border-color:#00e676;}
-  .badge-warn{background:var(--badge-amber);border-color:#ffe082;color:#000;}
-  .badge-bad{background:var(--badge-red);border-color:#ff8a80;}
+  .badge-good{background:var(--badge-green);border-color:rgba(24,201,122,.40);color:#d9ffe9;}
+  .badge-warn{background:var(--badge-amber);border-color:rgba(242,193,78,.40);color:#fff4d3;}
+  .badge-bad{background:var(--badge-red);border-color:rgba(255,51,85,.42);color:#ffd0da;}
 
   .btn-row-secondary{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 4px;}
   .btn-small{
     padding:12px 18px;
     border-radius:18px;
     font-size:.95rem;
-    font-weight:800;
+    font-weight:850;
     flex:0 0 auto;background:var(--bg-card-soft);color:var(--text-soft);
     border:1px solid var(--border-soft);cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.35);
   }
-  .btn-small-copy{background:var(--accent-blue);border-color:var(--accent-blue);color:#fff;}
-  .btn-small-summary{background:var(--accent-amber);border-color:var(--accent-amber);color:#000;}
-  .btn-small-manual{background:var(--accent-green);border-color:var(--accent-green);color:#000;}
-  .btn-small-reset{background:var(--accent-red);border-color:var(--accent-red);color:#fff;}
+  .btn-small-copy{background:rgba(57,189,245,.95);border-color:rgba(57,189,245,.95);color:#051018;}
+  .btn-small-summary{background:rgba(242,193,78,.95);border-color:rgba(242,193,78,.95);color:#0b0b0b;}
+  .btn-small-manual{background:rgba(24,201,122,.95);border-color:rgba(24,201,122,.95);color:#051018;}
+  .btn-small-reset{background:rgba(255,51,85,.92);border-color:rgba(255,51,85,.92);color:#fff;}
   .btn-small-wbadd{background:rgba(255,255,255,.06);color:var(--text-soft);}
-  .btn-small-wbclear{background:rgba(255,23,68,.14);border-color:rgba(255,23,68,.45);color:#ff8a80;}
+  .btn-small-wbclear{background:rgba(255,51,85,.12);border-color:rgba(255,51,85,.35);color:#ffd0da;}
 
-  .subsection-title{margin-top:10px;font-size:.82rem;font-weight:650;color:var(--text-soft);}
+  .subsection-title{margin-top:10px;font-size:.82rem;font-weight:700;color:var(--text-soft);}
   .footer-note{margin-top:10px;font-size:.65rem;color:var(--text-muted);text-align:right;}
 
   .charts-wrapper{
@@ -271,22 +272,51 @@
   canvas{width:100%;height:180px;background:#020b1a;border-radius:10px;}
 
   .btn-edit,.btn-del,.btn-relink{
-    padding:2px 6px;border-radius:8px;font-size:.7rem;
+    padding:2px 8px;border-radius:10px;font-size:.7rem;
     border:1px solid rgba(255,255,255,.2);cursor:pointer;background:transparent;
   }
-  .btn-edit{color:#81d4fa;}
-  .btn-del{color:#ff8a80;}
-  .btn-relink{color:#ffe082;}
+  .btn-edit{color:#9fe4ff;}
+  .btn-del{color:#ffd0da;}
+  .btn-relink{color:#fff4d3;}
 
   .wb-inp, .wb-sel, .wb-chk{
-    background:#020b1a;border-radius:8px;border:1px solid var(--border-soft);
-    padding:2px 6px;color:var(--text-soft);font-size:.70rem;
+    background:#020b1a;border-radius:10px;border:1px solid var(--border-soft);
+    padding:2px 8px;color:var(--text-soft);font-size:.70rem;
     outline:none;
   }
   .wb-inp{width:72px;}
   .wb-inp.wide{width:160px;}
   .wb-inp.slim{width:56px;}
-  .wb-sel{width:96px;}
+  .wb-sel{width:110px;}
+
+  /* Operation dropdown like Charts */
+  .wb-opwrap{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    justify-content:flex-start;
+  }
+  .wb-opselect{
+    width: calc(var(--wb-op-w) - 14px);
+    max-width: calc(var(--wb-op-w) - 14px);
+    background:#020b1a;
+    border-radius:10px;
+    border:1px solid var(--border-soft);
+    padding:3px 8px;
+    color:var(--text-soft);
+    font-size:.72rem;
+  }
+  .wb-opbtn{
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.04);
+    color:var(--text-soft);
+    border-radius:10px;
+    padding:2px 8px;
+    cursor:pointer;
+    font-size:.72rem;
+  }
+  .wb-opbtn:hover{ background:rgba(255,255,255,.06); }
+
   .wb-pill{
     display:inline-block;padding:3px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);
     background:rgba(255,255,255,.03);font-size:.72rem;color:var(--text-soft);
@@ -302,44 +332,33 @@
   .wb-sumline .badge{font-size:.70rem}
 
   /* =========================
-     ✅ WB STICKY COLUMNS (Seq, On, Operation) — FIXED OFFSETS/WIDTHS
+     ✅ WB STICKY COLUMNS (On, Operation) — Seq removed
      ========================= */
   #wbTable{ border-collapse:separate; border-spacing:0; }
   #wbTable th, #wbTable td{ position:relative; }
 
-  /* lock widths so offsets are correct (prevents overlay that blocks editing) */
-  #wbTable th:nth-child(1), #wbTable td:nth-child(1){ width:var(--wb-seq-w); min-width:var(--wb-seq-w); }
-  #wbTable th:nth-child(2), #wbTable td:nth-child(2){ width:var(--wb-on-w);  min-width:var(--wb-on-w); }
-  #wbTable th:nth-child(3), #wbTable td:nth-child(3){ width:var(--wb-op-w);  min-width:var(--wb-op-w); }
+  /* widths so offsets are correct */
+  #wbTable th:nth-child(1), #wbTable td:nth-child(1){ width:var(--wb-on-w); min-width:var(--wb-on-w); }
+  #wbTable th:nth-child(2), #wbTable td:nth-child(2){ width:var(--wb-op-w); min-width:var(--wb-op-w); }
 
-  /* 1st col: Seq */
+  /* 1st col: On */
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){
     position:sticky; left:0;
     z-index:30;
     background:linear-gradient(180deg, rgba(2,11,26,.98) 0%, rgba(7,21,43,.98) 100%);
   }
-  /* 2nd col: On */
+  /* 2nd col: Operation */
   #wbTable th:nth-child(2), #wbTable td:nth-child(2){
-    position:sticky; left:var(--wb-seq-w);
-    z-index:30;
-    background:linear-gradient(180deg, rgba(2,11,26,.98) 0%, rgba(7,21,43,.98) 100%);
-  }
-  /* 3rd col: Operation */
-  #wbTable th:nth-child(3), #wbTable td:nth-child(3){
-    position:sticky; left:calc(var(--wb-seq-w) + var(--wb-on-w));
+    position:sticky; left:var(--wb-on-w);
     z-index:30;
     background:linear-gradient(180deg, rgba(2,11,26,.98) 0%, rgba(7,21,43,.98) 100%);
   }
 
-  /* Make header higher priority */
+  /* header priority */
   #wbTable thead th:nth-child(1),
-  #wbTable thead th:nth-child(2),
-  #wbTable thead th:nth-child(3){
+  #wbTable thead th:nth-child(2){
     z-index:40;
   }
-
-  /* ensure inputs are clickable */
-  #wbTable td:nth-child(3) .wb-inp{ width: calc(var(--wb-op-w) - 18px); }
 
   @media (max-width:600px){
     .timer-display{font-size:2.2rem;}
@@ -352,9 +371,12 @@
     .btn-small{padding:12px 16px;font-size:.92rem;}
 
     :root{
-      --wb-seq-w:58px;
-      --wb-on-w:48px;
-      --wb-op-w:170px;
+      --wb-on-w:52px;
+      --wb-op-w:190px;
+    }
+    .wb-opselect{
+      width: calc(var(--wb-op-w) - 14px);
+      max-width: calc(var(--wb-op-w) - 14px);
     }
   }
 </style>
@@ -516,7 +538,6 @@
         <table id="wbTable">
           <thead>
             <tr>
-              <th data-i18n="wb.seq">Seq</th>
               <th data-i18n="wb.enabled">On</th>
               <th data-i18n="wb.operation">Operation</th>
               <th data-i18n="wb.operators">Operators</th>
@@ -660,7 +681,7 @@
     <div class="section-card" data-accent="amber">
       <div class="section-title" data-i18n="section.methodGuide">Method &amp; Guide</div>
       <details style="background:var(--bg-card-soft);border:1px solid var(--border-soft);border-radius:14px;padding:10px;">
-        <summary style="cursor:pointer;color:var(--text-soft);font-weight:700;">
+        <summary style="cursor:pointer;color:var(--text-soft);font-weight:800;">
           <span data-i18n="method.open">Open</span>
         </summary>
         <div style="margin-top:8px;font-size:.72rem;color:var(--text-soft);line-height:1.35;white-space:pre-wrap;" id="methodGuideText"></div>
@@ -751,7 +772,7 @@
   function pct(n, digits=0){ if(!isFinite(n)) return '-'; return n.toFixed(digits)+'%'; }
 
   /* ============================
-     ✅ Normalize operation names (WB runaway rows fix)
+     ✅ Normalize operation names
      ============================ */
   function normOp(s){
     return (s||'')
@@ -798,7 +819,6 @@
 
       'btn.wbAdd':'+ Add Operation',
       'btn.wbClear':'Clear WB',
-      'wb.seq':'Seq',
       'wb.enabled':'On',
       'wb.operation':'Operation',
       'wb.operators':'Operators',
@@ -870,7 +890,6 @@
 
       'btn.wbAdd':'+ Agregar operación',
       'btn.wbClear':'Borrar WB',
-      'wb.seq':'Orden',
       'wb.enabled':'On',
       'wb.operation':'Operación',
       'wb.operators':'Operadores',
@@ -911,15 +930,14 @@
   // =========================
   // ✅ AUTOSAVE TOTAL (State Keys)
   // =========================
-  const TL_STATE_KEY = 'taktlab_state_v3_full';   // laps + settings + wb + lang
-  const WB_KEY = 'taktlabWB_v2_sync';             // legacy compatibility
-  const LANG_KEY = 'taktlabLang';                // legacy compatibility
+  const TL_STATE_KEY = 'taktlab_state_v3_full';
+  const WB_KEY = 'taktlabWB_v2_sync';
+  const LANG_KEY = 'taktlabLang';
 
   function safeJsonParse(raw){
     try{ return JSON.parse(raw); }catch(e){ return null; }
   }
 
-  // ✅ debounce to avoid saving 50 times per second
   let _saveTimer = null;
   function scheduleSaveAll(){
     if(_saveTimer) clearTimeout(_saveTimer);
@@ -949,7 +967,6 @@
   function saveAllNow(){
     const snap = buildStateSnapshot();
     try{ localStorage.setItem(TL_STATE_KEY, JSON.stringify(snap)); }catch(e){}
-    // legacy mirrors (so no pierdes WB si cambias versión)
     try{ localStorage.setItem(WB_KEY, JSON.stringify(snap.wbRows || [])); }catch(e){}
     try{ localStorage.setItem(LANG_KEY, currentLang); }catch(e){}
   }
@@ -998,7 +1015,6 @@
     display.textContent = formatTime(elapsed);
   }
 
-  /* ✅ Update T1/T2 clocks depending on mode + pendingT1 */
   function updateSplitClocks(){
     const mode = modeSelect.value || 'CT';
     if(mode === 'CT'){
@@ -1006,13 +1022,10 @@
       t2Clock.textContent = '00:00.00';
       return;
     }
-    // MLD
     if(pendingT1 === null){
-      // capturing T1
       t1Clock.textContent = formatTime(elapsed);
       t2Clock.textContent = '00:00.00';
     }else{
-      // capturing T2 after T1 was latched
       t1Clock.textContent = formatTime(pendingT1*1000);
       t2Clock.textContent = formatTime(elapsed);
     }
@@ -1172,7 +1185,7 @@
   }
 
   /* =======================
-     ✅ WB DATA MODEL (with runaway-row fix)
+     ✅ WB DATA MODEL
      ======================= */
   function defaultWbRow(){
     const globalHours = clamp(parseFloat(hInput.value)||8, 1, 24);
@@ -1182,7 +1195,6 @@
 
     return {
       id: 'wb_' + Math.random().toString(36).slice(2,9),
-      seq: 10,
       enabled: true,
 
       operation: gOp || '',
@@ -1225,7 +1237,6 @@
   let wbRows = [];
 
   function loadWB(){
-    // legacy loader (kept)
     try{
       const raw = localStorage.getItem(WB_KEY);
       if(!raw){ wbRows=[]; return; }
@@ -1262,8 +1273,6 @@
     let row = wbRows.find(r => normOp(r.operation) === opKey);
     if(!row){
       row = defaultWbRow();
-      const maxSeq = wbRows.reduce((m,x)=>Math.max(m, parseFloat(x.seq)||0), 0);
-      row.seq = (maxSeq||0) + 10;
       row.operation = op;
       row.opAuto = true;
       row.opAutoKey = opKey;
@@ -1328,7 +1337,6 @@
     elapsed=0; updateDisplay();
     laps=[]; nextId=1; pendingT1=null;
     wbRows=[];
-    // clear storage
     clearAllSaved();
     updateSplitClocks();
     renderAll();
@@ -1337,12 +1345,8 @@
   modeSelect.addEventListener('change',()=>{ pendingT1=null; updateSplitClocks(); scheduleSaveAll(); });
 
   // =========================
-  // ✅ PART 2 CONTINUES BELOW
+  // ✅ Rendering + Logic
   // =========================
-  // =========================
-  // ✅ Rendering + Logic (Part 2)
-  // =========================
-
   function computeOEE(row){
     const A = clamp(parseFloat(row.oeeA)||0,0,100);
     const P = clamp(parseFloat(row.oeeP)||0,0,100);
@@ -1464,13 +1468,29 @@
     return {cap100, capOee, ctOee};
   }
 
-  function sortWb(){
-    wbRows.sort((a,b)=>(parseFloat(a.seq)||0)-(parseFloat(b.seq)||0));
+  /* ✅ Operation dropdown options (laps + WB + current input) */
+  function getOperationOptions(){
+    const set = new Map();
+
+    const g = (processInput.value||'').trim();
+    if(g) set.set(normOp(g), g);
+
+    laps.forEach(l=>{
+      const p=(l.process||'').trim();
+      if(p) set.set(normOp(p), p);
+    });
+
+    wbRows.forEach(r=>{
+      const p=(r.operation||'').trim();
+      if(p) set.set(normOp(p), p);
+    });
+
+    const arr = [...set.values()].sort((a,b)=>a.localeCompare(b, undefined, {numeric:true, sensitivity:'base'}));
+    return arr;
   }
 
   function renderWB(){
     wbRows.forEach(r=>applyGlobalToRow(r));
-    sortWb();
     saveWB();
 
     wbBody.innerHTML = '';
@@ -1479,7 +1499,9 @@
     let constr = null;
     let second = null;
 
-    wbRows.forEach((row, idx)=>{
+    const ops = getOperationOptions();
+
+    wbRows.forEach((row)=>{
       const enabled = !!row.enabled;
       const tr = document.createElement('tr');
 
@@ -1513,6 +1535,7 @@
       }
 
       function td(html){ const c=document.createElement('td'); c.innerHTML=html; tr.appendChild(c); }
+
       function chkCell(checked, onChange){
         const c=document.createElement('td');
         const inp=document.createElement('input');
@@ -1522,11 +1545,12 @@
         c.appendChild(inp);
         tr.appendChild(c);
       }
-      function inpCell(val, cls, onInput, type='number', step='1', min=null, max=null, widthClass=''){
+
+      function inpCell(val, cls, onInput, type='number', step='1', min=null, max=null){
         const c=document.createElement('td');
         const inp=document.createElement('input');
         inp.type=type;
-        inp.className=(cls||'wb-inp') + (widthClass?(' '+widthClass):'');
+        inp.className=(cls||'wb-inp');
         inp.value = (val===null || val===undefined) ? '' : val;
         if(step!==null) inp.step = step;
         if(min!==null) inp.min = min;
@@ -1535,6 +1559,7 @@
         c.appendChild(inp);
         tr.appendChild(c);
       }
+
       function selCell(value, options, onChange){
         const c=document.createElement('td');
         const sel=document.createElement('select');
@@ -1548,6 +1573,76 @@
         sel.addEventListener('change',()=>onChange(sel.value));
         c.appendChild(sel); tr.appendChild(c);
       }
+
+      function operationCell(){
+        const c=document.createElement('td');
+
+        const wrap=document.createElement('div');
+        wrap.className='wb-opwrap';
+
+        const sel=document.createElement('select');
+        sel.className='wb-opselect';
+
+        // include current value even if not in list
+        const currentOp = (row.operation||'').trim();
+        const list = ops.slice();
+        if(currentOp && !list.some(x=>normOp(x)===normOp(currentOp))) list.unshift(currentOp);
+
+        // placeholder
+        const ph=document.createElement('option');
+        ph.value='';
+        ph.textContent = (currentLang==='es'?'Selecciona…':'Select…');
+        if(!currentOp) ph.selected=true;
+        sel.appendChild(ph);
+
+        list.forEach(opName=>{
+          const o=document.createElement('option');
+          o.value=opName;
+          o.textContent=opName;
+          if(normOp(opName)===normOp(currentOp)) o.selected=true;
+          sel.appendChild(o);
+        });
+
+        const customOpt=document.createElement('option');
+        customOpt.value='__custom__';
+        customOpt.textContent = (currentLang==='es'?'+ Personalizar…':'+ Custom…');
+        sel.appendChild(customOpt);
+
+        sel.addEventListener('change',()=>{
+          let v = sel.value;
+          if(v==='__custom__'){
+            const newName = prompt(currentLang==='es'?'Nombre de operación:':'Operation name:', currentOp || (processInput.value||'').trim());
+            if(newName===null){ sel.value = currentOp || ''; return; }
+            v = (newName||'').toString().trim();
+            if(!v){ sel.value = currentOp || ''; return; }
+          }
+          row.operation = (v||'').toString().trim();
+          row.opAuto = false;
+          row.opAutoKey = normOp(row.operation);
+          saveWB(); renderAll(); scheduleSaveAll();
+        });
+
+        const bEdit=document.createElement('button');
+        bEdit.className='wb-opbtn';
+        bEdit.textContent = '✎';
+        bEdit.title = (currentLang==='es'?'Editar nombre':'Edit name');
+        bEdit.addEventListener('click',()=>{
+          const newName = prompt(currentLang==='es'?'Nombre de operación:':'Operation name:', currentOp || '');
+          if(newName===null) return;
+          const v=(newName||'').toString().trim();
+          if(!v) return;
+          row.operation=v;
+          row.opAuto=false;
+          row.opAutoKey=normOp(v);
+          saveWB(); renderAll(); scheduleSaveAll();
+        });
+
+        wrap.appendChild(sel);
+        wrap.appendChild(bEdit);
+        c.appendChild(wrap);
+        tr.appendChild(c);
+      }
+
       function btnCell(){
         const c=document.createElement('td');
         const bEdit=document.createElement('button');
@@ -1569,8 +1664,7 @@
           row.ctCurManual = parse2(curIn);
           row.ctWstManual = parse2(wstIn);
           row.ctPotManual = parse2(potIn);
-          saveWB(); renderAll();
-          scheduleSaveAll();
+          saveWB(); renderAll(); scheduleSaveAll();
         });
 
         const bRelink=document.createElement('button');
@@ -1583,8 +1677,7 @@
             row.opAuto = true;
             row.opAutoKey = gKey;
             row.operation = gOp;
-            saveWB(); renderAll();
-            scheduleSaveAll();
+            saveWB(); renderAll(); scheduleSaveAll();
           }
         });
 
@@ -1593,8 +1686,7 @@
         bDel.className='btn-del';
         bDel.addEventListener('click',()=>{
           wbRows = wbRows.filter(r=>r.id!==row.id);
-          saveWB(); renderAll();
-          scheduleSaveAll();
+          saveWB(); renderAll(); scheduleSaveAll();
         });
 
         c.appendChild(bEdit);
@@ -1605,18 +1697,13 @@
         tr.appendChild(c);
       }
 
-      inpCell(row.seq,'wb-inp',v=>{ row.seq=parseFloat(v)||0; saveWB(); renderWB(); scheduleSaveAll(); },'number','1',0,null,'slim');
+      // On
       chkCell(row.enabled,(v)=>{ row.enabled=!!v; saveWB(); renderAll(); scheduleSaveAll(); });
 
-      inpCell(row.operation,'wb-inp wide',v=>{
-        row.operation = (v||'').toString().trim();
-        row.opAuto = false;
-        row.opAutoKey = normOp(row.operation);
-        saveWB();
-        renderAll();
-        scheduleSaveAll();
-      },'text',null,null,null,'wide');
+      // Operation (dropdown)
+      operationCell();
 
+      // rest
       inpCell(row.operators,'wb-inp',v=>{ row.operators=clamp(parseFloat(v)||0,0,999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999);
       inpCell(row.shifts,'wb-inp',v=>{ row.shifts=clamp(parseFloat(v)||1,1,10); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',1,10);
       inpCell(row.hours,'wb-inp',v=>{ row.hours=clamp(parseFloat(v)||8,1,24); row.hoursAuto=false; saveWB(); renderAll(); scheduleSaveAll(); },'number','.5',1,24);
@@ -1698,15 +1785,13 @@
     }
 
     wbConstraintNote.textContent = (currentLang==='es'
-      ? 'La restricción se calcula con filas activas (On) que tengan contrato > 0, usando Cap@OEE vs Contrato. Ajusta CT, OEE, pérdidas y turnos para ver el impacto real.'
-      : 'Constraint is computed from active rows (On) with contract > 0, using Cap@OEE vs Contract. Tune CT, OEE, losses and shifts to see real impact.'
+      ? 'Restricción = filas activas (On) con contrato > 0, usando Cap@OEE vs Contrato.'
+      : 'Constraint = active rows (On) with contract > 0, using Cap@OEE vs Contract.'
     );
   }
 
   btnWbAdd.addEventListener('click',()=>{
     const r = defaultWbRow();
-    const maxSeq = wbRows.reduce((m,x)=>Math.max(m, parseFloat(x.seq)||0), 0);
-    r.seq = (maxSeq||0)+10;
     wbRows.push(r);
     saveWB();
     renderAll();
@@ -2007,7 +2092,7 @@
     canvas.height = Math.max(1, Math.floor(rect.height));
   }
   function drawAxes(ctx, w, h, pad){
-    ctx.strokeStyle='rgba(255,255,255,.25)';
+    ctx.strokeStyle='rgba(255,255,255,.22)';
     ctx.lineWidth=1;
     ctx.beginPath();
     ctx.moveTo(pad, pad);
@@ -2031,7 +2116,7 @@
     function x(i){ return pad + (i/(values.length-1||1))*(w-2*pad); }
     function y(v){ return (h-pad) - ((v-minV)/range)*(h-2*pad); }
 
-    ctx.strokeStyle='rgba(41,182,246,.9)';
+    ctx.strokeStyle='rgba(57,189,245,.90)';
     ctx.lineWidth=2;
     ctx.beginPath();
     values.forEach((v,i)=>{
@@ -2045,10 +2130,10 @@
       ctx.strokeStyle=style; ctx.lineWidth=1.5;
       ctx.beginPath(); ctx.moveTo(pad,y(v)); ctx.lineTo(w-pad,y(v)); ctx.stroke();
     }
-    hline(mean,'rgba(0,200,83,.8)');
-    hline(median,'rgba(255,179,0,.85)');
-    hline(mean+3*std,'rgba(255,23,68,.6)');
-    hline(mean-3*std,'rgba(255,23,68,.6)');
+    hline(mean,'rgba(24,201,122,.75)');
+    hline(median,'rgba(242,193,78,.80)');
+    hline(mean+3*std,'rgba(255,51,85,.55)');
+    hline(mean-3*std,'rgba(255,51,85,.55)');
 
     ctx.fillStyle='rgba(255,255,255,.75)';
     ctx.font='12px system-ui';
@@ -2082,7 +2167,7 @@
     const plotW=w-2*pad, plotH=h-2*pad;
     const barW=plotW/bins;
 
-    ctx.fillStyle='rgba(41,182,246,.55)';
+    ctx.fillStyle='rgba(57,189,245,.45)';
     counts.forEach((c,i)=>{
       const bh=(c/maxC)*plotH;
       const x=pad+i*barW;
@@ -2095,9 +2180,9 @@
       ctx.strokeStyle=style; ctx.lineWidth=2;
       ctx.beginPath(); ctx.moveTo(xFor(v), pad); ctx.lineTo(xFor(v), h-pad); ctx.stroke();
     }
-    vline(stats.median,'rgba(255,179,0,.9)');
-    vline(stats.p10,'rgba(0,200,83,.85)');
-    vline(stats.p90,'rgba(255,23,68,.75)');
+    vline(stats.median,'rgba(242,193,78,.85)');
+    vline(stats.p10,'rgba(24,201,122,.75)');
+    vline(stats.p90,'rgba(255,51,85,.70)');
 
     ctx.fillStyle='rgba(255,255,255,.75)';
     ctx.font='12px system-ui';
@@ -2166,7 +2251,7 @@
     out.push('WB Rows:');
     wbRows.forEach(r=>{
       const {capOee}=capPerDayFromRow(r);
-      out.push(`${r.seq}\t${r.enabled?1:0}\t${r.operation}\tContract:${r.contractPcd}\tCap@OEE:${isFinite(capOee)?Math.round(capOee):'-'}`);
+      out.push(`${r.enabled?1:0}\t${r.operation}\tContract:${r.contractPcd}\tCap@OEE:${isFinite(capOee)?Math.round(capOee):'-'}`);
     });
     copyText(out.join('\n'));
   });
@@ -2207,7 +2292,10 @@
 
   function buildMethodGuide(){
     const es = (currentLang==='es');
-    return (es ? `MÉTODO & GUÍA (TaktLab + WB)\n\n(igual que tu versión anterior)\n` : `METHOD & GUIDE (TaktLab + WB)\n\n(same as your previous version)\n`);
+    return (es
+      ? `MÉTODO & GUÍA (TaktLab + WB)\n\n(igual que tu versión anterior)\n`
+      : `METHOD & GUIDE (TaktLab + WB)\n\n(same as your previous version)\n`
+    );
   }
 
   function renderAll(){
@@ -2247,10 +2335,8 @@
     const st = raw ? safeJsonParse(raw) : null;
     if(!st || typeof st !== 'object') return false;
 
-    // language first
     if(st.lang){ currentLang = (st.lang==='es')?'es':'en'; }
 
-    // settings
     const s = st.settings || {};
     if(typeof s.processName === 'string') processInput.value = s.processName;
     if(typeof s.mode === 'string') modeSelect.value = (s.mode==='MLD')?'MLD':'CT';
@@ -2260,22 +2346,18 @@
     if(s.daysPerWeek !== undefined) dInput.value = s.daysPerWeek;
     if(typeof s.capView === 'string') capViewSel.value = s.capView;
 
-    // laps
     if(Array.isArray(st.laps)) laps = st.laps;
     if(isFinite(st.nextId)) nextId = st.nextId;
 
-    // WB
     if(Array.isArray(st.wbRows)) wbRows = st.wbRows;
 
-    // force timer safe state
     running=false; elapsed=0; pendingT1=null;
-
     return true;
   }
 
   const restored = restoreStateIfAny();
   if(!restored){
-    loadWB(); // fallback legacy
+    loadWB();
   }
 
   updateLangButtons();
@@ -2289,7 +2371,7 @@
   updateDisplay();
   updateSplitClocks();
   renderAll();
-  saveAllNow(); // ensure current snapshot exists immediately
+  saveAllNow();
 
 })();
 </script>
