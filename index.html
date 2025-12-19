@@ -28,6 +28,7 @@
     --btn-green:#18c97a;
     --btn-orange:#f2a93b;
     --btn-grey:#455a64;
+    --btn-amber:#f2c14e; /* ✅ fixed */
 
     --badge-green:rgba(24,201,122,.14);
     --badge-red:rgba(255,51,85,.14);
@@ -257,7 +258,7 @@
     box-shadow:0 6px 14px rgba(10,20,40,.08);
   }
   .btn-small-copy{background:rgba(57,189,245,.95);border-color:rgba(57,189,245,.95);color:#051018;}
-  .btn-small-summary{background:rgba(242,193,78,.95);border-color:rgba(242,193,78,.95);color:#0b0b0b;}
+  .btn-small-summary{background:var(--btn-amber);border-color:var(--btn-amber);color:#0b0b0b;}
   .btn-small-manual{background:rgba(24,201,122,.95);border-color:rgba(24,201,122,.95);color:#051018;}
   .btn-small-reset{background:rgba(255,51,85,.92);border-color:rgba(255,51,85,.92);color:#fff;}
   .btn-small-wbadd{background:rgba(11,18,32,.03);color:var(--text-main);}
@@ -404,7 +405,6 @@
   </div>
 
   <div class="content-section">
-
     <div class="section-card" data-accent="blue">
       <div class="section-title" data-i18n="section.measurementSetup">Measurement Setup</div>
 
@@ -517,6 +517,7 @@
         <button class="btn-small btn-small-wbclear" id="btnWbClear" data-i18n="btn.wbClear">Clear WB</button>
         <button class="btn-small btn-small-copy" id="btnCopyWB" data-i18n="btn.copyWB">Copy WB</button>
       </div>
+
       <div style="max-height:320px;overflow:auto;">
         <table id="wbTable">
           <thead>
@@ -759,6 +760,7 @@
       .replace(/\s+/g,' ')
       .toLowerCase();
   }
+
   const i18n = {
     en:{
       'title.subtitle':'Cycle Time & Capacity Analyzer',
@@ -790,6 +792,7 @@
       'col.sample':'Sample size / Error',
       'col.capCurrent':'Current @Eff','col.capPotential':'Potential @Eff','col.capWorst':'Worst @Eff',
       'col.contract':'Contract','col.gap':'Gap','col.vsContract':'% vs',
+
       'chart.timeSeriesTitle':'Time Series with Mean, Median, ±3σ',
       'chart.histTitle':'Histogram with Median & Percentiles',
       'stats.note':'Simple language on purpose: few / enough samples, low / high variation, capable / not capable.',
@@ -807,11 +810,11 @@
       'wb.contract':'Contract (pcs/day)',
       'wb.gross':'Gross min/day',
       'wb.lunch':'Lunch min/day',
-      'wb.changeover':'Changeover (min/day)',
-      'wb.cleaning':'5S/Clean (min/day)',
-      'wb.maint':'Maintenance (min/day)',
-      'wb.other':'Other (min/day)',
-      'wb.shared':'Shared Capacity (min/day)',
+      'wb.changeover':'Changeover',
+      'wb.cleaning':'5S/Clean',
+      'wb.maint':'Maintenance',
+      'wb.other':'Other',
+      'wb.shared':'Shared Capacity',
       'wb.udt':'Unplanned DT',
       'wb.udtUnit':'Unit',
       'wb.net':'Net min/day',
@@ -821,12 +824,12 @@
       'wb.oeeP':'P%',
       'wb.oeeQ':'Q%',
       'wb.oee':'OEE%',
-      'wb.ctCur':'CT Current (s)',
-      'wb.ctWst':'CT Worst (s)',
-      'wb.ctPot':'CT Potential (s)',
+      'wb.ctCur':'CT Current',
+      'wb.ctWst':'CT Worst',
+      'wb.ctPot':'CT Potential',
       'wb.ctCurOee':'CT@OEE (Cur)',
-      'wb.cap100':'Cap 100% (Cur/day)',
-      'wb.capOee':'Cap@OEE (Cur/day)',
+      'wb.cap100':'Cap 100% (Cur)',
+      'wb.capOee':'Cap@OEE (Cur)',
       'wb.vsContract':'% vs contract',
       'wb.inputReq':'Input req. for Contract',
       'wb.actions':'Actions',
@@ -863,6 +866,7 @@
       'col.sample':'Tamaño de muestra / Error',
       'col.capCurrent':'Actual @Eff','col.capPotential':'Potencial @Eff','col.capWorst':'Peor @Eff',
       'col.contract':'Contrato','col.gap':'Gap','col.vsContract':'% vs',
+
       'chart.timeSeriesTitle':'Serie de tiempo con media, mediana y ±3σ',
       'chart.histTitle':'Histograma con mediana y percentiles',
       'stats.note':'Lenguaje simple: pocas / suficientes muestras, baja / alta variación, capaz / no capaz.',
@@ -879,12 +883,12 @@
       'wb.pcsPerOp':'Pzs/Op',
       'wb.contract':'Contrato (pzs/día)',
       'wb.gross':'Min brutos/día',
-      'wb.lunch':'Comida/día',
-      'wb.changeover':'Changeover (min/día)',
-      'wb.cleaning':'5S/Limpieza (min/día)',
-      'wb.maint':'Mtto (min/día)',
-      'wb.other':'Otros (min/día)',
-      'wb.shared':'Capacidad compartida (min/día)',
+      'wb.lunch':'Comida min/día',
+      'wb.changeover':'Changeover',
+      'wb.cleaning':'5S/Limpieza',
+      'wb.maint':'Mtto',
+      'wb.other':'Otros',
+      'wb.shared':'Capacidad compartida',
       'wb.udt':'DT no planeado',
       'wb.udtUnit':'Unidad',
       'wb.net':'Min netos/día',
@@ -894,12 +898,12 @@
       'wb.oeeP':'P%',
       'wb.oeeQ':'Q%',
       'wb.oee':'OEE%',
-      'wb.ctCur':'CT Actual (s)',
-      'wb.ctWst':'CT Peor (s)',
-      'wb.ctPot':'CT Potencial (s)',
+      'wb.ctCur':'CT Actual',
+      'wb.ctWst':'CT Peor',
+      'wb.ctPot':'CT Potencial',
       'wb.ctCurOee':'CT@OEE (Act)',
-      'wb.cap100':'Cap 100% (Act/día)',
-      'wb.capOee':'Cap@OEE (Act/día)',
+      'wb.cap100':'Cap 100% (Act)',
+      'wb.capOee':'Cap@OEE (Act)',
       'wb.vsContract':'% vs contrato',
       'wb.inputReq':'Entrada req. p/Contrato',
       'wb.actions':'Acciones',
@@ -1163,6 +1167,7 @@
 
     return {cls, text: head + tail};
   }
+
   function copyText(text){
     try{ navigator.clipboard.writeText(text); }
     catch(e){
@@ -1202,34 +1207,34 @@
       opAuto: true,
       opAutoKey: normOp(gOp || ''),
 
-      operators: 1,     // 0-10
-      shifts: 1,        // 1-4 (ref)
-      hours: globalHours,
+      operators: 1,     // 0-10 (dropdown)
+      shifts: 1,        // 1-4 (dropdown reference)
+      hours: globalHours, // 0-24 step .5 (dropdown)
       hoursAuto: true,
 
-      machines: 1,      // 1-50
+      machines: 1,      // 1-50 (dropdown)
 
-      pcsPerOp: 1,      // 1-999
+      pcsPerOp: 1,      // input 1-999
 
-      contractPcd: globalContract,  // 0-99999
+      contractPcd: globalContract,  // input editable
       contractAuto: true,
 
-      lunchMin: 0,      // 0-1440
-      changeoverMin: 0, // 1-1440 -> (permitimos 0 también, como pediste para algunos; changeover lo pediste 1-1440, lo clamp en input)
-      cleanMin: 0,      // 0-1440
-      maintMin: 0,      // 1-1440 -> clamp en input
-      otherMin: 0,      // 0-1440
+      lunchMin: 0,        // dropdown 0-1440
+      changeoverMin: 1,   // dropdown 1-1440
+      cleanMin: 0,        // dropdown 0-1440
+      maintMin: 1,        // dropdown 1-1440
+      otherMin: 0,        // dropdown 0-1440
 
-      sharedMin: 0,     // 0-1440
+      sharedMin: 0,       // dropdown 0-1440
 
       udtValue: 0,
       udtUnit: 'min_day',
 
-      scrapPct: 0,      // 0-100
+      scrapPct: 0,      // dropdown 0-100
 
-      oeeA: 100,        // 0-100
-      oeeP: 100,        // 0-100
-      oeeQ: globalQ,    // 0-100
+      oeeA: 100,        // dropdown 0-100
+      oeeP: 100,        // dropdown 0-100
+      oeeQ: globalQ,    // dropdown 0-100
       qAuto: true,
 
       ctCurManual: null,
@@ -1363,9 +1368,9 @@
   function plannedLossMin(row){
     return (
       clamp(parseFloat(row.lunchMin)||0,0,1440) +
-      clamp(parseFloat(row.changeoverMin)||0,0,1440) +
+      clamp(parseFloat(row.changeoverMin)||1,1,1440) +
       clamp(parseFloat(row.cleanMin)||0,0,1440) +
-      clamp(parseFloat(row.maintMin)||0,0,1440) +
+      clamp(parseFloat(row.maintMin)||1,1,1440) +
       clamp(parseFloat(row.otherMin)||0,0,1440)
     );
   }
@@ -1374,7 +1379,7 @@
     const v = clamp(parseFloat(row.udtValue)||0,0,999999);
     const u = row.udtUnit || 'min_day';
     if(u==='min_day') return v;
-    if(u==='min_shift') return v; // ref
+    if(u==='min_shift') return v;
     if(u==='min_hour') return v * (clamp(parseFloat(row.hours)||8,0,24));
     if(u==='pct') {
       const gross = grossMinPerDay(row);
@@ -1464,7 +1469,6 @@
     return [...set.values()].sort((a,b)=>a.localeCompare(b, undefined, {numeric:true, sensitivity:'base'}));
   }
 
-  /* ✅ helper: build select options numeric */
   function buildNumericOptions(min, max, step=1){
     const out=[];
     for(let v=min; v<=max+1e-9; v+=step){
@@ -1473,7 +1477,6 @@
     }
     return out;
   }
-
   function renderWB(){
     wbRows.forEach(r=>applyGlobalToRow(r));
     saveWB();
@@ -1556,6 +1559,55 @@
         sel.addEventListener('change',()=>onChange(sel.value));
         c.appendChild(sel); tr.appendChild(c);
         return sel;
+      }
+
+      /* ✅ Dropdown con Custom (NO lista gigante de 1441 valores, pero sí cumple rangos) */
+      function selCellQuickCustomNumber(value, min, max, quickStep, onPick, cls='wb-sel'){
+        const c=document.createElement('td');
+        const sel=document.createElement('select');
+        sel.className=cls;
+
+        const ph=document.createElement('option');
+        ph.value='__ph__';
+        ph.textContent = '—';
+        sel.appendChild(ph);
+
+        for(let v=min; v<=max+1e-9; v+=quickStep){
+          const vv = Math.round(v*1000)/1000;
+          const op=document.createElement('option');
+          op.value=String(vv);
+          op.textContent=String(vv);
+          sel.appendChild(op);
+        }
+
+        const custom=document.createElement('option');
+        custom.value='__custom__';
+        custom.textContent = (currentLang==='es'?'+ Personalizar…':'+ Custom…');
+        sel.appendChild(custom);
+
+        const cur = (value===null || value===undefined || value==='') ? null : String(value);
+        if(cur !== null){
+          const found=[...sel.options].some(o=>o.value===cur);
+          sel.value = found ? cur : '__custom__';
+        }else{
+          sel.value='__ph__';
+        }
+
+        sel.addEventListener('change',()=>{
+          if(sel.value==='__custom__'){
+            const raw = prompt(currentLang==='es'?'Valor:':'Value:', (value??''));
+            if(raw===null) { sel.value='__ph__'; return; }
+            const n = parseFloat(String(raw).trim());
+            if(!isFinite(n)) { sel.value='__ph__'; return; }
+            onPick(clamp(n,min,max));
+            return;
+          }
+          if(sel.value==='__ph__') return;
+          onPick(clamp(parseFloat(sel.value),min,max));
+        });
+
+        c.appendChild(sel);
+        tr.appendChild(c);
       }
 
       function operationCell(){
@@ -1683,10 +1735,8 @@
          ✅ WB CELLS (RANGOS / DROPDOWNS)
          ========================= */
 
-      // On
       chkCell(row.enabled,(v)=>{ row.enabled=!!v; saveWB(); renderAll(); scheduleSaveAll(); });
 
-      // Operation
       operationCell();
 
       // Operators 0-10 (dropdown)
@@ -1714,10 +1764,10 @@
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
 
-      // Pcs/Op (input, 1-999)
+      // Pcs/Op (input 1-999)
       inpCell(row.pcsPerOp,'wb-inp',v=>{ row.pcsPerOp=clamp(parseFloat(v)||1,1,999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',1,999);
 
-      // Contract 0-99999 (input editable)
+      // Contract (input editable)
       inpCell(row.contractPcd,'wb-inp',v=>{
         row.contractPcd=clamp(parseFloat(v)||0,0,99999);
         row.contractAuto=false;
@@ -1726,27 +1776,40 @@
 
       td(formatUnits(gGross));
 
-      // Lunch 0-1440
-      inpCell(row.lunchMin||0,'wb-inp',v=>{ row.lunchMin=clamp(parseFloat(v)||0,0,1440); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,1440);
+      // Lunch 0-1440 (quick dropdown + custom)
+      selCellQuickCustomNumber(row.lunchMin ?? 0, 0, 1440, 5, v=>{
+        row.lunchMin=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel');
 
-      // Changeover 1-1440 (pero si pones 0, lo dejo en 0 porque pediste 0/1440 en general; si quieres estrictamente 1, te lo cierro)
-      inpCell(row.changeoverMin||0,'wb-inp',v=>{ row.changeoverMin=clamp(parseFloat(v)||0,0,1440); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,1440);
+      // Changeover 1-1440
+      selCellQuickCustomNumber(row.changeoverMin ?? 1, 1, 1440, 5, v=>{
+        row.changeoverMin=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel');
 
-      // 5S 0-1440
-      inpCell(row.cleanMin||0,'wb-inp',v=>{ row.cleanMin=clamp(parseFloat(v)||0,0,1440); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,1440);
+      // 5S/Clean 0-1440
+      selCellQuickCustomNumber(row.cleanMin ?? 0, 0, 1440, 5, v=>{
+        row.cleanMin=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel');
 
-      // Maintenance 1-1440 (permito 0 también, mismo comentario)
-      inpCell(row.maintMin||0,'wb-inp',v=>{ row.maintMin=clamp(parseFloat(v)||0,0,1440); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,1440);
+      // Maintenance 1-1440
+      selCellQuickCustomNumber(row.maintMin ?? 1, 1, 1440, 5, v=>{
+        row.maintMin=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel');
 
       // Other 0-1440
-      inpCell(row.otherMin||0,'wb-inp',v=>{ row.otherMin=clamp(parseFloat(v)||0,0,1440); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,1440);
+      selCellQuickCustomNumber(row.otherMin ?? 0, 0, 1440, 5, v=>{
+        row.otherMin=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel');
 
       // Shared 0-1440
-      inpCell(row.sharedMin||0,'wb-inp',v=>{ row.sharedMin=clamp(parseFloat(v)||0,0,1440); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,1440);
+      selCellQuickCustomNumber(row.sharedMin ?? 0, 0, 1440, 5, v=>{
+        row.sharedMin=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel');
 
-      // UDT value (keep)
+      // UDT value (input)
       inpCell(row.udtValue||0,'wb-inp',v=>{ row.udtValue=clamp(parseFloat(v)||0,0,999999); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,999999);
 
+      // UDT unit
       selCell(row.udtUnit||'min_day',[
         {value:'min_day', label:(currentLang==='es'?'min/día':'min/day')},
         {value:'min_shift', label:(currentLang==='es'?'min/turno (ref)':'min/shift (ref)')},
@@ -1757,14 +1820,24 @@
       td(formatUnits(net));
 
       // Scrap 0-100
-      inpCell(row.scrapPct||0,'wb-inp',v=>{ row.scrapPct=clamp(parseFloat(v)||0,0,100); saveWB(); renderAll(); scheduleSaveAll(); },'number','.1',0,100);
+      selCellQuickCustomNumber(row.scrapPct ?? 0, 0, 100, 5, v=>{
+        row.scrapPct=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel narrow');
 
       td(pct(y*100,1));
 
       // A/P/Q 0-100
-      inpCell(row.oeeA||100,'wb-inp',v=>{ row.oeeA=clamp(parseFloat(v)||0,0,100); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,100);
-      inpCell(row.oeeP||100,'wb-inp',v=>{ row.oeeP=clamp(parseFloat(v)||0,0,100); saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,100);
-      inpCell(row.oeeQ||100,'wb-inp',v=>{ row.oeeQ=clamp(parseFloat(v)||0,0,100); row.qAuto=false; saveWB(); renderAll(); scheduleSaveAll(); },'number','1',0,100);
+      selCellQuickCustomNumber(row.oeeA ?? 100, 0, 100, 5, v=>{
+        row.oeeA=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel narrow');
+
+      selCellQuickCustomNumber(row.oeeP ?? 100, 0, 100, 5, v=>{
+        row.oeeP=v; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel narrow');
+
+      selCellQuickCustomNumber(row.oeeQ ?? 100, 0, 100, 5, v=>{
+        row.oeeQ=v; row.qAuto=false; saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel narrow');
 
       td(pct(oee,1));
 
@@ -1870,9 +1943,6 @@
     copyText(out.join('\n'));
   });
 
-  /* =========================
-     CONTRACT SUMMARY + FOCUS
-     ========================= */
   function buildContractLinesForCurrentSelection(){
     const proc = (processInput.value||'').trim();
     const mode = modeSelect.value || 'CT';
@@ -2480,6 +2550,8 @@ WB planner
 
     wbRows.forEach(r=>{
       if(!isFinite(r.pcsPerOp) || r.pcsPerOp<=0) r.pcsPerOp = 1;
+      if(!isFinite(r.changeoverMin) || r.changeoverMin<1) r.changeoverMin = 1;
+      if(!isFinite(r.maintMin) || r.maintMin<1) r.maintMin = 1;
     });
   }
 
@@ -2520,3 +2592,4 @@ WB planner
 })();
 </script>
 </body>
+</html>
