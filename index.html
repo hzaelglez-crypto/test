@@ -1131,7 +1131,7 @@
     refreshRingStates();
   }
   btnStart.addEventListener('click',()=>{
-    lockBtn(btnStart,6000);
+    lockBtn(btnStart,1000);
     running?pause():start();
   });
 
@@ -1421,13 +1421,13 @@
   }
 
   btnLap.addEventListener('click',()=>{
-    lockBtn(btnLap,6000);
+    lockBtn(btnLap,1000);
     flashCard(); vibrate(18);
     addLap();
   });
 
   btnAddMan.addEventListener('click',()=>{
-    lockBtn(btnAddMan,6000);
+    lockBtn(btnAddMan,1000);
     const t1 = parseFloat(prompt(currentLang==='es'?'T1 (s)':'T1 (s)',''));
     const t2 = parseFloat(prompt(currentLang==='es'?'T2 (s)':'T2 (s)',''));
     if(isNaN(t1) && isNaN(t2)) return;
@@ -1436,7 +1436,7 @@
   });
 
   btnReset.addEventListener('click',()=>{
-    lockBtn(btnReset,6000);
+    lockBtn(btnReset,1000);
     if(!confirm(currentLang==='es'
       ? '¿Reset TOTAL? Borra laps, WB y configuración guardada.'
       : 'TOTAL reset? This will delete laps, WB and saved settings.'
