@@ -1178,19 +1178,25 @@ th{ white-space:normal; line-height:1.05; }
   }
 
   function scSyncToWB(m){
-    if(!m.syncToWB) return;
-    const op = (m.operation||'').trim();
-    if(!op) return;
+  const op = (m.process || "").trim();
+  if(!op) return;
 
-    const req = scTotalRequiredMinDay(m);
-    const row = wbRows.find(r => normOp((r.operation||'').trim()) === normOp(op));
-    if(!row) return;
+  // total requerido por día (todas las máquinas del recurso)
+  const reqTotal = scTotalRequiredMinDay(m);
 
-    // Empuja a WB.sharedMin (min/día)
-    row.sharedMin = clamp(Math.round(req),0,1440);
+  // ✅ convertir a "min/día por máquina" para WB (porque WB lo multiplica por Machines)
+  const machines = Math.max(1, parseInt(m.machines || 1, 10));
+  const reqPerMachine = reqTotal / machines;
+
+  ensureWbRowForOperation(op);
+
+  const row = wbRows.find(r => r.op === op);
+  if(row){
+    row.sharedMin = clamp(Math.round(reqPerMachine), 0, 1440);
     saveWB();
+    renderWB();
   }
-
+}
   function scEnsureWbRowExists(op){
     const name = (op||'').trim();
     if(!name) return;
@@ -2039,14 +2045,18 @@ function applyTranslations(){
       clamp(parseFloat(row.otherMin)||0,0,1440)
     );
   }
+function netMinPerDay(row){
+  const gross = row.hours * 60 * row.machines;
 
-  function netMinPerDay(row){
-    const gross = grossMinPerDay(row);
-    const pl = plannedLossMin(row);
-    const shared = clamp(parseFloat(row.sharedMin)||0,0,1440);
-    const udtMin = clamp(parseFloat(row.udtMinDay)||0,0,1440);
-    const net = gross - pl - shared - udtMin;
-    return Math.max(net,0);
+  const planned = row.lunch + row.changeover + row.fiveS + row.maint + row.other;
+
+  // ✅ SharedMin se interpreta como "min/día por máquina"
+  const sharedTotal = row.sharedMin * row.machines;
+
+  const unplanned = row.unplannedMin;
+
+  return Math.max(0, gross - planned - sharedTotal - unplanned);
+}
   }
 
   function yieldFromScrap(row){
@@ -3368,6 +3378,7 @@ View: ${capViewSel.value||''}`;
       return;
         // ✅ load shared capacity
     loadSC();
+    scRender(); 
 }
     const snap = safeJsonParse(raw);
     if(!snap || !snap.settings) { loadWB(); return; }
