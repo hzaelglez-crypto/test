@@ -1178,7 +1178,7 @@ th{ white-space:normal; line-height:1.05; }
   }
 
   function scSyncToWB(m){
-  const op = (m.process || "").trim();
+  const op = (m.operation || "").trim();
   if(!op) return;
 
   // total requerido por día (todas las máquinas del recurso)
@@ -1190,7 +1190,7 @@ th{ white-space:normal; line-height:1.05; }
 
   ensureWbRowForOperation(op);
 
-  const row = wbRows.find(r => r.op === op);
+  const row = wbRows.find(r => normOp(r.operation) === normOp(op));
   if(row){
     row.sharedMin = clamp(Math.round(reqPerMachine), 0, 1440);
     saveWB();
@@ -1206,7 +1206,7 @@ th{ white-space:normal; line-height:1.05; }
   function scCopyAllText(){
     const lines = [];
     lines.push(`SHARED CAPACITY EXPORT (${new Date().toISOString()})`);
-    lines.push(`On\tOperation\tMachines\tAvailMinDay(per)\tPlannedDT\tUnplannedDT\tDaysWeek\tWeeksYear\tReqMinDay\tUtil%\tSemaphore\tOpenMinDay`);
+    lines.push(`On\t\tMachines\tAvailMinDay(per)\tPlannedDT\tUnplannedDT\tDaysWeek\tWeeksYear\tReqMinDay\tUtil%\tSemaphore\tOpenMinDay`);
     scMachines.forEach(m=>{
       const on = m.enabled?1:0;
       const op = (m.operation||'').trim();
@@ -2039,7 +2039,7 @@ function applyTranslations(){
   function plannedLossMin(row){
     return (
       clamp(parseFloat(row.lunchMin)||0,0,1440) +
-      clamp(parseFloat(row.changeoverMin)||1,1,1440) +
+      clamp(parseFloat(row.changeoverMin)||0,0,1440) +
       clamp(parseFloat(row.cleanMin)||0,0,1440) +
       clamp(parseFloat(row.maintMin)||0,0,1440) +
       clamp(parseFloat(row.otherMin)||0,0,1440)
@@ -2417,7 +2417,7 @@ function yieldFromScrap(row){
       }
 
       ddMinutes(row.lunchMin ?? 0, 0, 1440, 5, v=>{ row.lunchMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
-      ddMinutes(row.changeoverMin ?? 1, 1, 1440, 5, v=>{ row.changeoverMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
+      ddMinutes(row.changeoverMin ?? 0, 0, 1440, 5, v=>{ row.changeoverMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
       ddMinutes(row.cleanMin ?? 0, 0, 1440, 5, v=>{ row.cleanMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
       ddMinutes(row.maintMin ?? 0, 0, 1440, 5, v=>{ row.maintMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
       ddMinutes(row.otherMin ?? 0, 0, 1440, 5, v=>{ row.otherMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
