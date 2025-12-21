@@ -1474,79 +1474,74 @@ th{ white-space:normal; line-height:1.05; }
         tdNode(chk);
       }
 
-// Subprocess table (Shared Capacity – Level 1.x)
+// Subprocesos (simple, seguro)
 {
   const wrap = document.createElement('div');
-  wrap.className = 'sc-sublevel';
+  wrap.style.minWidth = '260px';
 
   const title = document.createElement('div');
-  title.className = 'sc-subtitle';
-  title.textContent = 'Subprocesos (1, 1.1, 1.2…)';
+  title.style.fontWeight = '800';
+  title.style.fontSize = '.72rem';
+  title.style.color = 'var(--text-soft)';
+  title.style.marginBottom = '6px';
+  title.textContent = (currentLang === 'es')
+    ? 'Subprocesos (1, 1.1, 1.2…)'
+    : 'Subprocesses (1, 1.1, 1.2…)';
   wrap.appendChild(title);
 
   const table = document.createElement('table');
-  table.className = 'sc-subtable';
-
+  table.style.width = '100%';
+  table.style.borderCollapse = 'collapse';
   table.innerHTML = `
     <thead>
       <tr>
-        <th>Subproceso</th>
-        <th>CT (s)</th>
-        <th>Scrap %</th>
-        <th>Contrato anual</th>
+        <th style="text-align:left;">Sub</th>
+        <th>CT(s)</th>
+        <th>Scrap%</th>
+        <th>Anual</th>
       </tr>
     </thead>
     <tbody></tbody>
   `;
-
   const tbody = table.querySelector('tbody');
 
   function renderSubParts(){
     tbody.innerHTML = '';
-    m.parts.forEach((p, idx)=>{
-      const tr = document.createElement('tr');
-
-      tr.innerHTML = `
-        <td><input value="${p.subCode||''}" placeholder="1.1"/></td>
-        <td><input type="number" min="0" max="999" value="${p.ctSec||0}"/></td>
-        <td><input type="number" min="0" max="100" value="${p.scrapPct||0}"/></td>
-        <td><input type="number" min="0" value="${p.annualContract||0}"/></td>
+    (m.parts || []).forEach((p, idx)=>{
+      const tr2 = document.createElement('tr');
+      tr2.innerHTML = `
+        <td style="text-align:left;"><input class="wb-inp slim" value="${p.subCode||''}" placeholder="1.1"></td>
+        <td><input class="wb-inp slim" type="number" min="0" max="999" value="${p.ctSec||0}"></td>
+        <td><input class="wb-inp slim" type="number" min="0" max="100" value="${p.scrapPct||0}"></td>
+        <td><input class="wb-inp" type="number" min="0" value="${p.annualContract||0}"></td>
       `;
+      const [sub, ct, scr, ann] = tr2.querySelectorAll('input');
 
-      const [sub,ct,scr,ann] = tr.querySelectorAll('input');
+      sub.addEventListener('input', ()=>{ p.subCode = sub.value; saveSC(); });
+      ct.addEventListener('input',  ()=>{ p.ctSec = +ct.value||0; saveSC(); });
+      scr.addEventListener('input', ()=>{ p.scrapPct = +scr.value||0; saveSC(); });
+      ann.addEventListener('input', ()=>{ p.annualContract = +ann.value||0; saveSC(); });
 
-      sub.onchange = ()=>{ p.subCode=sub.value; saveSC(); };
-      ct.onchange  = ()=>{ p.ctSec=+ct.value||0; saveSC(); };
-      scr.onchange = ()=>{ p.scrapPct=+scr.value||0; saveSC(); };
-      ann.onchange = ()=>{ p.annualContract=+ann.value||0; saveSC(); };
-
-      tbody.appendChild(tr);
+      tbody.appendChild(tr2);
     });
   }
 
   const btnAdd = document.createElement('button');
-  btnAdd.textContent = '+ Agregar subproceso';
   btnAdd.className = 'btn-small';
-  btnAdd.onclick = ()=>{
-    m.parts.push({
-      subCode: `${m.parts.length+1}`,
-      ctSec: 0,
-      scrapPct: 0,
-      annualContract: 0
-    });
+  btnAdd.textContent = (currentLang === 'es') ? '+ Agregar subproceso' : '+ Add subprocess';
+  btnAdd.addEventListener('click', ()=>{
+    if(!Array.isArray(m.parts)) m.parts = [];
+    m.parts.push({ subCode: String(m.parts.length + 1), ctSec: 0, scrapPct: 0, annualContract: 0 });
     renderSubParts();
     saveSC();
-  };
+  });
 
   wrap.appendChild(table);
   wrap.appendChild(btnAdd);
-  tdNode(wrap);
 
+  tdNode(wrap);
   renderSubParts();
 }
-        });
-        tdNode(btn);
-      }
 
       // Actions
       {
