@@ -653,7 +653,51 @@ th{ white-space:normal; line-height:1.05; }
         </table>
       </div>
     </div>
+    <!-- 4.5) Shared Capacity -->
+    <div class="section-card" data-accent="red" id="secSharedCapacity">
+      <div class="section-head">
+        <div class="section-title">Shared Capacity (Capacidad compartida)</div>
+        <div class="section-tools">
+          <button class="btn-small btn-small-wbadd" id="btnScAddMachine">+ Agregar máquina compartida</button>
+          <button class="btn-small btn-small-wbclear" id="btnScClear">Borrar Shared</button>
+          <button class="btn-small btn-small-copy" id="btnCopyShared">Copiar</button>
+        </div>
+      </div>
 
+      <div style="font-size:.72rem;color:var(--text-soft);line-height:1.35;margin:6px 0 8px;">
+        <b>Qué es:</b> aquí declaras tiempo consumido por <b>otros números de parte / otros clientes</b> en una máquina o proceso compartido.
+        El resultado (minutos requeridos por día) se empuja a WB en la columna <b>Capacidad compartida</b> del proceso seleccionado.
+        <br><b>Semáforo:</b> &lt;90% verde · 90–100% amarillo · &gt;100% rojo.
+      </div>
+
+      <div style="max-height:360px;overflow:auto;">
+        <table id="scTable">
+          <thead>
+            <tr>
+              <th>On</th>
+              <th>Proceso/Máquina</th>
+              <th># Máqs</th>
+              <th>Avail min/día</th>
+              <th>Planned DT</th>
+              <th>Unplanned DT</th>
+              <th>Días/sem</th>
+              <th>Sem/año</th>
+              <th>Min req/día</th>
+              <th>Util %</th>
+              <th>Semáforo</th>
+              <th>Sync a WB</th>
+              <th>Partes</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="scBody"></tbody>
+        </table>
+      </div>
+
+      <div class="wb-mini" style="margin-top:8px;">
+        Nota: <b>Avail min/día</b> es el tiempo “nominal” disponible según horas/turno (máximo 1440). No castiga comedor/mantenimiento: eso va en Planned/Unplanned.
+      </div>
+    </div>
     <!-- 5) Charts -->
     <div class="section-card" data-accent="grey" id="secCharts">
       <div class="section-head">
@@ -1010,6 +1054,514 @@ th{ white-space:normal; line-height:1.05; }
   const TL_STATE_KEY = 'taktlab_state_v4_full';
   const WB_KEY = 'taktlabWB_v3_sync';
   const LANG_KEY = 'taktlabLang';
+    /* =======================
+     ✅ SHARED CAPACITY MODEL
+     ======================= */
+  const SC_KEY = 'taktlabSharedCapacity_v1';
+
+  const scBody = document.getElementById('scBody');
+  const btnScAddMachine = document.getElementById('btnScAddMachine');
+  const btnScClear = document.getElementById('btnScClear');
+  const btnCopyShared = document.getElementById('btnCopyShared');
+
+  let scMachines = [];
+
+  function loadSC(){
+    try{
+      const raw = localStorage.getItem(SC_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      scMachines = Array.isArray(parsed) ? parsed : [];
+    }catch(e){ scMachines = []; }
+  }
+
+  function saveSC(){
+    try{ localStorage.setItem(SC_KEY, JSON.stringify(scMachines)); }catch(e){}
+    scheduleSaveAll();
+  }
+
+  function defaultScMachine(){
+    const gOp = (processInput.value||'').trim();
+    const opKey = normOp(gOp);
+
+    const hours = clamp(parseFloat(hInput.value)||8,0,24);
+    const availDefault = Math.round(hours*60); // <= 1440
+
+    // Si existe row en WB, jalo defaults
+    const wbRow = wbRows.find(r => normOp((r.operation||'').trim()) === opKey);
+    const machinesDefault = wbRow ? clamp(parseFloat(wbRow.machines)||1,1,50) : 1;
+    const udtDefault = wbRow ? clamp(parseFloat(wbRow.udtMinDay)||0,0,1440) : 0;
+
+    return {
+      id: 'sc_' + Math.random().toString(36).slice(2,9),
+      enabled: true,
+      operation: gOp || '',
+      machines: machinesDefault,          // #Máqs
+      availMinDay: clamp(availDefault,0,1440), // avail por máquina
+      plannedDT: 0,                       // min/día
+      unplannedDT: udtDefault,            // min/día (default desde WB)
+      daysPerWeek: clamp(parseFloat(dInput.value)||5,0,7),
+      weeksPerYear: 47,
+      syncToWB: true,
+      parts: [] // rows
+    };
+  }
+
+  function defaultScPart(){
+    return {
+      partDesc: '',
+      partNo: '',
+      annualContract: '',   // manual
+      pcsPerCycle: 1,       // 1-99
+      ctSec: 0,             // 0-999
+      scrapPct: 0,          // 0-100
+      changeoverMin: 0,     // 0-1440
+      changeoverFreqDays: 0 // 0-365 (0=sin CO)
+    };
+  }
+
+  function scDailyParts(part, m){
+    const annual = parseFloat(part.annualContract);
+    const weeks = clamp(parseFloat(m.weeksPerYear)||0,0,52);
+    const days  = clamp(parseFloat(m.daysPerWeek)||0,0,7);
+    if(!isFinite(annual) || annual<=0) return 0;
+    if(weeks<=0 || days<=0) return 0;
+    return annual/(weeks*days);
+  }
+
+  function scDailyMinutesRequired(part, m){
+    const dailyParts = scDailyParts(part,m);
+    const ppc = clamp(parseFloat(part.pcsPerCycle)||1,1,99);
+    const ct = clamp(parseFloat(part.ctSec)||0,0,999);
+    const scrap = clamp(parseFloat(part.scrapPct)||0,0,100);
+    const y = (100 - scrap)/100;
+
+    // piezas a correr considerando yield
+    const partsToRun = y>0 ? (dailyParts / y) : dailyParts;
+
+    const cycles = ppc>0 ? (partsToRun / ppc) : 0;
+    const runMin = (cycles * ct)/60;
+
+    const coMin = clamp(parseFloat(part.changeoverMin)||0,0,1440);
+    const freq = clamp(parseFloat(part.changeoverFreqDays)||0,0,365);
+    const coPerDay = (freq>0) ? (coMin / freq) : 0;
+
+    return Math.max(runMin + coPerDay, 0);
+  }
+
+  function scNetAvailMinDay(m){
+    const availOne = clamp(parseFloat(m.availMinDay)||0,0,1440);
+    const machines = clamp(parseFloat(m.machines)||1,1,50);
+    const availTotal = availOne * machines;
+
+    const pdt = clamp(parseFloat(m.plannedDT)||0,0,1440);
+    const udt = clamp(parseFloat(m.unplannedDT)||0,0,1440);
+
+    return Math.max(availTotal - pdt - udt, 0);
+  }
+
+  function scTotalRequiredMinDay(m){
+    const parts = Array.isArray(m.parts) ? m.parts : [];
+    return parts.reduce((sum,p)=> sum + scDailyMinutesRequired(p,m), 0);
+  }
+
+  function scUtilPct(m){
+    const req = scTotalRequiredMinDay(m);
+    const net = scNetAvailMinDay(m);
+    if(net<=0) return (req>0)? 999 : 0;
+    return (req/net)*100;
+  }
+
+  function scBadge(util){
+    if(util < 90) return {cls:'badge-good', txt:'OK'};
+    if(util <= 100) return {cls:'badge-warn', txt:'Riesgo'};
+    return {cls:'badge-bad', txt:'No Capacity'};
+  }
+
+  function scSyncToWB(m){
+    if(!m.syncToWB) return;
+    const op = (m.operation||'').trim();
+    if(!op) return;
+
+    const req = scTotalRequiredMinDay(m);
+    const row = wbRows.find(r => normOp((r.operation||'').trim()) === normOp(op));
+    if(!row) return;
+
+    // Empuja a WB.sharedMin (min/día)
+    row.sharedMin = clamp(Math.round(req),0,1440);
+    saveWB();
+  }
+
+  function scEnsureWbRowExists(op){
+    const name = (op||'').trim();
+    if(!name) return;
+    ensureWbRowForOperation(name);
+  }
+
+  function scCopyAllText(){
+    const lines = [];
+    lines.push(`SHARED CAPACITY EXPORT (${new Date().toISOString()})`);
+    lines.push(`On\tOperation\tMachines\tAvailMinDay(per)\tPlannedDT\tUnplannedDT\tDaysWeek\tWeeksYear\tReqMinDay\tUtil%\tSemaphore\tOpenMinDay`);
+    scMachines.forEach(m=>{
+      const on = m.enabled?1:0;
+      const op = (m.operation||'').trim();
+      const machines = clamp(parseFloat(m.machines)||1,1,50);
+      const avail = clamp(parseFloat(m.availMinDay)||0,0,1440);
+      const pdt = clamp(parseFloat(m.plannedDT)||0,0,1440);
+      const udt = clamp(parseFloat(m.unplannedDT)||0,0,1440);
+      const dw = clamp(parseFloat(m.daysPerWeek)||0,0,7);
+      const wy = clamp(parseFloat(m.weeksPerYear)||0,0,52);
+
+      const req = scTotalRequiredMinDay(m);
+      const net = scNetAvailMinDay(m);
+      const util = scUtilPct(m);
+      const open = Math.max(net - req, 0);
+      const sem = scBadge(util).txt;
+
+      lines.push([
+        on, op, machines, avail, pdt, udt, dw, wy,
+        req.toFixed(2), util.toFixed(1), sem, open.toFixed(2)
+      ].join('\t'));
+
+      if(Array.isArray(m.parts) && m.parts.length){
+        lines.push(`\tPARTS for ${op}`);
+        lines.push(`\tPartDesc\tPartNo\tAnnual\tDailyParts\tPcs/Cycle\tCT(s)\tScrap%\tCOmin\tFreqDays\tMinReq/Day`);
+        m.parts.forEach(p=>{
+          const dp = scDailyParts(p,m);
+          const mr = scDailyMinutesRequired(p,m);
+          lines.push([
+            '', (p.partDesc||'').replace(/\t/g,' '),
+            (p.partNo||'').replace(/\t/g,' '),
+            (p.annualContract||''),
+            dp.toFixed(2),
+            clamp(parseFloat(p.pcsPerCycle)||1,1,99),
+            clamp(parseFloat(p.ctSec)||0,0,999),
+            clamp(parseFloat(p.scrapPct)||0,0,100),
+            clamp(parseFloat(p.changeoverMin)||0,0,1440),
+            clamp(parseFloat(p.changeoverFreqDays)||0,0,365),
+            mr.toFixed(2)
+          ].join('\t'));
+        });
+      }
+    });
+    return lines.join('\n');
+  }
+
+  function scRender(){
+    if(!scBody) return;
+    scBody.innerHTML = '';
+
+    const ops = getOperationOptions();
+
+    scMachines.forEach(m=>{
+      // defaults y límites
+      m.machines = clamp(parseFloat(m.machines)||1,1,50);
+      m.availMinDay = clamp(parseFloat(m.availMinDay)||0,0,1440);
+      m.plannedDT = clamp(parseFloat(m.plannedDT)||0,0,1440);
+      m.unplannedDT = clamp(parseFloat(m.unplannedDT)||0,0,1440);
+      m.daysPerWeek = clamp(parseFloat(m.daysPerWeek)||0,0,7);
+      m.weeksPerYear = clamp(parseFloat(m.weeksPerYear)||47,0,52);
+      if(m.weeksPerYear === 0) m.weeksPerYear = 47;
+      if(!Array.isArray(m.parts)) m.parts = [];
+
+      // auto sync
+      if(m.enabled) scSyncToWB(m);
+
+      const req = scTotalRequiredMinDay(m);
+      const util = scUtilPct(m);
+      const badge = scBadge(util);
+      const net = scNetAvailMinDay(m);
+      const open = Math.max(net - req, 0);
+
+      const tr = document.createElement('tr');
+
+      function tdNode(node){
+        const td = document.createElement('td');
+        td.appendChild(node);
+        tr.appendChild(td);
+      }
+      function tdTxt(txt, left=false){
+        const td = document.createElement('td');
+        td.textContent = txt;
+        if(left) td.style.textAlign='left';
+        tr.appendChild(td);
+      }
+
+      // On
+      {
+        const inp = document.createElement('input');
+        inp.type='checkbox';
+        inp.className='wb-chk';
+        inp.checked = !!m.enabled;
+        inp.addEventListener('change',()=>{
+          m.enabled = !!inp.checked;
+          saveSC(); renderAll();
+        });
+        tdNode(inp);
+      }
+
+      // Operation selector
+      {
+        const sel = document.createElement('select');
+        sel.className='wb-opselect';
+        const cur = (m.operation||'').trim();
+
+        const ph = document.createElement('option');
+        ph.value='';
+        ph.textContent = (currentLang==='es'?'Selecciona…':'Select…');
+        if(!cur) ph.selected = true;
+        sel.appendChild(ph);
+
+        const list = ops.slice();
+        if(cur && !list.some(x=>normOp(x)===normOp(cur))) list.unshift(cur);
+
+        list.forEach(opName=>{
+          const o=document.createElement('option');
+          o.value=opName; o.textContent=opName;
+          if(normOp(opName)===normOp(cur)) o.selected=true;
+          sel.appendChild(o);
+        });
+
+        const customOpt=document.createElement('option');
+        customOpt.value='__custom__';
+        customOpt.textContent = (currentLang==='es'?'+ Personalizar…':'+ Custom…');
+        sel.appendChild(customOpt);
+
+        sel.addEventListener('change',()=>{
+          let v = sel.value;
+          if(v==='__custom__'){
+            const newName = prompt(currentLang==='es'?'Nombre de proceso/máquina:':'Process/machine name:', cur || (processInput.value||'').trim());
+            if(newName===null){ sel.value = cur || ''; return; }
+            v = (newName||'').trim();
+            if(!v){ sel.value = cur || ''; return; }
+          }
+          m.operation = (v||'').trim();
+          scEnsureWbRowExists(m.operation);
+          saveSC(); renderAll();
+        });
+
+        const wrap = document.createElement('div');
+        wrap.className='wb-opwrap';
+        wrap.appendChild(sel);
+
+        tdNode(wrap);
+      }
+
+      // Machines (1-50)
+      {
+        const sel=document.createElement('select');
+        sel.className='wb-sel narrow';
+        for(let v=1; v<=50; v++){
+          const o=document.createElement('option');
+          o.value=String(v); o.textContent=String(v);
+          if(v===m.machines) o.selected=true;
+          sel.appendChild(o);
+        }
+        sel.addEventListener('change',()=>{
+          m.machines = clamp(parseFloat(sel.value)||1,1,50);
+          saveSC(); renderAll();
+        });
+        tdNode(sel);
+      }
+
+      // Avail 0-1440
+      {
+        const sel=document.createElement('select');
+        sel.className='wb-sel';
+        for(let v=0; v<=1440; v+=5){
+          const o=document.createElement('option');
+          o.value=String(v); o.textContent=String(v);
+          if(v===m.availMinDay) o.selected=true;
+          sel.appendChild(o);
+        }
+        sel.addEventListener('change',()=>{
+          m.availMinDay = clamp(parseFloat(sel.value)||0,0,1440);
+          saveSC(); renderAll();
+        });
+        tdNode(sel);
+      }
+
+      // Planned DT 0-1440
+      {
+        const sel=document.createElement('select');
+        sel.className='wb-sel';
+        for(let v=0; v<=1440; v+=5){
+          const o=document.createElement('option');
+          o.value=String(v); o.textContent=String(v);
+          if(v===m.plannedDT) o.selected=true;
+          sel.appendChild(o);
+        }
+        sel.addEventListener('change',()=>{
+          m.plannedDT = clamp(parseFloat(sel.value)||0,0,1440);
+          saveSC(); renderAll();
+        });
+        tdNode(sel);
+      }
+
+      // Unplanned DT 0-1440
+      {
+        const sel=document.createElement('select');
+        sel.className='wb-sel';
+        for(let v=0; v<=1440; v+=5){
+          const o=document.createElement('option');
+          o.value=String(v); o.textContent=String(v);
+          if(v===m.unplannedDT) o.selected=true;
+          sel.appendChild(o);
+        }
+        sel.addEventListener('change',()=>{
+          m.unplannedDT = clamp(parseFloat(sel.value)||0,0,1440);
+          saveSC(); renderAll();
+        });
+        tdNode(sel);
+      }
+
+      // Days/week 0-7
+      {
+        const sel=document.createElement('select');
+        sel.className='wb-sel narrow';
+        for(let v=0; v<=7; v++){
+          const o=document.createElement('option');
+          o.value=String(v); o.textContent=String(v);
+          if(v===m.daysPerWeek) o.selected=true;
+          sel.appendChild(o);
+        }
+        sel.addEventListener('change',()=>{
+          m.daysPerWeek = clamp(parseFloat(sel.value)||0,0,7);
+          saveSC(); renderAll();
+        });
+        tdNode(sel);
+      }
+
+      // Weeks/year 0-52 (default 47)
+      {
+        const sel=document.createElement('select');
+        sel.className='wb-sel narrow';
+        for(let v=0; v<=52; v++){
+          const o=document.createElement('option');
+          o.value=String(v); o.textContent=String(v);
+          if(v===m.weeksPerYear) o.selected=true;
+          sel.appendChild(o);
+        }
+        sel.addEventListener('change',()=>{
+          m.weeksPerYear = clamp(parseFloat(sel.value)||47,0,52);
+          if(m.weeksPerYear===0) m.weeksPerYear = 47;
+          saveSC(); renderAll();
+        });
+        tdNode(sel);
+      }
+
+      // Req / Util / Semaforo
+      tdTxt(req.toFixed(2));
+      tdTxt(util.toFixed(1));
+      tdTxt('', false);
+      tr.lastChild.innerHTML = `<span class="badge ${badge.cls}">${badge.txt}</span>`;
+
+      // Sync toggle
+      {
+        const chk=document.createElement('input');
+        chk.type='checkbox';
+        chk.className='wb-chk';
+        chk.checked = !!m.syncToWB;
+        chk.addEventListener('change',()=>{
+          m.syncToWB = !!chk.checked;
+          saveSC(); renderAll();
+        });
+        tdNode(chk);
+      }
+
+      // Parts button
+      {
+        const btn=document.createElement('button');
+        btn.className='btn-small btn-small-wbadd';
+        btn.textContent = `Partes (${m.parts.length})`;
+        btn.addEventListener('click',()=>{
+          // abre editor simple con prompts (modo "Roberto no se pierde")
+          if(m.parts.length>=100){
+            alert('Límite: 100 líneas por máquina.');
+            return;
+          }
+          const addCount = parseInt(prompt('¿Cuántas líneas agregar? (1-10)', '1')||'1',10);
+          const n = clamp(addCount||1,1,10);
+          for(let i=0;i<n;i++){
+            if(m.parts.length>=100) break;
+            m.parts.push(defaultScPart());
+          }
+          saveSC(); renderAll();
+          // editor rápido: te deja llenar 1 por 1 si quieres
+          if(confirm('¿Quieres capturar AHORA la primera línea (rápido con prompts)?')){
+            const p = m.parts[m.parts.length-1];
+            p.partDesc = prompt('Part Description:', p.partDesc||'') ?? p.partDesc;
+            p.partNo = prompt('Part Number:', p.partNo||'') ?? p.partNo;
+            p.annualContract = prompt('Annual Contract (volumen anual):', p.annualContract||'') ?? p.annualContract;
+            p.pcsPerCycle = clamp(parseFloat(prompt('Parts per Cycle (1-99):', String(p.pcsPerCycle||1))||p.pcsPerCycle)||1,1,99);
+            p.ctSec = clamp(parseFloat(prompt('Cycle Time seconds (0-999):', String(p.ctSec||0))||p.ctSec)||0,0,999);
+            p.scrapPct = clamp(parseFloat(prompt('True Scrap % (0-100):', String(p.scrapPct||0))||p.scrapPct)||0,0,100);
+            p.changeoverMin = clamp(parseFloat(prompt('Changeover minutes (0-1440):', String(p.changeoverMin||0))||p.changeoverMin)||0,0,1440);
+            p.changeoverFreqDays = clamp(parseFloat(prompt('Changeover frequency in DAYS (0=none):', String(p.changeoverFreqDays||0))||p.changeoverFreqDays)||0,0,365);
+            saveSC(); renderAll();
+          }
+        });
+        tdNode(btn);
+      }
+
+      // Actions
+      {
+        const td = document.createElement('td');
+
+        const bDel=document.createElement('button');
+        bDel.className='btn-del';
+        bDel.textContent='Del';
+        bDel.addEventListener('click',()=>{
+          if(!confirm('¿Borrar esta máquina compartida?')) return;
+          scMachines = scMachines.filter(x=>x.id!==m.id);
+          saveSC(); renderAll();
+        });
+
+        const bClrParts=document.createElement('button');
+        bClrParts.className='btn-relink';
+        bClrParts.textContent='Clear Parts';
+        bClrParts.addEventListener('click',()=>{
+          if(!confirm('¿Borrar TODAS las partes de esta máquina?')) return;
+          m.parts = [];
+          saveSC(); renderAll();
+        });
+
+        td.appendChild(bClrParts);
+        td.appendChild(document.createTextNode(' '));
+        td.appendChild(bDel);
+
+        tr.appendChild(td);
+      }
+
+      if(!m.enabled) tr.style.opacity='0.55';
+      scBody.appendChild(tr);
+    });
+  }
+
+  if(btnScAddMachine){
+    btnScAddMachine.addEventListener('click',()=>{
+      lockBtn(btnScAddMachine,6000);
+      const m = defaultScMachine();
+      scEnsureWbRowExists(m.operation);
+      scMachines.push(m);
+      saveSC(); renderAll();
+    });
+  }
+
+  if(btnScClear){
+    btnScClear.addEventListener('click',()=>{
+      lockBtn(btnScClear,6000);
+      if(!confirm('¿Borrar TODO Shared Capacity?')) return;
+      scMachines = [];
+      saveSC(); renderAll();
+    });
+  }
+
+  if(btnCopyShared){
+    btnCopyShared.addEventListener('click',()=>{
+      lockBtn(btnCopyShared,6000);
+      copyText(scCopyAllText());
+    });
+  }
 
   function safeJsonParse(raw){ try{ return JSON.parse(raw); }catch(e){ return null; } }
 
@@ -2438,156 +2990,245 @@ function applyTranslations(){
   chartSelect.addEventListener('change',()=>renderCharts());
 
   function renderMethodGuide(){
-    const textES =
-`GUÍA COMPLETA (campo por campo)
+  const textES =
+`GUÍA COMPLETA (campo por campo) — TaktLab + WB
+Versión enriquecida: qué es, cómo se llena, por qué importa, y errores comunes.
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 A) CONFIGURACIÓN DE MEDICIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 1) Proceso
-- Qué es: el nombre de la operación/estación que estás midiendo (ej: "Op 30", "Op 10-2", "Router 1").
-- Cómo llenarlo: usa un nombre consistente, sin inventar variaciones cada rato (para que las estadísticas se agrupen bien).
-- Por qué importa: si cambias el nombre, TaktLab cree que es “otro proceso” y te separa los datos.
+- Qué es: nombre de la operación/estación medida (ej: "Op 30", "Op 10-2", "Router 1", "ICT-11").
+- Cómo llenarlo:
+  • Usa un nombre consistente (mismo formato, mismos guiones).
+  • Si cambia el equipo/máquina, acláralo (ej: "Router 1" vs "Router 2").
+- Por qué importa: el nombre es la “llave” del dataset. Si lo cambias, TaktLab separa los datos.
+- Error común: "Op10" / "Op 10" / "OP10" = 3 procesos distintos.
 
 2) Modo
-- CT (Tiempo de ciclo): cada VUELTA es un tiempo total. Úsalo cuando el operador está integrado al ciclo y no te interesa separar máquina vs mano.
-- MLD (Machine & Load/Unload): aquí medimos en 2 pasos:
-  - VUELTA 1 = T1 (tiempo de máquina)
-  - VUELTA 2 = T2 (carga/descarga / trabajo manual)
-  - Total = T1 + T2
-- Por qué importa: MLD te ayuda a ver si estás limitado por máquina o por mano.
+- CT (Tiempo de ciclo):
+  • Cada VUELTA (lap) es un ciclo completo.
+  • Úsalo cuando operador y máquina son una sola cosa y no necesitas separar.
+- MLD (Machine & Load/Unload):
+  • Captura en 2 pasos (por cada ciclo):
+    - VUELTA 1 = T1 (tiempo de máquina)
+    - VUELTA 2 = T2 (carga/descarga / trabajo manual)
+    - Total = T1 + T2
+  • Útil para ver si el límite real es máquina o mano.
+- Por qué importa:
+  • CT te da el número “operativo” rápido.
+  • MLD te ayuda a atacar la restricción correcta (máquina vs mano).
+- Regla práctica:
+  • Si hay robot/maquina con tiempo “solo”, usa MLD.
+  • Si todo es manual y continuo, usa CT.
 
 3) Eficiencia %
-- Qué es: factor para ajustar capacidad real vs ideal (micro-paros, variación normal, eficiencia de la línea).
-- Cómo llenarlo: si no tienes datos, empieza con 100 y baja con evidencia (ej. 85–95 suele ser típico).
-- Por qué importa: evita prometer capacidad “de laboratorio” que nunca ocurre en piso.
+- Qué es: factor de realismo para ajustar capacidad (micro-paros, variación normal, pérdidas pequeñas).
+- Cómo llenarlo:
+  • Si no tienes evidencia: empieza en 100%.
+  • Si ya conoces el comportamiento: 85–95% suele ser realista.
+  • Baja con evidencia (paros, variación, retrabajo, etc.).
+- Por qué importa: evita prometer capacidad “de laboratorio”.
+- Error común: poner 70% “por feeling” y luego todo sale mal (porque ya metiste pérdidas dobles).
 
 4) Capacidad contrato (pzs/día)
-- Qué es: demanda/compromiso diario que DEBES cumplir.
-- Cómo llenarlo: usa lo que realmente pide el cliente o el plan maestro.
-- Por qué importa: todas las alertas de “gap” y “% vs contrato” salen de aquí.
+- Qué es: demanda o compromiso diario que DEBES cumplir.
+- Cómo llenarlo: lo que realmente pide el cliente / plan maestro (no lo que “crees” que quieren).
+- Por qué importa: el GAP y el % vs contrato salen de aquí.
 
 5) Horas / día
-- Qué es: horas disponibles reales del día (no “turno nominal”).
-- Cómo llenarlo: si trabajas 2 turnos de 10.5 = 21, si son 3 turnos de 8 = 24, etc.
+- Qué es: horas reales disponibles en el día (no “turno nominal”).
+- Cómo llenarlo:
+  • 2 turnos de 10.5 = 21
+  • 3 turnos de 8 = 24
 - Por qué importa: convierte capacidad a día/semana correctamente.
+- Error común: usar 24 cuando en realidad solo hay 2 turnos.
 
 6) Días / semana
-- Qué es: cuántos días se trabaja (5, 6, 7).
-- Por qué importa: el view semanal se calcula con esto.
+- Qué es: cuántos días se trabaja (5/6/7).
+- Por qué importa: la vista semanal depende de esto.
 
 7) Vista de capacidad
-- Por hora: útil para comparar con UPH o ver si un proceso “da” por hora.
+- Por hora: útil para comparar contra UPH / flujo por hora.
 - Por día: útil para contrato diario.
 - Por semana: útil para planeación y compromisos semanales.
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 B) CONTROLES DE DATOS
-- Copiar resumen: copia el resumen de capacidad/contrato + stats.
-- Copiar todo: incluye raw data (ideal para pegar en Excel).
-- Agregar vuelta manual: útil cuando te dictan datos o traes tiempos de otro sistema.
-- Reiniciar: BORRA todo (laps + WB + settings guardados). Solo úsalo cuando quieres empezar de cero.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Copiar resumen: capacidad/contrato + stats (ideal para Teams/Correo).
+- Copiar todo: incluye raw data (ideal para Excel / evidencia).
+- Agregar vuelta manual: para cuando te dictan tiempos o traes datos de otro sistema.
+- Reiniciar: BORRA TODO (laps + WB + settings). Úsalo solo si vas a empezar de cero.
+  • Tip: antes de reset, copia “todo” para no perder evidencia.
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 C) RESUMEN CONTRATO VS CAPACIDAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - Actual: usa la Mediana (robusta ante outliers).
 - Potencial: usa P10 (mejor escenario realista).
 - Peor: usa P90 (escenario conservador).
 - Todo multiplicado por Eficiencia %.
+- Tip de piso:
+  • Si Mediana cumple pero P90 no, el proceso es inestable (no “confiable”).
+  • Si ni P10 cumple, necesitas cambio fuerte (takt, método, layout, máquina, gente).
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 D) ENFOQUE ESTADÍSTICO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - N: número de muestras válidas (NO incluye Bloqueado/Hambriento).
-- Error estimado: aproximación con CV y 95% (direccional).
-- Consejo: si estás “casi suficiente” no te pelees: mide 5-10 más y cierras discusión con datos.
+- Error estimado: aproximación direccional al 95% (no reemplaza un estudio formal, pero orienta).
+- Consejo:
+  • Si estás “casi suficiente”, mide 5–10 más y cierras la discusión con datos.
+- Regla práctica de calidad del dataset:
+  • Mucha variación = primero estandariza método (antes de pelear capacidad).
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 E) WB – PLANEADOR DE CAPACIDAD (por proceso)
-Campos clave:
-1) Operación: nombre del proceso (ideal: mismo que en “Proceso”).
-2) Operadores (0–10): número de personas asignadas.
-3) Turnos (1–4): referencia (no cambia cálculo directo, es para contexto).
-4) Horas (0–24): horas reales disponibles por día.
-5) # Máquinas (1–50): multiplicador de tiempo disponible.
-6) Pzs/Op (1–99): piezas producidas por ciclo/operación (si haces 2-up, aquí pones 2).
-7) Contrato (pzs/día): meta diaria de esa operación (si aplica).
-8) Pérdidas planificadas (min/día): Comida, Changeover, 5S, Mtto, Otros
-9) Capacidad compartida (min/día): tiempo que se “come” otra familia/producto/recurso compartido.
-10) DT no planeado (min/día): paros NO planeados. Se captura como minutos al día.
-11) Scrap % y Yield: Yield = 1 - scrap.
-12) A/P/Q y OEE: OEE = A×P×Q (en decimales). Si no tienes datos: empieza 100/100/100 y baja con evidencia.
-13) CT Actual/Peor/Potencial: viene de tus mediciones (si quieres forzar valores, usa Edit).
-Resultados:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Campos clave (qué meter y por qué):
+
+1) Operación
+- Debe coincidir con “Proceso” para mantener trazabilidad.
+
+2) Operadores (0–10)
+- Número real asignado (no “en nómina”, sino “en piso”).
+
+3) Turnos (1–4)
+- Contexto (no siempre cambia el cálculo directo, pero da sentido).
+
+4) Horas (0–24)
+- Horas reales disponibles por día.
+
+5) # Máquinas (1–50)
+- Multiplica tiempo disponible. Si hay 2 máquinas idénticas, aquí va 2.
+
+6) Pzs/Op (1–99)
+- Piezas por ciclo/operación.
+- Ejemplo: 2-up → pones 2.
+
+7) Contrato (pzs/día)
+- Meta diaria de esa operación (si aplica).
+
+8) Pérdidas planificadas (min/día)
+- Comida, Changeover, 5S, Mtto, Otros.
+- Regla: si “siempre pasa”, es planificado.
+
+9) Capacidad compartida (min/día)
+- Tiempo consumido por otras familias/productos en el mismo recurso.
+
+10) DT no planeado (min/día)
+- Paros NO planeados. Se captura como minutos/día.
+
+11) Scrap % y Yield
+- Yield = 1 - scrap (en decimal).
+- Si scrap=3% → yield=0.97.
+
+12) A/P/Q y OEE
+- OEE = A×P×Q (en decimales).
+- Si no hay datos: empieza 100/100/100 y ajusta con evidencia.
+
+13) CT Actual/Peor/Potencial
+- Viene de tus mediciones en TaktLab.
+- Si fuerzas valores en Edit, deja nota (para que se sepa que fue supuesto).
+
+Resultados (lógica):
 - Min netos/día = Brutos - pérdidas planificadas - compartido - DT no planeado
 - Cap 100% (Cur) = (Seg netos / CT) × Yield × Pzs/Op
 - Cap@OEE (Cur) ajusta CT por OEE (más realista)
-- % vs contrato te grita si cumples o no.
+- % vs contrato te dice si cumples o no
 - Entrada requerida p/Contrato = Contrato / (Yield×Pzs/Op)
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 F) DATOS CRUDOS DE TIEMPO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - Estatus:
-  - Normal: cuenta para stats
-  - Bloqueado: NO cuenta (esperando material, falla upstream, etc.)
-  - Hambriento: NO cuenta (sin trabajo/flujo)
-- Nota: escribe causa, modelo, condición especial (sirve para análisis posterior).
-- Editar/Borrar: limpieza del dataset.
+  • Normal: cuenta para stats
+  • Bloqueado: NO cuenta (esperando material, falla upstream, etc.)
+  • Hambriento: NO cuenta (sin trabajo/flujo)
+- Nota:
+  • Escribe causa/modelo/condición especial (sirve para análisis posterior).
+- Editar/Borrar:
+  • Limpieza del dataset (si alguien tomó una vuelta mal, aquí lo corriges).
+
+Tip de disciplina:
+- Si marcas Bloqueado/Hambriento sin causa, pierdes valor. Pon aunque sea 3 palabras.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+G) SHARED CAPACITY (Capacidad compartida)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Cuándo usarlo:
+- Cuando un mismo recurso corre varias familias/part numbers y ese tiempo “se come” tu capacidad.
+
+Cómo se captura:
+1) Por máquina:
+- Avail min/día (0–1440): minutos nominales según horas/turnos.
+- Planned DT / Unplanned DT: pérdidas en minutos/día.
+- Días/sem y Sem/año: para convertir anual a diario.
+
+2) Por parte (PN/familia):
+- Annual Contract → Daily Parts = Annual / (Weeks*Days)
+- Minutes required/day:
+  • (DailyParts/Yield / PcsPerCycle) * CT
+  • + (ChangeoverMin/FrequencyDays)
+
+Resultado:
+- Min req/día, Util %, Semáforo
+- Si “Sync a WB” está ON:
+  • Se escribe en WB → columna “Capacidad compartida” (sharedMin)
 
 Regla de oro:
-Si el dato no es defendible, no lo uses. Si el dato es defendible, que se vea en el WB.`;
+- Si el dato no es defendible, NO lo uses.
+- Si el dato es defendible, que se vea en WB (y que se pueda explicar en 30 segundos).
 
-    const textEN =
-`FULL GUIDE (field-by-field)
+Checklist rápido (para no mentirte):
+- ¿Nombre de proceso consistente?
+- ¿CT medido con método estable?
+- ¿Pérdidas planificadas no duplicadas?
+- ¿DT no planeado con evidencia?
+- ¿Yield/OEE razonables o documentados?
+`;
+
+  const textEN =
+`FULL GUIDE (field-by-field) — TaktLab + WB
+Enriched version: what it is, how to fill it, why it matters, and common mistakes.
 
 A) MEASUREMENT SETUP
-1) Process
-- What: operation/station name you are measuring (e.g., "Op 30").
-- How: keep naming consistent so stats group correctly.
-- Why: different names = different buckets.
-
-2) Mode
+1) Process: keep naming consistent or stats split into different buckets.
+2) Mode:
 - CT: each LAP is total cycle time.
-- MLD: two-step capture:
-  - LAP 1 = T1 (machine)
-  - LAP 2 = T2 (load/unload / manual)
-  - Total = T1 + T2
-- Why: shows whether constraint is machine or labor.
-
-3) Efficiency %
-- What: realism factor (micro-stops, normal losses).
-- How: start at 100, reduce with evidence.
-- Why: avoids “lab capacity”.
-
-4) Contract (pcs/day)
-- What: required output per day.
-- Why: drives gap and % vs contract.
-
-5) Hours / day
-- What: real available hours (not nominal).
-- Why: correct daily/weekly conversion.
-
-6) Days / week
-- What: working days.
-- Why: weekly view uses it.
-
-7) Capacity view
-- Hour/Day/Week for the lens you need.
+- MLD: LAP1=T1(machine), LAP2=T2(load/unload), Total=T1+T2.
+3) Efficiency %: realism factor; start 100%, reduce with evidence.
+4) Contract (pcs/day): required daily output.
+5) Hours/day & 6) Days/week: drive conversions.
+7) Capacity view: Hour/Day/Week lens.
 
 B) DATA CONTROLS
-- Copy summary / Copy all / Manual lap / Reset.
+Copy summary / Copy all / Manual lap / Reset (Reset wipes everything).
 
 C) CONTRACT vs CAPACITY
-- Current=Median, Potential=P10, Worst=P90, all × Efficiency.
+Current=Median, Potential=P10, Worst=P90, all × Efficiency%.
 
 D) STAT FOCUS
-- N excludes Blocked/Starved.
-- Error estimate is directional.
+N excludes Blocked/Starved. Error estimate is directional. Add 5–10 samples when close.
 
 E) WB CAPACITY PLANNER
-- Net minutes/day = Gross - planned losses - shared - unplanned DT
-- Output = (Net seconds / CT) × Yield × Pcs/Op
-- Cap@OEE uses CT adjusted by OEE.
-- Input required = Contract / (Yield×Pcs/Op)
+Net minutes/day = Gross - planned losses - shared - unplanned DT
+Output = (Net seconds / CT) × Yield × Pcs/Op
+Cap@OEE uses OEE-adjusted realism
+Input required = Contract / (Yield×Pcs/Op)
 
 F) RAW DATA
-- Status filters, notes, edit/delete for dataset quality.`;
+Statuses, notes, edit/delete for dataset quality.
 
-    methodGuideText.textContent = (currentLang==='es') ? textES : textEN;
-  }
+G) SHARED CAPACITY
+Use when a shared resource runs other families/PNs.
+If Sync to WB is ON, shared minutes populate WB sharedMin column.
+`;
 
+  methodGuideText.textContent = (currentLang === 'es') ? textES : textEN;
+}
   function buildSummaryText(){
     const b = buildContractLinesForCurrentSelection();
     const lines = [];
@@ -2725,7 +3366,9 @@ View: ${capViewSel.value||''}`;
     if(!raw){
       loadWB();
       return;
-    }
+        // ✅ load shared capacity
+    loadSC();
+}
     const snap = safeJsonParse(raw);
     if(!snap || !snap.settings) { loadWB(); return; }
 
@@ -2777,6 +3420,7 @@ View: ${capViewSel.value||''}`;
     renderContractSummaryAndFocus();
     renderStatsTables();
     renderWB();
+    scRender();
     renderRaw();
     renderCharts();
     updateSplitClocks();
