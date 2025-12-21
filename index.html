@@ -50,7 +50,7 @@
 .page{
   max-width:1100px;
   margin:0 auto;
-  padding:8px 8px 22px; /* más compacto */
+  padding:6px 8px 16px; /* más compacto */
   }
 
   .sticky-timer-bar{
@@ -195,8 +195,8 @@
   background:var(--bg-card);
   border-radius:18px;
   border:2px solid var(--border-soft);
-  padding:8px 10px 10px;   /* menos padding */
-  margin-bottom:10px;      /* menos separación entre secciones */
+  padding:6px 8px 8px;   /* menos padding */
+  margin-bottom:8px;      /* menos separación entre secciones */
   position:relative;
   box-shadow:0 10px 22px rgba(10,20,40,.06);
 }
@@ -211,9 +211,9 @@
     align-items:center;
     justify-content:space-between;
     gap:8px;
-    margin:0 0 6px;
+    margin:0 0 4px;
   }
-  .section-title{font-size:1.02rem;font-weight:900;margin:0;}
+  .section-title{font-size:.98rem;font-weight:900;margin:0;}
   .section-tools{display:flex;gap:8px;align-items:center;}
 
   .btn-small{
@@ -237,12 +237,12 @@
   .btn-small-wbclear{background:rgba(255,51,85,.10);border-color:rgba(255,51,85,.30);color:#6b0014;}
 
   .mode-row{
-    display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;
+    display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;
     font-size:.76rem;color:var(--text-soft);
   }
   .mode-row select,.mode-row input{
-    background:#fff;border-radius:10px;border:1px solid var(--border-soft);
-    padding:6px 10px;color:var(--text-main);font-size:.78rem;min-width:70px;
+    background:#fff;border-radius:6px;border:1px solid var(--border-soft);
+    padding:4px 8px;color:var(--text-main);font-size:.78rem;min-width:70px;
     outline:none;
   }
   .mode-row input[type="number"]{width:88px;}
@@ -272,7 +272,7 @@ th{ white-space:normal; line-height:1.05; }
   .badge-warn{background:var(--badge-amber);border-color:rgba(242,193,78,.36);color:#6a4a00;}
   .badge-bad{background:var(--badge-red);border-color:rgba(255,51,85,.36);color:#6b0014;}
 
-  .btn-row-secondary{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 2px;}
+  .btn-row-secondary{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px;}
 
   .subsection-title{margin-top:10px;font-size:.82rem;font-weight:900;color:var(--text-soft);}
   .footer-note{margin-top:10px;font-size:.68rem;color:var(--text-muted);text-align:right;}
@@ -1328,7 +1328,7 @@ function applyTranslations(){
       lunchMin: 0,        // 0-1440
       changeoverMin: 1,   // 1-1440
       cleanMin: 0,        // 0-1440
-      maintMin: 1,        // 1-1440
+      maintMin: 0,        // 1-1440
       otherMin: 0,        // 0-1440
 
       sharedMin: 0,       // 0-1440
@@ -1483,7 +1483,7 @@ function applyTranslations(){
       clamp(parseFloat(row.lunchMin)||0,0,1440) +
       clamp(parseFloat(row.changeoverMin)||1,1,1440) +
       clamp(parseFloat(row.cleanMin)||0,0,1440) +
-      clamp(parseFloat(row.maintMin)||1,1,1440) +
+      clamp(parseFloat(row.maintMin)||0,0,1440) +
       clamp(parseFloat(row.otherMin)||0,0,1440)
     );
   }
@@ -1849,7 +1849,7 @@ function applyTranslations(){
       ddMinutes(row.lunchMin ?? 0, 0, 1440, 5, v=>{ row.lunchMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
       ddMinutes(row.changeoverMin ?? 1, 1, 1440, 5, v=>{ row.changeoverMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
       ddMinutes(row.cleanMin ?? 0, 0, 1440, 5, v=>{ row.cleanMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
-      ddMinutes(row.maintMin ?? 1, 1, 1440, 5, v=>{ row.maintMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
+      ddMinutes(row.maintMin ?? 0, 0, 1440, 5, v=>{ row.maintMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
       ddMinutes(row.otherMin ?? 0, 0, 1440, 5, v=>{ row.otherMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
 
       ddMinutes(row.sharedMin ?? 0, 0, 1440, 5, v=>{ row.sharedMin=v; saveWB(); renderAll(); scheduleSaveAll(); });
@@ -2754,7 +2754,7 @@ View: ${capViewSel.value||''}`;
       r.pcsPerOp = clamp(parseFloat(r.pcsPerOp)||1,1,99);
       r.udtMinDay = clamp(parseFloat(r.udtMinDay)||0,0,1440);
       if(!isFinite(r.changeoverMin) || r.changeoverMin<1) r.changeoverMin = 1;
-      if(!isFinite(r.maintMin) || r.maintMin<1) r.maintMin = 1;
+      if(!isFinite(r.maintMin) || r.maintMin<0) r.maintMin = 0;
     });
   }
 
