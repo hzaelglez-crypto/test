@@ -47,11 +47,10 @@
     background:var(--bg-main);
     color:var(--text-main);
   }
-
-  .page{
-    max-width:1100px;
-    margin:0 auto;
-    padding:10px 10px 34px;
+.page{
+  max-width:1100px;
+  margin:0 auto;
+  padding:8px 8px 22px; /* más compacto */
   }
 
   .sticky-timer-bar{
@@ -193,14 +192,14 @@
 
   /* ✅ cards con marco pintado por acento */
   .section-card{
-    background:var(--bg-card);
-    border-radius:18px;
-    border:2px solid var(--border-soft);
-    padding:10px 12px 12px;
-    margin-bottom:12px;
-    position:relative;
-    box-shadow:0 10px 22px rgba(10,20,40,.06);
-  }
+  background:var(--bg-card);
+  border-radius:18px;
+  border:2px solid var(--border-soft);
+  padding:8px 10px 10px;   /* menos padding */
+  margin-bottom:10px;      /* menos separación entre secciones */
+  position:relative;
+  box-shadow:0 10px 22px rgba(10,20,40,.06);
+}
   .section-card[data-accent="blue"]{ border-color: rgba(57,189,245,.55); }
   .section-card[data-accent="green"]{ border-color: rgba(24,201,122,.45); }
   .section-card[data-accent="amber"]{ border-color: rgba(242,193,78,.55); }
@@ -211,8 +210,8 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:10px;
-    margin:0 0 8px;
+    gap:8px;
+    margin:0 0 6px;
   }
   .section-title{font-size:1.02rem;font-weight:900;margin:0;}
   .section-tools{display:flex;gap:8px;align-items:center;}
@@ -238,8 +237,8 @@
   .btn-small-wbclear{background:rgba(255,51,85,.10);border-color:rgba(255,51,85,.30);color:#6b0014;}
 
   .mode-row{
-    display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;
-    font-size:.78rem;color:var(--text-soft);
+    display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;
+    font-size:.76rem;color:var(--text-soft);
   }
   .mode-row select,.mode-row input{
     background:#fff;border-radius:10px;border:1px solid var(--border-soft);
@@ -249,12 +248,15 @@
   .mode-row input[type="number"]{width:88px;}
 
   table{width:100%;border-collapse:collapse;font-size:.72rem;}
-  th,td{
-    padding:4px 6px;text-align:right;
-    border-bottom:1px solid rgba(11,18,32,.06);
-    white-space:nowrap;
-    vertical-align:middle;
-  }
+th,td{
+  padding:3px 5px; /* más compacto */
+  text-align:right;
+  border-bottom:1px solid rgba(11,18,32,.06);
+  white-space:nowrap;
+  vertical-align:middle;
+}
+/* ✅ headers pueden partirse en 2 líneas (sin afectar datos) */
+th{ white-space:normal; line-height:1.05; }
   th:first-child,td:first-child{text-align:left;}
   th{
     color:var(--text-soft);font-weight:800;background:rgba(11,18,32,.02);
@@ -270,7 +272,7 @@
   .badge-warn{background:var(--badge-amber);border-color:rgba(242,193,78,.36);color:#6a4a00;}
   .badge-bad{background:var(--badge-red);border-color:rgba(255,51,85,.36);color:#6b0014;}
 
-  .btn-row-secondary{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 4px;}
+  .btn-row-secondary{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 2px;}
 
   .subsection-title{margin-top:10px;font-size:.82rem;font-weight:900;color:var(--text-soft);}
   .footer-note{margin-top:10px;font-size:.68rem;color:var(--text-muted);text-align:right;}
@@ -443,7 +445,7 @@
 
         <div>
           <label for="contractPcd" data-i18n="label.contractPcd">Capacidad contrato (pzs/día)</label><br/>
-          <input id="contractPcd" type="number" min="0" max="99999" step="1"/>
+          <input id="contractPcd" type="number" value="0" min="0" max="99999" step="1"/>
         </div>
 
         <div>
@@ -581,7 +583,8 @@
               <th data-i18n="wb.maint">Mtto</th>
               <th data-i18n="wb.other">Otros</th>
 
-              <th data-i18n="wb.shared">Capacidad compartida</th>
+              <th data-i18n-html="wb.shared">Capacidad<br/>compartida</th>
+
 
               <th data-i18n="wb.udt">DT no planeado (min/día)</th>
 
@@ -906,7 +909,7 @@
       'wb.cleaning':'5S/Clean',
       'wb.maint':'Maintenance',
       'wb.other':'Other',
-      'wb.shared':'Shared Capacity',
+      'wb.shared':'Shared<br>Capacity',
       'wb.udt':'Unplanned DT (min/day)',
       'wb.net':'Net min/day',
       'wb.scrap':'Scrap %',
@@ -981,7 +984,7 @@
       'wb.cleaning':'5S/Limpieza',
       'wb.maint':'Mtto',
       'wb.other':'Otros',
-      'wb.shared':'Capacidad compartida',
+      'wb.shared':'Capacidad<br>compartida',
       'wb.udt':'DT no planeado (min/día)',
       'wb.net':'Min netos/día',
       'wb.scrap':'Scrap %',
@@ -1051,18 +1054,26 @@
 
   let currentLang = localStorage.getItem(LANG_KEY) || 'es';
   function t(key){ return (i18n[currentLang] && i18n[currentLang][key]) || i18n.es[key] || i18n.en[key] || key; }
+function applyTranslations(){
+  // texto normal
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    if(el === btnStart) return;
+    el.textContent = t(key);
+  });
 
-  function applyTranslations(){
-    document.querySelectorAll('[data-i18n]').forEach(el=>{
-      const key = el.dataset.i18n;
-      if(el === btnStart) return;
-      el.textContent = t(key);
-    });
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
-      const key = el.dataset.i18nPlaceholder;
-      el.placeholder = t(key);
-    });
-  }
+  // ✅ i18n con HTML (para headers en 2 líneas)
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    const key = el.dataset.i18nHtml;
+    el.innerHTML = t(key);
+  });
+
+  // placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    const key = el.dataset.i18nPlaceholder;
+    el.placeholder = t(key);
+  });
+}
   function updateLangButtons(){ langButtons.forEach(b=>b.classList.toggle('active', b.dataset.lang === currentLang)); }
 
   function setLanguage(lang){
@@ -1291,7 +1302,7 @@
   function defaultWbRow(){
     const globalHours = clamp(parseFloat(hInput.value)||8, 0, 24);
     const globalContract = clamp(parseFloat(pcdInput.value)||0, 0, 99999);
-    const globalQ = clamp(parseFloat(effInput.value)||100, 0, 100);
+    const globalQ = 100; // ✅ Q% por default (calidad), NO viene del Efficiency%
     const gOp = (processInput.value||'').trim();
 
     return {
@@ -1353,24 +1364,25 @@
   }
 
   function applyGlobalToRow(row){
-    const gHours = clamp(parseFloat(hInput.value)||8,0,24);
-    const gContract = clamp(parseFloat(pcdInput.value)||0,0,99999);
-    const gQ = clamp(parseFloat(effInput.value)||100,0,100);
-    const gOp = (processInput.value||'').trim();
-    const gOpKey = normOp(gOp);
+  const gHours = clamp(parseFloat(hInput.value)||8,0,24);
+  const gContract = clamp(parseFloat(pcdInput.value)||0,0,99999);
+  const gQ = 100; // ✅ Q% por default, NO viene de Efficiency
+  const gOp = (processInput.value||'').trim();
+  const gOpKey = normOp(gOp);
 
-    if(row.opAuto && gOp && gOpKey){
-      row.operation = gOp;
-      row.opAutoKey = gOpKey;
-    }
-    if(row.hoursAuto) row.hours = gHours;
-    if(row.contractAuto) row.contractPcd = gContract;
-    if(row.qAuto) row.oeeQ = gQ;
-
-    row.pcsPerOp = clamp(parseFloat(row.pcsPerOp)||1,1,99);
-    row.udtMinDay = clamp(parseFloat(row.udtMinDay)||0,0,1440);
+  if(row.opAuto && gOp && gOpKey){
+    row.operation = gOp;
+    row.opAutoKey = gOpKey;
   }
+  if(row.hoursAuto) row.hours = gHours;
+  if(row.contractAuto) row.contractPcd = gContract;
 
+  // ✅ Solo aplica Q global si quieres “Q default = 100”
+  if(row.qAuto) row.oeeQ = gQ;
+
+  row.pcsPerOp = clamp(parseFloat(row.pcsPerOp)||1,1,99);
+  row.udtMinDay = clamp(parseFloat(row.udtMinDay)||0,0,1440);
+}
   function ensureWbRowForOperation(opName){
     const op = (opName||'').trim();
     const opKey = normOp(op);
@@ -2725,6 +2737,9 @@ View: ${capViewSel.value||''}`;
     modeSelect.value   = (snap.settings.mode ?? 'CT');
     effInput.value     = (snap.settings.efficiency ?? '100');
     pcdInput.value     = (snap.settings.contractPcd ?? '');
+    if(pcdInput.value === '' || pcdInput.value === null || pcdInput.value === undefined){
+  pcdInput.value = '0';
+}
     hInput.value       = (snap.settings.hoursPerDay ?? '8');
     dInput.value       = (snap.settings.daysPerWeek ?? '5');
     capViewSel.value   = (snap.settings.capView ?? 'hour');
