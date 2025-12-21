@@ -2045,21 +2045,29 @@ function applyTranslations(){
       clamp(parseFloat(row.otherMin)||0,0,1440)
     );
   }
-function netMinPerDay(row){
-  const gross = row.hours * 60 * row.machines;
+  function netMinPerDay(row){
+  // Gross = horas * 60 * máquinas
+  const hours = clamp(parseFloat(row.hours)||0, 0, 24);
+  const machines = clamp(parseFloat(row.machines)||1, 1, 50);
+  const gross = hours * 60 * machines;
 
-  const planned = row.lunch + row.changeover + row.fiveS + row.maint + row.other;
+  // Planned losses (min/día) — TODOS son por proceso (no por máquina)
+  const planned =
+    clamp(parseFloat(row.lunchMin)||0, 0, 1440) +
+    clamp(parseFloat(row.changeoverMin)||0, 0, 1440) +
+    clamp(parseFloat(row.cleanMin)||0, 0, 1440) +
+    clamp(parseFloat(row.maintMin)||0, 0, 1440) +
+    clamp(parseFloat(row.otherMin)||0, 0, 1440);
 
-  // ✅ SharedMin se interpreta como "min/día por máquina"
-  const sharedTotal = row.sharedMin * row.machines;
+  // SharedMin = min/día POR MÁQUINA → totaliza por máquinas
+  const sharedTotal = clamp(parseFloat(row.sharedMin)||0, 0, 1440) * machines;
 
-  const unplanned = row.unplannedMin;
+  // Unplanned DT (min/día) — tu campo real es udtMinDay
+  const unplanned = clamp(parseFloat(row.udtMinDay)||0, 0, 1440);
 
   return Math.max(0, gross - planned - sharedTotal - unplanned);
 }
-  }
 
-  function yieldFromScrap(row){
     const scrap = clamp(parseFloat(row.scrapPct)||0,0,100);
     return (100 - scrap)/100;
   }
