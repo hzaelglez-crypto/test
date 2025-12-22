@@ -1298,6 +1298,7 @@ if(btnScClear){
   }
 
   function scNetAvailMinDay(m){
+    let scSimMachinesDelta = 0;
     const availOne = clamp(parseFloat(m.availMinDay)||0,0,1440);
     const machines = clamp(parseFloat(m.machines)||1,1,50) + scSimMachinesDelta;
     const availTotal = availOne * machines;
@@ -1309,45 +1310,6 @@ if(btnScClear){
   }
 
   function scTotalRequiredMinDay(m){
-    function scBuildSummary(){
-  if(!Array.isArray(scMachines) || !scMachines.length){
-    return 'Shared Capacity: sin datos';
-  }
-
-  const msgs = [];
-
-  scMachines.forEach(m=>{
-    if(!m.syncToWB) return;
-
-    const req = scTotalRequiredMinDay(m);
-    const avail =
-      Math.max(
-        0,
-        (m.availMinDay||0) -
-        (m.plannedDT||0) -
-        (m.unplannedDT||0)
-      );
-
-    if(req > avail){
-      const gap = Math.round(req - avail);
-      msgs.push(`❌ ${m.operation}: faltan ${gap} min/día`);
-
-      if(m.parts?.some(p=>p.ctSec > 120)){
-        msgs.push('⚠ CT alto');
-      }
-      if(m.parts?.some(p=>p.scrapPct > 5)){
-        msgs.push('⚠ Scrap alto');
-      }
-      if((m.plannedDT||0) > 60){
-        msgs.push('⚠ Changeover alto');
-      }
-    }else{
-      msgs.push(`✅ ${m.operation}: capacidad OK`);
-    }
-  });
-
-  return msgs.join(' · ');
-}
     const parts = Array.isArray(m.parts) ? m.parts : [];
     return parts.reduce((sum,p)=> sum + scDailyMinutesRequired(p,m), 0);
   }
@@ -1682,6 +1644,10 @@ if(m.syncToWB){
         });
         tdNode(sel);
       }
+      function getCurrentCT(){
+  const st = buildContractLinesForCurrentSelection().st;
+  return st?.median || 0;
+}
 renderSharedSummary(m, {
   dailyDemand: pcdInput.value,
   ctSec: getCurrentCT(),
