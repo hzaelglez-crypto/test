@@ -33,6 +33,31 @@
     --badge-green:rgba(24,201,122,.14);
     --badge-red:rgba(255,51,85,.14);
     --badge-amber:rgba(242,193,78,.14);
+    .sc-summary{
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+  gap:12px;
+  margin-bottom:12px;
+}
+.sc-summary-block{
+  border:1px solid #e0e6ef;
+  border-radius:10px;
+  padding:10px 12px;
+  background:#f9fbff;
+  font-size:13px;
+}
+.sc-summary-reco{
+  grid-column:1/-1;
+  border-radius:10px;
+  padding:12px;
+  background:#fff6e5;
+  border:1px solid #ffd58a;
+  font-size:14px;
+}
+.sc-ok{color:#1a7f37;font-weight:600;}
+.sc-warn{color:#9a6700;font-weight:600;}
+.sc-bad{color:#b42318;font-weight:600;}
+
 
     /* WB sticky sizing */
     --wb-on-w:56px;
@@ -654,6 +679,12 @@ th{ white-space:normal; line-height:1.05; }
       </div>
     </div>
     <!-- 4.5) Shared Capacity -->
+    <div id="scSummaryBox" class="sc-summary">
+  <div id="scMachineSummary" class="sc-summary-block"></div>
+  <div id="scOperationSummary" class="sc-summary-block"></div>
+  <div id="scRecommendation" class="sc-summary-reco"></div>
+</div>
+
     <div class="section-card" data-accent="red" id="secSharedCapacity">
       <div class="section-head">
         <div class="section-title">Shared Capacity (Capacidad compartida)</div>
@@ -1058,7 +1089,65 @@ function lockBtn(btn, ms=6000){
     /* =======================
      ✅ SHARED CAPACITY MODEL
      ======================= */
+  function renderSharedSummary(machine, main){
+  if(!machine) return;
+
+  const pool =
+    (machine.hours||24)*60*(machine.machines||1)
+    - (machine.plannedDT||0)
+    - (machine.unplannedDT||0);
+
+  const sharedReq = scTotalRequiredMinDay(machine);
+
+  const utilShared = pool>0 ? (sharedReq/pool)*100 : 0;
+
+  const remain = Math.max(0, pool - sharedReq);
+
+  const mainReq =
+    ((main.dailyDemand||0)*(main.ctSec||0))/60;
+
+  // --- MACHINE SUMMARY ---
+  document.getElementById('scMachineSummary').innerHTML = `
+    <b>Shared Capacity – Máquina</b><br>
+    Disponibles netos: ${pool.toFixed(0)} min/día<br>
+    Requeridos (otros OEM): ${sharedReq.toFixed(1)} min/día<br>
+    Utilización: <span class="${utilShared>100?'sc-bad':utilShared>90?'sc-warn':'sc-ok'}">
+      ${utilShared.toFixed(1)}%
+    </span>
+  `;
+
+  // --- OPERATION SUMMARY ---
+  const okMain = remain >= mainReq;
+  document.getElementById('scOperationSummary').innerHTML = `
+    <b>Impacto en tu operación</b><br>
+    Min restantes: ${remain.toFixed(0)} min/día<br>
+    Min requeridos (tu contrato): ${mainReq.toFixed(0)} min/día<br>
+    Resultado:
+    <span class="${okMain?'sc-ok':'sc-bad'}">
+      ${okMain?'ALCANZA':'NO ALCANZA'}
+    </span>
+  `;
+
+  // --- RECOMMENDATION ---
+  let reco = '';
+  if(!okMain){
+    const needMachines = Math.ceil(mainReq / (remain/(machine.machines||1)));
+    const targetCT = (remain*60)/(main.dailyDemand||1);
+    reco = `
+      <b>Recomendaciones:</b><br>
+      • Agregar ${needMachines} máquina(s)<br>
+      • o bajar CT a ${targetCT.toFixed(1)} s<br>
+      • o reducir ${Math.abs(remain-mainReq).toFixed(0)} min/día de carga compartida
+    `;
+  }else{
+    reco = `<b>Estado:</b> Capacidad suficiente. No se requiere acción.`;
+  }
+
+  document.getElementById('scRecommendation').innerHTML = reco;
+}
+
   const SC_KEY = 'taktlabSharedCapacity_v1';
+  
 
   const scBody = document.getElementById('scBody');
   const btnScAddMachine = document.getElementById('btnScAddMachine');
@@ -1371,6 +1460,10 @@ row.sharedMin = clamp(snap5(reqPerMachine), 0, 1440);
         });
         tdNode(sel);
       }
+renderSharedSummary(m, {
+  dailyDemand: pcdInput.value,
+  ctSec: getCurrentCT(),
+});
 
       // Avail 0-1440
       {
