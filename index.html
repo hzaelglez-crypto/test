@@ -1287,15 +1287,31 @@ function lockBtn(btn, ms=6000){
     if(util <= 100) return {cls:'badge-warn', txt:'Riesgo'};
     return {cls:'badge-bad', txt:'No Capacity'};
   }
-
   function scSyncToWB(m){
+  if(!m || !m.operation) return;
+
+  const opKey = normOp(m.operation);
+  ensureWbRowForOperation(m.operation);
+
+  const row = wbRows.find(r => normOp(r.operation) === opKey);
+  if(!row) return;
+
+  // minutos requeridos TOTALES por día
+  const reqTotal = scTotalRequiredMinDay(m);
+
+  // repartir por máquina
+  const machines = Math.max(1, parseInt(row.machines || 1,10));
+  const perMachine = reqTotal / machines;
+
+  row.sharedMin = Math.round(perMachine);
+
+  saveWB();
+}
+function scSyncToWB(m){
   const op = (m.operation || "").trim();
   if(!op) return;
 
-  // total requerido por día (todas las máquinas del recurso)
-  const reqTotal = scTotalRequiredMinDay(m);
-
-  // ✅ convertir a "min/día por máquina" para WB (porque WB lo multiplica por Machines)
+  const reqTotal = scTotalRequiredMinDay(m); // min/día TOTAL
   const machines = Math.max(1, parseInt(m.machines || 1, 10));
   const reqPerMachine = reqTotal / machines;
 
@@ -1303,10 +1319,8 @@ function lockBtn(btn, ms=6000){
 
   const row = wbRows.find(r => normOp(r.operation) === normOp(op));
   if(row){
-    const snap5 = (x)=> Math.round(x/5)*5;
-row.sharedMin = clamp(snap5(reqPerMachine), 0, 1440);
+    row.sharedMin = Math.round(reqPerMachine); // 🔥 CLAVE
     saveWB();
-    renderWB();
   }
 }
   function scEnsureWbRowExists(op){
@@ -1421,7 +1435,10 @@ if(simNote){
         inp.checked = !!m.enabled;
         inp.addEventListener('change',()=>{
           m.enabled = !!inp.checked;
-          saveSC(); renderAll();
+          saveSC();
+if(m.syncToWB) scSyncToWB(m);
+renderAll();
+
         });
         tdNode(inp);
       }
@@ -1704,8 +1721,7 @@ renderSharedSummary(m, {
 
   if(btnScAddMachine){
     btnScAddMachine.addEventListener('click',()=>{
-      lockBtn(btnScAddMachine,6000);
-      const m = defaultScMachine();
+            const m = defaultScMachine();
       scEnsureWbRowExists(m.operation);
       scMachines.push(m);
       saveSC(); renderAll();
@@ -1714,7 +1730,6 @@ renderSharedSummary(m, {
 
   if(btnScClear){
     btnScClear.addEventListener('click',()=>{
-      lockBtn(btnScClear,6000);
       if(!confirm('¿Borrar TODO Shared Capacity?')) return;
       scMachines = [];
       saveSC(); renderAll();
@@ -1723,7 +1738,6 @@ renderSharedSummary(m, {
 
   if(btnCopyShared){
     btnCopyShared.addEventListener('click',()=>{
-      lockBtn(btnCopyShared,6000);
       copyText(scCopyAllText());
     });
   }
