@@ -1428,7 +1428,21 @@ if(simNote){
 }
 
     scBody.innerHTML = '';
-    
+ // ===== Shared Capacity – Recommendations =====
+const scReco = document.createElement('div');
+scReco.className = 'sc-reco';
+scReco.style.margin = '6px 0 12px';
+scReco.style.padding = '6px 10px';
+scReco.style.background = '#fff7e6';
+scReco.style.border = '1px solid #f2c14e';
+scReco.style.borderRadius = '8px';
+scReco.style.fontSize = '.78rem';
+scReco.style.fontWeight = '600';
+
+scReco.textContent = scBuildRecommendations();
+scWrap.appendChild(scReco);
+// ============================================
+   
 // ===== Shared Capacity – Executive Summary =====
 const scSummary = document.createElement('div');
 scSummary.className = 'sc-summary';
@@ -1442,6 +1456,60 @@ scSummary.style.fontWeight = '600';
 
 scSummary.textContent = scBuildSummary();
 scWrap.appendChild(scSummary);
+
+function scBuildRecommendations(){
+  if(!Array.isArray(scMachines) || !scMachines.length){
+    return 'Recomendaciones: sin datos';
+  }
+
+  const tips = [];
+
+  scMachines.forEach(m=>{
+    if(!m.syncToWB) return;
+
+    const req = scTotalRequiredMinDay(m);
+    const avail =
+      Math.max(
+        0,
+        (m.availMinDay||0) -
+        (m.plannedDT||0) -
+        (m.unplannedDT||0)
+      );
+
+    if(req <= avail){
+      tips.push(`✔ ${m.operation}: no requiere acción`);
+      return;
+    }
+
+    const gap = Math.round(req - avail);
+
+    // 1) +1 máquina
+    const addMachineGain = Math.round(avail);
+    tips.push(`➕ ${m.operation}: +1 máquina recupera ~${addMachineGain} min/día`);
+
+    // 2) CT objetivo
+    const worstCT = Math.max(...(m.parts||[]).map(p=>p.ctSec||0));
+    if(worstCT > 0){
+      const targetCT = Math.max(1, Math.round(worstCT * 0.85));
+      tips.push(`⏱ ${m.operation}: CT objetivo ≈ ${targetCT}s`);
+    }
+
+    // 3) Changeover
+    if((m.plannedDT||0) > 60){
+      tips.push(`🔁 ${m.operation}: reduce changeover (>${m.plannedDT} min/día)`);
+    }
+
+    // 4) Scrap
+    if(m.parts?.some(p=>(p.scrapPct||0) > 5)){
+      tips.push(`🧪 ${m.operation}: scrap >5%, atacar calidad`);
+    }
+
+    tips.push(`❗ Gap actual: ${gap} min/día`);
+  });
+
+  return tips.join(' · ');
+}
+   
 // ===============================================
 
     const ops = getOperationOptions();
