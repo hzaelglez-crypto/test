@@ -1496,6 +1496,13 @@ renderAll();
         });
         tdNode(inp);
       }
+if(m.syncToWB){
+  const wbRow = wbRows.find(r => normOp(r.operation) === normOp(m.operation));
+  if(wbRow){
+    wbRow.sharedMin = Math.round(req); // min/día desde Shared
+    saveWB();
+  }
+}
 
       // Operation selector
       {
