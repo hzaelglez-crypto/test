@@ -3451,17 +3451,7 @@ function restoreState(){
 
   loadSC();
 }
-    try{
-      currentLang = (snap.lang==='en') ? 'en' : (localStorage.getItem(LANG_KEY)||'es');
-    }catch(e){}
-
-    processInput.value = (snap.settings.processName ?? '');
-    modeSelect.value   = (snap.settings.mode ?? 'CT');
-    effInput.value     = (snap.settings.efficiency ?? '100');
-    pcdInput.value     = (snap.settings.contractPcd ?? '');
-    if(pcdInput.value === '' || pcdInput.value === null || pcdInput.value === undefined){
-  pcdInput.value = '0';
-}
+   
     hInput.value       = (snap.settings.hoursPerDay ?? '8');
     dInput.value       = (snap.settings.daysPerWeek ?? '5');
     capViewSel.value   = (snap.settings.capView ?? 'hour');
@@ -3514,46 +3504,6 @@ function restoreState(){
   window.addEventListener('resize',()=>{ renderCharts(); });
 
 })();
-  /* =========================================================
-   COPIAR POR SECCIÓN – IMPLEMENTACIÓN SIMPLE Y FUNCIONAL
-   ========================================================= */
-
-// Copia texto "visible" de una sección
-  // Clonamos para no afectar la UI
-  const clone = sec.cloneNode(true);
-
-  // Quitamos botones para que no se copien
-  clone.querySelectorAll('button').forEach(b=>b.remove());
-
-  // Reemplazamos inputs/selects por su valor
-  clone.querySelectorAll('input, select, textarea').forEach(el=>{
-    const span = document.createElement('span');
-    span.textContent = el.value ?? '';
-    el.replaceWith(span);
-  });
-
-  const text = clone.innerText.trim();
-  if(!text){
-    alert('La sección está vacía, no hay nada que copiar.');
-    return;
-  }
-
-  // Clipboard moderno + fallback
-  try{
-    navigator.clipboard.writeText(text);
-    alert('✅ Copiado al portapapeles');
-  }catch(e){
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    alert('✅ Copiado al portapapeles');
-  }
-}
-  // === SHARED CAPACITY CORE ===
-  if(m.enabled && m.syncToWB) scSyncToWB(m);
 </script>
 </body>
 </html>
