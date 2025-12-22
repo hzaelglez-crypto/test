@@ -1179,13 +1179,40 @@ function lockBtn(btn, ms=6000){
 // ===============================
 if(btnScAddMachine){
   btnScAddMachine.addEventListener('click', ()=>{
-    const m = defaultScMachine();   // crea máquina con defaults
-    scMachines.push(m);             // la agrega al modelo
-    saveSC();                        // guarda en localStorage
-    renderAll();                     // vuelve a pintar todo
+    const m = defaultScMachine();
+    scMachines.push(m);
+    saveSC();
+    renderAll();
   });
 }
 
+// ===============================
+// Shared Capacity – Clear All (incluye WB)
+// ===============================
+if(btnScClear){
+  btnScClear.addEventListener('click', ()=>{
+    const ok = confirm(
+      currentLang === 'es'
+        ? 'Esto borrará Shared Capacity y limpiará WB. ¿Continuar?'
+        : 'This will clear Shared Capacity AND WB. Continue?'
+    );
+    if(!ok) return;
+
+    // 1️⃣ Limpiar modelo Shared
+    scMachines = [];
+    localStorage.removeItem(SC_KEY);
+
+    // 2️⃣ Limpiar WB: sharedMin = 0 en todas las filas
+    wbRows.forEach(r=>{
+      r.sharedMin = 0;
+    });
+    saveWB();
+
+    // 3️⃣ Redibujar todo
+    renderAll();
+  });
+}
+}
   let scMachines = [];
 
   function loadSC(){
