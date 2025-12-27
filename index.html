@@ -1841,6 +1841,9 @@ function applyTranslations(){
     const recN = sampleReqN(cv);
     const errPct = estErrorPct(cv,n);
     const ratio=n/recN;
+    const skewAbs = Math.abs(st.mean - st.median);
+    const normalBy3Sigma = skewAbs <= (0.5 * st.std);
+
 
     let cls='sample-warn', tail='';
     if(ratio<0.6){
@@ -1863,9 +1866,15 @@ function applyTranslations(){
     const head = (currentLang==='es')
       ? `Tamaño de muestra: ${n} / ${recN} · Error estimado: ±${errPct.toFixed(1)}% (95%) – `
       : `Sample size: ${n} / ${recN} · Est. error: ±${errPct.toFixed(1)}% (95%) – `;
+    const distTag = normalBy3Sigma
+  ? (currentLang==='es' ? 'Distribución estable (≈ normal)' : 'Stable distribution (≈ normal)')
+  : (currentLang==='es' ? 'Distribución sesgada (no normal)' : 'Skewed distribution (non-normal)');
 
-    return {cls, text: head + tail};
-  }
+
+return {
+  cls,
+  text: head + tail + ' · ' + distTag
+};
 
   function copyText(text){
     try{ navigator.clipboard.writeText(text); }
@@ -3416,12 +3425,11 @@ View: ${capViewSel.value||''}`;
 
   function restoreState(){
     const raw = localStorage.getItem(TL_STATE_KEY);
-    if(!raw){
-      loadWB();
-      return;
-        // ✅ load shared capacity
-    loadSC();
-    scRender(); 
+if(!raw){
+  loadWB();
+  loadSC();
+  scRender();
+  return;
 }
     const snap = safeJsonParse(raw);
     if(!snap || !snap.settings) { loadWB(); return; }
