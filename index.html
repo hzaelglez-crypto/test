@@ -656,7 +656,7 @@ th{ white-space:normal; line-height:1.05; }
     <!-- 4.5) Shared Capacity -->
     <div class="section-card" data-accent="red" id="secSharedCapacity">
       <div class="section-head">
-        <div class="section-title">Shared Cap (Cap comp)</div>
+        <div class="section-title">Shared Cap</div>
         <div class="section-tools">
           <button class="btn-small btn-small-wbadd" id="btnScAddMachine">+ máq</button>
           <button class="btn-small btn-small-wbclear" id="btnScClear">- Borrar</button>
@@ -1740,7 +1740,7 @@ function applyTranslations(){
   });
 
   function flashCard(){ timerCard.classList.add('flash'); setTimeout(()=>timerCard.classList.remove('flash'),120); }
-  function vibrate(ms=60){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
+  function vibrate(ms=90){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
 
   function ensureDefaults(){
     let proc=(processInput.value||'').trim();
@@ -2036,7 +2036,7 @@ return {
 
   btnLap.addEventListener('click',()=>{
     lockBtn(btnLap,1000);
-    flashCard(); vibrate(60);
+    flashCard(); vibrate(90);
     addLap();
   });
 
