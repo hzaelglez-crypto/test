@@ -1740,7 +1740,7 @@ function applyTranslations(){
   });
 
   function flashCard(){ timerCard.classList.add('flash'); setTimeout(()=>timerCard.classList.remove('flash'),120); }
-  function vibrate(ms=18){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
+  function vibrate(ms=60){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
 
   function ensureDefaults(){
     let proc=(processInput.value||'').trim();
