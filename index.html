@@ -3663,14 +3663,12 @@ function restoreState(){
 
   laps = Array.isArray(snap.laps) ? snap.laps : [];
   nextId = snap.nextId || (laps.length + 1);
-
   wbRows = Array.isArray(snap.wbRows) ? snap.wbRows : [];
 
   loadSC();
   scRender();
   renderAll();
-}
-  
+}  
   restoreState();
 </script>
 </body>
