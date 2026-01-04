@@ -465,49 +465,44 @@ th{ white-space:normal; line-height:1.05; }
     <!-- =========================
      INFORMACIÓN DEL ESTUDIO
      ========================= -->
-<div class="section-card" id="secStudyInfo">
-  <div class="section-title">
-    Información del Estudio
+<hr style="margin:12px 0;border:none;border-top:1px dashed var(--border-soft);"/>
+
+<div class="mode-row">
+  <div>
+    <label data-i18n="study.plant">Planta</label><br/>
+    <input id="studyPlant" type="text"/>
   </div>
 
-  <div class="grid-7">
-    <div>
-      <label>Planta</label>
-      <input id="studyPlant" type="text" placeholder="Ej. BCS Reynosa">
-    </div>
+  <div>
+    <label data-i18n="study.area">Área / Línea</label><br/>
+    <input id="studyArea" type="text"/>
+  </div>
 
-    <div>
-      <label>Área / Línea</label>
-      <input id="studyArea" type="text" placeholder="Ej. SMT Línea 3">
-    </div>
+  <div>
+    <label data-i18n="study.date">Fecha</label><br/>
+    <input id="studyDate" type="date"/>
+  </div>
 
-    <div>
-      <label>Fecha</label>
-      <input id="studyDate" type="date">
-    </div>
+  <div>
+    <label data-i18n="study.time">Hora</label><br/>
+    <input id="studyTime" type="time"/>
+  </div>
 
-    <div>
-      <label>Hora</label>
-      <input id="studyTime" type="time">
-    </div>
+  <div>
+    <label data-i18n="study.site">Sitio / Cliente</label><br/>
+    <input id="studySite" type="text"/>
+  </div>
 
-    <div>
-      <label>Sitio / Cliente</label>
-      <input id="studySite" type="text" placeholder="Ej. GM">
-    </div>
+  <div>
+    <label data-i18n="study.contact">Contacto</label><br/>
+    <input id="studyContact" type="text"/>
+  </div>
 
-    <div>
-      <label>Contacto</label>
-      <input id="studyContact" type="text" placeholder="Responsable">
-    </div>
-
-    <div>
-      <label>Analista</label>
-      <input id="studyAnalyst" type="text" placeholder="Nombre">
-    </div>
+  <div>
+    <label data-i18n="study.analyst">Analista</label><br/>
+    <input id="studyAnalyst" type="text"/>
   </div>
 </div>
-
     <!-- 1) Configuración de Medición -->
     <div class="section-card" data-accent="blue" id="secSetup">
       <div class="section-head">
@@ -1019,6 +1014,14 @@ th{ white-space:normal; line-height:1.05; }
 
   const i18n = {
     en:{
+      'study.plant':'Plant',
+      'study.area':'Area / Line',
+      'study.date':'Date',
+      'study.time':'Time',
+      'study.site':'Site / Customer',
+      'study.contact':'Contact',
+      'study.analyst':'Analyst',
+
       'title.subtitle':'Cycle Time & Capacity Analyzer',
       'btn.start':'Start','btn.pause':'Pause','btn.lap':'LAP',
       'btn.copyAll':'Copy All','btn.copySummary':'Copy Summary','btn.addManualLap':'Add Manual Lap','btn.reset':'Reset',
@@ -1094,6 +1097,14 @@ th{ white-space:normal; line-height:1.05; }
       'wb.opsSum':'Operators total:'
     },
     es:{
+      'study.plant':'Planta',
+      'study.area':'Área / Línea',
+      'study.date':'Fecha',
+      'study.time':'Hora',
+      'study.site':'Sitio / Cliente',
+      'study.contact':'Contacto',
+      'study.analyst':'Analista',
+
       'title.subtitle':'Analizador de Tiempo de Ciclo y Capacidad',
       'btn.start':'Iniciar','btn.pause':'Pausar','btn.lap':'VUELTA',
       'btn.copyAll':'Copiar todo','btn.copySummary':'Copiar resumen','btn.addManualLap':'Agregar vuelta manual','btn.reset':'Reiniciar',
