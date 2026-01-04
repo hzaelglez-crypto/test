@@ -463,7 +463,6 @@ th{ white-space:normal; line-height:1.05; }
 
   <div class="content-section">
     <!-- 1) Configuración de Medición -->
-    <div class="section-card" data-accent="blue" id="secSetup">
       <div class="section-card" id="secMeasurementSetup" data-accent="blue">
 
           <!-- =========================
@@ -3515,10 +3514,17 @@ document.addEventListener('click', (e)=>{
   if(id==='btnCopySum')
     return copyTextLocked(e.target, buildSummaryText());
 
-  if(id==='btnCopySetup'){
-    const header = getStudyHeaderText();
-    const txt =
-`${header ? header + '\n' : ''}MEASUREMENT SETUP
+if(id==='btnCopySetup'){
+  const txt =
+`MEASUREMENT SETUP
+Plant: ${document.getElementById('studyPlant')?.value || ''}
+Area / Line: ${document.getElementById('studyArea')?.value || ''}
+Date: ${document.getElementById('studyDate')?.value || ''}
+Time: ${document.getElementById('studyTime')?.value || ''}
+Site / Customer: ${document.getElementById('studySite')?.value || ''}
+Contact: ${document.getElementById('studyContact')?.value || ''}
+Analyst: ${document.getElementById('studyAnalyst')?.value || ''}
+
 Process: ${processInput.value || ''}
 Mode: ${modeSelect.value || ''}
 Efficiency %: ${effInput.value || ''}
@@ -3526,11 +3532,12 @@ Contract pcs/day: ${pcdInput.value || ''}
 Hours/day: ${hInput.value || ''}
 Days/week: ${dInput.value || ''}
 Capacity view: ${capViewSel.value || ''}
+
 Language: ${currentLang}
 Timestamp: ${new Date().toISOString()}
 `;
-    return copyTextLocked(e.target, txt);
-  }
+  return copyTextLocked(e.target, txt);
+}
 
   if(id==='btnCopyControls')
     return copyTextLocked(
