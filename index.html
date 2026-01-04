@@ -924,24 +924,24 @@ th{ white-space:normal; line-height:1.05; }
   const wbConstraintNote = document.getElementById('wbConstraintNote');
   const wbOperatorsSum = document.getElementById('wbOperatorsSum');
   const methodGuideText = document.getElementById('methodGuideText');
-  function getStudyHeaderText(){
-  const rows = [
-    ['PLANTA', studyPlant.value],
-    ['ÁREA / LÍNEA', studyArea.value],
-    ['FECHA', studyDate.value],
-    ['HORA', studyTime.value],
-    ['SITIO / CLIENTE', studySite.value],
-    ['CONTACTO', studyContact.value],
-    ['ANALISTA', studyAnalyst.value],
-    ['VERSIÓN', 'TaktLab']
-  ];
+  btnCopySetup.addEventListener('click',()=>{
+  const header = getStudyHeaderText();
 
-  let out = [];
-  rows.forEach(([k,v])=>{
-    if(v && String(v).trim() !== ''){
-      out.push(`${k}: ${v}`);
-    }
-  });
+  const txt =
+`${header ? header + '\n' : ''}MEASUREMENT SETUP
+Process: ${processInput.value || ''}
+Mode: ${modeSelect.value || ''} (${modeSelect.value==='MLD' ? 'Machine & Load/Unload' : 'Cycle Time'})
+Efficiency %: ${effInput.value || '100'}
+Contract (pcs/day): ${pcdInput.value || '0'}
+Hours / Day: ${hInput.value || '0'}
+Days / Week: ${dInput.value || '0'}
+Capacity View: ${capViewSel.value || ''}
+Language: ${currentLang}
+Timestamp: ${new Date().toISOString()}
+`;
+
+  copyTextLocked(btnCopySetup, txt);
+});
 
   if(out.length){
     out.push('--------------------------------');
