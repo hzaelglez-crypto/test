@@ -3490,8 +3490,11 @@ document.addEventListener('click', (e)=>{
   const id = e.target?.id;
   if(!id) return;
 
-  if(id==='btnCopyAll')   return copyTextLocked(e.target, buildAllText());
-  if(id==='btnCopySum')   return copyTextLocked(e.target, buildSummaryText());
+  if(id==='btnCopyAll')
+    return copyTextLocked(e.target, buildAllText());
+
+  if(id==='btnCopySum')
+    return copyTextLocked(e.target, buildSummaryText());
 
   if(id==='btnCopySetup'){
     const header = getStudyHeaderText();
@@ -3511,17 +3514,25 @@ Timestamp: ${new Date().toISOString()}
   }
 
   if(id==='btnCopyControls')
-    return copyTextLocked(e.target,'DATA CONTROLS\nCopy Summary / Copy All / Manual Lap / Reset');
+    return copyTextLocked(
+      e.target,
+      'DATA CONTROLS\nCopy Summary / Copy All / Manual Lap / Reset'
+    );
 
   if(id==='btnCopyContract'){
     const b = buildContractLinesForCurrentSelection();
-    return copyTextLocked(e.target,[b.l1,b.l2,b.l3,b.l4].join('\n'));
+    return copyTextLocked(
+      e.target,
+      [b.l1,b.l2,b.l3,b.l4].join('\n')
+    );
   }
 
   if(id==='btnCopyFocus'){
     let out=[];
     out.push('FOCUS TABLE');
-    out.push('Process\tMode\tN\tSample/Error\tStd\tCV%\tCTmed\tP10\tP90\tCur@Eff\tPot@Eff\tWst@Eff\tContract\tGap\t%vs\tCp\tCpk');
+    out.push(
+      'Process\tMode\tN\tSample/Error\tStd\tCV%\tCTmed\tP10\tP90\tCur@Eff\tPot@Eff\tWst@Eff\tContract\tGap\t%vs\tCp\tCpk'
+    );
     [...focusBody.querySelectorAll('tr')].forEach(tr=>{
       const tds=[...tr.querySelectorAll('td')]
         .map(td=>td.textContent.replace(/\s+/g,' ').trim());
@@ -3534,7 +3545,9 @@ Timestamp: ${new Date().toISOString()}
     lockBtn(e.target,6000);
     let out=[];
     out.push(`WB EXPORT (${new Date().toISOString()})`);
-    out.push('On\tOperation\tOperators\tShifts\tHours\tMachines\tPcs/Op\tContract\tNetMin\tOEE%\tYield%\tCT\tCap@OEE\t%vs\tUDT');
+    out.push(
+      'On\tOperation\tOperators\tShifts\tHours\tMachines\tPcs/Op\tContract\tNetMin\tOEE%\tYield%\tCT\tCap@OEE\t%vs\tUDT'
+    );
 
     wbRows.forEach(r=>{
       const net = netMinPerDay(r);
@@ -3564,12 +3577,16 @@ Timestamp: ${new Date().toISOString()}
         clamp(+r.udtMinDay||0,0,1440)
       ].join('\t'));
     });
+
     return copyText(out.join('\n'));
   }
 
   if(id==='btnCopyCharts'){
     const v = chartSelect.value || '';
-    return copyTextLocked(e.target,`CHARTS\nSelected: ${v}\n(Charts are visual only)`);
+    return copyTextLocked(
+      e.target,
+      `CHARTS\nSelected: ${v}\n(Charts are visual only)`
+    );
   }
 
   if(id==='btnCopyRaw'){
@@ -3590,11 +3607,23 @@ Timestamp: ${new Date().toISOString()}
     });
     const header = getStudyHeaderText();
     const body = out.join('\n');
-    return copyTextLocked(e.target, header ? `${header}\n${body}` : body);
+    return copyTextLocked(
+      e.target,
+      header ? `${header}\n${body}` : body
+    );
   }
 
   if(id==='btnCopyGuide')
-    return copyTextLocked(e.target, methodGuideText.textContent || '');
+    return copyTextLocked(
+      e.target,
+      methodGuideText.textContent || ''
+    );
+}); // ⬅️ CIERRE CORRECTO DEL EVENT LISTENER
+
+
+// ==================================================
+// ✅ RESTORE STATE (FUERA DE CUALQUIER LISTENER)
+// ==================================================
 function restoreState(){
   const raw = localStorage.getItem(TL_STATE_KEY);
 
@@ -3624,16 +3653,18 @@ function restoreState(){
   dInput.value       = snap.settings.daysPerWeek || 5;
   capViewSel.value   = snap.settings.capView || 'hour';
 
-  laps = Array.isArray(snap.laps) ? snap.laps : [];
+  laps   = Array.isArray(snap.laps)   ? snap.laps   : [];
   nextId = snap.nextId || (laps.length + 1);
-
   wbRows = Array.isArray(snap.wbRows) ? snap.wbRows : [];
 
   loadSC();
   scRender();
   renderAll();
-}  
+}
+
+// 👉 UNA SOLA LLAMADA
 restoreState();
+
 </script>
 </body>
 </html>
