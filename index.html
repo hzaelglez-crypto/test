@@ -3490,108 +3490,167 @@ If Sync to WB is ON, shared minutes populate WB sharedMin column.
     return lines.join('\n');
   }
 
-  // ✅ botones copiar por sección
-  btnCopyAll.addEventListener('click',()=>copyTextLocked(btnCopyAll, buildAllText()));
-  btnCopySum.addEventListener('click',()=>copyTextLocked(btnCopySum, buildSummaryText()));
+ // ==================================================
+// ✅ BOTONES COPIAR POR SECCIÓN (VERSIÓN CORREGIDA)
+// ==================================================
 
-  btnCopySetup.addEventListener('click',()=>{
+if (btnCopyAll) {
+  btnCopyAll.addEventListener('click', () =>
+    copyTextLocked(btnCopyAll, buildAllText())
+  );
+}
+
+if (btnCopySum) {
+  btnCopySum.addEventListener('click', () =>
+    copyTextLocked(btnCopySum, buildSummaryText())
+  );
+}
+
+if (btnCopySetup) {
+  btnCopySetup.addEventListener('click', () => {
+    const header = getStudyHeaderText();
+
     const txt =
-`SETUP
-Process: ${processInput.value||''}
-Mode: ${modeSelect.value||''}
-Efficiency%: ${effInput.value||''}
-Contract pcs/day: ${pcdInput.value||''}
-Hours/day: ${hInput.value||''}
-Days/week: ${dInput.value||''}
-View: ${capViewSel.value||''}`;
+`${header ? header + '\n' : ''}MEASUREMENT SETUP
+Process: ${processInput.value || ''}
+Mode: ${modeSelect.value || ''}
+Efficiency %: ${effInput.value || ''}
+Contract pcs/day: ${pcdInput.value || ''}
+Hours/day: ${hInput.value || ''}
+Days/week: ${dInput.value || ''}
+Capacity view: ${capViewSel.value || ''}
+Language: ${currentLang}
+Timestamp: ${new Date().toISOString()}
+`;
+
     copyTextLocked(btnCopySetup, txt);
   });
+}
 
-  btnCopyControls.addEventListener('click',()=>{
-    copyTextLocked(btnCopyControls, 'Data Controls: Copy Summary / Copy All / Manual Lap / Reset');
-  });
+if (btnCopyControls) {
+  btnCopyControls.addEventListener('click', () =>
+    copyTextLocked(
+      btnCopyControls,
+      'DATA CONTROLS\nCopy Summary / Copy All / Manual Lap / Reset'
+    )
+  );
+}
 
-  btnCopyContract.addEventListener('click',()=>{
+if (btnCopyContract) {
+  btnCopyContract.addEventListener('click', () => {
     const b = buildContractLinesForCurrentSelection();
-    copyTextLocked(btnCopyContract, [b.l1,b.l2,b.l3,b.l4].join('\n'));
+    copyTextLocked(
+      btnCopyContract,
+      [b.l1, b.l2, b.l3, b.l4].join('\n')
+    );
   });
+}
 
-  btnCopyFocus.addEventListener('click',()=>{
-    let out=[];
+if (btnCopyFocus) {
+  btnCopyFocus.addEventListener('click', () => {
+    let out = [];
     out.push('FOCUS TABLE');
-    out.push('Process\tMode\tN\tSample/Error\tStd\tCV%\tCTmed\tP10\tP90\tCur@Eff\tPot@Eff\tWst@Eff\tContract\tGap\t%vs\tCp\tCpk');
-    [...focusBody.querySelectorAll('tr')].forEach(tr=>{
-      const tds=[...tr.querySelectorAll('td')].map(td=>td.textContent.replace(/\s+/g,' ').trim());
+    out.push(
+      'Process\tMode\tN\tSample/Error\tStd\tCV%\tCTmed\tP10\tP90\tCur@Eff\tPot@Eff\tWst@Eff\tContract\tGap\t%vs\tCp\tCpk'
+    );
+
+    [...focusBody.querySelectorAll('tr')].forEach(tr => {
+      const tds = [...tr.querySelectorAll('td')]
+        .map(td => td.textContent.replace(/\s+/g, ' ').trim());
       out.push(tds.join('\t'));
     });
+
     copyTextLocked(btnCopyFocus, out.join('\n'));
   });
+}
 
-  btnCopyWB.addEventListener('click',()=>{
-    lockBtn(btnCopyWB,6000);
-    let out=[];
-    out.push(`WB Export (${new Date().toISOString()})`);
-    out.push('On\tOperation\tOperators\tShifts(ref)\tHours\tMachines\tPcsPerOp\tContractPcd\tNetMinDay\tOEE%\tYield%\tCTcur\tCap@OEE\t%vsContract\tUDTminDay');
-    wbRows.forEach(r=>{
+if (btnCopyWB) {
+  btnCopyWB.addEventListener('click', () => {
+    lockBtn(btnCopyWB, 6000);
+
+    let out = [];
+    out.push(`WB EXPORT (${new Date().toISOString()})`);
+    out.push(
+      'On\tOperation\tOperators\tShifts\tHours\tMachines\tPcs/Op\tContract\tNetMin\tOEE%\tYield%\tCT\tCap@OEE\t%vs\tUDT'
+    );
+
+    wbRows.forEach(r => {
       const net = netMinPerDay(r);
       const oee = computeOEE(r);
-      const y = yieldFromScrap(r)*100;
-      const {cur} = ctForRow(r);
-      const {capOee} = capPerDayFromRow(r);
-      const contract = clamp(parseFloat(r.contractPcd)||0,0,99999);
-      const vs = contract>0 ? (capOee/contract*100) : NaN;
-      const ppo = clamp(parseFloat(r.pcsPerOp)||1, 1, 99);
+      const yieldPct = yieldFromScrap(r) * 100;
+      const { cur } = ctForRow(r);
+      const { capOee } = capPerDayFromRow(r);
+      const contract = clamp(+r.contractPcd || 0, 0, 99999);
+      const vs = contract > 0 ? (capOee / contract * 100) : NaN;
+      const ppo = clamp(+r.pcsPerOp || 1, 1, 99);
+
       out.push([
-        r.enabled?1:0,
-        (r.operation||'').trim(),
-        Math.round(clamp(parseFloat(r.operators)||0,0,10)),
-        Math.round(clamp(parseFloat(r.shifts)||1,1,4)),
-        clamp(parseFloat(r.hours)||0,0,24),
-        clamp(parseFloat(r.machines)||1,1,50),
-        Math.round(ppo),
+        r.enabled ? 1 : 0,
+        (r.operation || '').trim(),
+        Math.round(clamp(+r.operators || 0, 0, 10)),
+        Math.round(clamp(+r.shifts || 1, 1, 4)),
+        clamp(+r.hours || 0, 0, 24),
+        clamp(+r.machines || 1, 1, 50),
+        ppo,
         Math.round(contract),
         Math.round(net),
         oee.toFixed(1),
-        y.toFixed(1),
-        (isFinite(cur)?formatSecs(cur):''),
-        (isFinite(capOee)?Math.round(capOee):''),
-        (isFinite(vs)?vs.toFixed(0):''),
-        clamp(parseFloat(r.udtMinDay)||0,0,1440)
+        yieldPct.toFixed(1),
+        isFinite(cur) ? formatSecs(cur) : '',
+        isFinite(capOee) ? Math.round(capOee) : '',
+        isFinite(vs) ? vs.toFixed(0) : '',
+        clamp(+r.udtMinDay || 0, 0, 1440)
       ].join('\t'));
     });
+
     copyText(out.join('\n'));
   });
+}
 
-  btnCopyCharts.addEventListener('click',()=>{
+if (btnCopyCharts) {
+  btnCopyCharts.addEventListener('click', () => {
     const v = chartSelect.value || '';
-    copyTextLocked(btnCopyCharts, `CHARTS\nSelected: ${v}\n(Charts are visual; export raw data for Excel.)`);
+    copyTextLocked(
+      btnCopyCharts,
+      `CHARTS\nSelected: ${v}\n(Charts are visual only)`
+    );
   });
+}
 
-  btnCopyRaw.addEventListener('click',()=>{
-    let out=[];
+if (btnCopyRaw) {
+  btnCopyRaw.addEventListener('click', () => {
+    let out = [];
     out.push('RAW DATA');
     out.push('#\tProcess\tMode\tStatus\tNote\tT1\tT2\tTotal');
-    laps.forEach((l,idx)=>{
+
+    laps.forEach((l, idx) => {
       out.push([
-        idx+1,
-        (l.process||'').trim(),
-        l.mode||'',
-        l.status||'',
-        (l.note||'').replace(/\t/g,' '),
+        idx + 1,
+        (l.process || '').trim(),
+        l.mode || '',
+        l.status || '',
+        (l.note || '').replace(/\t/g, ' '),
         formatSecs(l.t1),
         formatSecs(l.t2),
         formatSecs(l.total)
       ].join('\t'));
     });
+
     const header = getStudyHeaderText();
-const body   = out.join('\n');
-copyTextLocked(btnCopyRaw, header ? `${header}\n${body}` : body);
+    const body = out.join('\n');
 
+    copyTextLocked(
+      btnCopyRaw,
+      header ? `${header}\n${body}` : body
+    );
   });
+}
 
-  btnCopyGuide.addEventListener('click',()=>{
-    copyTextLocked(btnCopyGuide, methodGuideText.textContent || '');
-  });
+if (btnCopyGuide) {
+  btnCopyGuide.addEventListener('click', () =>
+    copyTextLocked(btnCopyGuide, methodGuideText.textContent || '')
+  );
+}
 
   function restoreState(){
     const raw = localStorage.getItem(TL_STATE_KEY);
