@@ -2976,34 +2976,53 @@ if(sampleProgressFill && sampleProgressLabel){
       tdTxt(formatSecs(l.t2));
       tdTxt(formatSecs(l.total));
 
-      { // edit
-        const tdEdit=document.createElement('td');
-        const bEdit=document.createElement('button');
-        bEdit.className='btn-edit';
-        bEdit.textContent=t('col.edit');
-          const newProc = prompt(currentLang==='es'?'Proceso':'Process', l.process) ?? l.process;
-          const newMode = prompt(currentLang==='es'?'Modo (CT/MLD)':'Mode (CT/MLD)', l.mode) ?? l.mode;
-          const newT1 = prompt('T1 (s)', formatSecs(l.t1)) ?? l.t1;
-          const newT2 = prompt('T2 (s)', formatSecs(l.t2)) ?? l.t2;
+{ // edit
+  const tdEdit = document.createElement('td');
+  const bEdit  = document.createElement('button');
 
-          const p = (newProc||'').toString().trim();
-          const m = (newMode||'CT').toString().trim().toUpperCase()==='MLD'?'MLD':'CT';
-          const t1v = Math.round((parseFloat(newT1)||0)*100)/100;
-          const t2v = Math.round((parseFloat(newT2)||0)*100)/100;
+  bEdit.className = 'btn-edit';
+  bEdit.textContent = t('col.edit');
 
-          l.process = p || l.process;
-          l.mode = m;
-          l.t1 = t1v;
-          l.t2 = t2v;
-          l.total = Math.round((t1v+t2v)*100)/100;
+  bEdit.addEventListener('click', () => {
+    const newProc = prompt(
+      currentLang === 'es' ? 'Proceso' : 'Process',
+      l.process
+    );
+    if (newProc === null) return;
 
-          ensureWbRowForOperation(l.process);
-          renderAll();
-          scheduleSaveAll();
-        tdEdit.appendChild(bEdit);
-        tr.appendChild(tdEdit);
-      }
+    const newMode = prompt(
+      currentLang === 'es' ? 'Modo (CT/MLD)' : 'Mode (CT/MLD)',
+      l.mode
+    );
+    if (newMode === null) return;
 
+    const newT1 = prompt('T1 (s)', formatSecs(l.t1));
+    if (newT1 === null) return;
+
+    const newT2 = (newMode.toUpperCase() === 'MLD')
+      ? prompt('T2 (s)', formatSecs(l.t2))
+      : '0';
+    if (newT2 === null) return;
+
+    const p = newProc.toString().trim();
+    const m = newMode.toString().trim().toUpperCase() === 'MLD' ? 'MLD' : 'CT';
+    const t1v = Math.round((parseFloat(newT1) || 0) * 100) / 100;
+    const t2v = Math.round((parseFloat(newT2) || 0) * 100) / 100;
+
+    l.process = p || l.process;
+    l.mode    = m;
+    l.t1      = t1v;
+    l.t2      = t2v;
+    l.total   = Math.round((t1v + t2v) * 100) / 100;
+
+    ensureWbRowForOperation(l.process);
+    renderAll();
+    scheduleSaveAll();
+  });
+
+  tdEdit.appendChild(bEdit);
+  tr.appendChild(tdEdit);
+}
       { // del
         const tdDel=document.createElement('td');
         const bDel=document.createElement('button');
