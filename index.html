@@ -462,6 +462,52 @@ th{ white-space:normal; line-height:1.05; }
   </div>
 
   <div class="content-section">
+    <!-- =========================
+     INFORMACIÓN DEL ESTUDIO
+     ========================= -->
+<div class="section-card" id="secStudyInfo">
+  <div class="section-title">
+    Información del Estudio
+  </div>
+
+  <div class="grid-7">
+    <div>
+      <label>Planta</label>
+      <input id="studyPlant" type="text" placeholder="Ej. BCS Reynosa">
+    </div>
+
+    <div>
+      <label>Área / Línea</label>
+      <input id="studyArea" type="text" placeholder="Ej. SMT Línea 3">
+    </div>
+
+    <div>
+      <label>Fecha</label>
+      <input id="studyDate" type="date">
+    </div>
+
+    <div>
+      <label>Hora</label>
+      <input id="studyTime" type="time">
+    </div>
+
+    <div>
+      <label>Sitio / Cliente</label>
+      <input id="studySite" type="text" placeholder="Ej. GM">
+    </div>
+
+    <div>
+      <label>Contacto</label>
+      <input id="studyContact" type="text" placeholder="Responsable">
+    </div>
+
+    <div>
+      <label>Analista</label>
+      <input id="studyAnalyst" type="text" placeholder="Nombre">
+    </div>
+  </div>
+</div>
+
     <!-- 1) Configuración de Medición -->
     <div class="section-card" data-accent="blue" id="secSetup">
       <div class="section-head">
@@ -882,6 +928,31 @@ th{ white-space:normal; line-height:1.05; }
   const wbConstraintNote = document.getElementById('wbConstraintNote');
   const wbOperatorsSum = document.getElementById('wbOperatorsSum');
   const methodGuideText = document.getElementById('methodGuideText');
+  function getStudyHeaderText(){
+  const rows = [
+    ['PLANTA', studyPlant.value],
+    ['ÁREA / LÍNEA', studyArea.value],
+    ['FECHA', studyDate.value],
+    ['HORA', studyTime.value],
+    ['SITIO / CLIENTE', studySite.value],
+    ['CONTACTO', studyContact.value],
+    ['ANALISTA', studyAnalyst.value],
+    ['VERSIÓN', 'TaktLab']
+  ];
+
+  let out = [];
+  rows.forEach(([k,v])=>{
+    if(v && String(v).trim() !== ''){
+      out.push(`${k}: ${v}`);
+    }
+  });
+
+  if(out.length){
+    out.push('--------------------------------');
+  }
+
+  return out.join('\n');
+}
 
   /* ✅ copiar por sección */
   const btnCopySetup    = document.getElementById('btnCopySetup');
@@ -890,7 +961,6 @@ th{ white-space:normal; line-height:1.05; }
   const btnCopyFocus    = document.getElementById('btnCopyFocus');
   const btnCopyCharts   = document.getElementById('btnCopyCharts');
   const btnCopyRaw      = document.getElementById('btnCopyRaw');
-  const btnCopyGuide    = document.getElementById('btnCopyGuide');
 
   function formatSecs(s){
     if(!isFinite(s)) return '-';
@@ -3501,7 +3571,10 @@ View: ${capViewSel.value||''}`;
         formatSecs(l.total)
       ].join('\t'));
     });
-    copyTextLocked(btnCopyRaw, out.join('\n'));
+    const header = getStudyHeaderText();
+const body   = out.join('\n');
+copyTextLocked(btnCopyRaw, header ? `${header}\n${body}` : body);
+
   });
 
   btnCopyGuide.addEventListener('click',()=>{
