@@ -2981,7 +2981,6 @@ if(sampleProgressFill && sampleProgressLabel){
         const bEdit=document.createElement('button');
         bEdit.className='btn-edit';
         bEdit.textContent=t('col.edit');
-        bEdit.addEventListener('click',()=>{
           const newProc = prompt(currentLang==='es'?'Proceso':'Process', l.process) ?? l.process;
           const newMode = prompt(currentLang==='es'?'Modo (CT/MLD)':'Mode (CT/MLD)', l.mode) ?? l.mode;
           const newT1 = prompt('T1 (s)', formatSecs(l.t1)) ?? l.t1;
@@ -3671,6 +3670,62 @@ if(!raw){
   window.addEventListener('resize',()=>{ renderCharts(); });
 
 })();
+  bEdit.addEventListener('click',()=>{
+  const newProc = prompt(currentLang==='es'?'Proceso':'Process', l.process);
+  if(newProc === null) return;
+
+  const newMode = prompt(currentLang==='es'?'Modo (CT/MLD)':'Mode (CT/MLD)', l.mode);
+  if(newMode === null) return;
+
+  const newT1 = prompt('T1 (s)', formatSecs(l.t1));
+  if(newT1 === null) return;
+
+  const newT2 = prompt('T2 (s)', formatSecs(l.t2));
+  if(newT2 === null) return;
+
+  const newTotal = prompt('Total (s)', formatSecs(l.total));
+  if(newTotal === null) return;
+
+  const proc = (newProc || l.process).toString().trim() || l.process;
+  const mode = ((newMode || l.mode).toString().trim().toUpperCase() === 'MLD') ? 'MLD' : 'CT';
+
+  const t1 = clamp(parseFloat(newT1)||0, 0, 999999);
+  const t2 = clamp(parseFloat(newT2)||0, 0, 999999);
+  const total = clamp(parseFloat(newTotal)||0, 0, 999999);
+
+  l.process = proc;
+  l.mode = mode;
+  l.t1 = t1;
+  l.t2 = t2;
+  l.total = total;
+
+  renderAll();
+  scheduleSaveAll();
+});
+
+tdEdit.appendChild(bEdit);
+tr.appendChild(tdEdit);
+}
+
+// delete
+{
+  const tdDel=document.createElement('td');
+  const bDel=document.createElement('button');
+  bDel.className='btn-del';
+  bDel.textContent=t('col.del');
+  bDel.addEventListener('click',()=>{
+    if(!confirm(currentLang==='es'?'¿Borrar esta vuelta?':'Delete this lap?')) return;
+    laps = laps.filter(x=>x.id!==l.id);
+    renderAll();
+    scheduleSaveAll();
+  });
+  tdDel.appendChild(bDel);
+  tr.appendChild(tdDel);
+}
+
+dataBody.appendChild(tr);
+});
+}
 </script>
 </body>
 </html>
