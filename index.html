@@ -3632,7 +3632,48 @@ function restoreState(){
   loadSC();
   scRender();
   renderAll();
-})();
+function restoreState(){
+  const raw = localStorage.getItem(TL_STATE_KEY);
+
+  if(!raw){
+    loadWB();
+    loadSC();
+    scRender();
+    return;
+  }
+
+  const snap = safeJsonParse(raw);
+  if(!snap || !snap.settings){
+    loadWB();
+    loadSC();
+    scRender();
+    return;
+  }
+
+  currentLang = snap.lang || currentLang;
+  setLanguage(currentLang);
+
+  processInput.value = snap.settings.processName || '';
+  modeSelect.value   = snap.settings.mode || 'CT';
+  effInput.value     = snap.settings.efficiency || 100;
+  pcdInput.value     = snap.settings.contractPcd || 0;
+  hInput.value       = snap.settings.hoursPerDay || 8;
+  dInput.value       = snap.settings.daysPerWeek || 5;
+  capViewSel.value   = snap.settings.capView || 'hour';
+
+  laps = Array.isArray(snap.laps) ? snap.laps : [];
+  nextId = snap.nextId || (laps.length + 1);
+
+  wbRows = Array.isArray(snap.wbRows) ? snap.wbRows : [];
+
+  loadSC();
+  scRender();
+  renderAll();
+  restoreState();
+</script>
+</body>
+</html>
+
 </script>
 </body>
 </html>
