@@ -2077,11 +2077,9 @@ function applyTranslations(){
     return {
       id: 'wb_' + Math.random().toString(36).slice(2,9),
       enabled: true,
-
       operation: gOp || '',
       opAuto: true,
       opAutoKey: normOp(gOp || ''),
-
       operators: 1,     // 0-10 dropdown
       shifts: 1,        // 1-4 dropdown reference
       hours: globalHours, // 0-24 step .5
