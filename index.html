@@ -390,20 +390,6 @@ th{ white-space:normal; line-height:1.05; }
       width: calc(var(--wb-op-w) - 14px);
       max-width: calc(var(--wb-op-w) - 14px);
     }
-    @media (max-width:600px){
-  .section-card{
-    border-radius:10px;
-    border:5px solid rgba(20,30,50,.08);
-  }
-
-  #wbTable th{
-    font-size:.68rem;
-  }
-
-  #wbTable td{
-    font-size:.68rem;
-  }
-}
 
   }
   /* ================================
@@ -485,6 +471,52 @@ th{ white-space:normal; line-height:1.05; }
   .sample-progress-wrap{
   margin-top:6px;
 }
+  /* ================================
+   WB – MODO TARJETA (SOLO MÓVIL)
+   ================================ */
+@media (max-width:600px){
+
+  /* ocultar encabezado de tabla */
+  #wbTable thead{
+    display:none;
+  }
+
+  /* cada fila es una tarjeta */
+  #wbTable tr{
+    display:block;
+    border:2px solid rgba(20,30,50,.18);
+    border-radius:12px;
+    margin-bottom:12px;
+    padding:8px 10px;
+    background:#fff;
+  }
+
+  /* cada celda en formato label : value */
+  #wbTable td{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border:none;
+    padding:6px 4px;
+    font-size:.75rem;
+  }
+
+  /* etiqueta de la columna */
+  #wbTable td::before{
+    content: attr(data-label);
+    font-weight:600;
+    color:#555;
+    margin-right:8px;
+    white-space:nowrap;
+  }
+
+  /* acciones al final */
+  #wbTable td:last-child{
+    justify-content:flex-end;
+    gap:6px;
+  }
+}
+
 </style>
 </head>
 
@@ -2399,7 +2431,12 @@ function yieldFromScrap(row){
         }
       }
 
-      function td(html){ const c=document.createElement('td'); c.innerHTML=html; tr.appendChild(c); }
+    function td(html, label=''){
+  const c=document.createElement('td');
+  if(label) c.setAttribute('data-label', label);
+  c.innerHTML = html;
+  tr.appendChild(c);
+}
 
       function chkCell(checked, onChange){
         const c=document.createElement('td');
