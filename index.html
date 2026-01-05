@@ -374,6 +374,44 @@ th{ white-space:normal; line-height:1.05; }
       max-width: calc(var(--wb-op-w) - 14px);
     }
   }
+  /* ================================
+   WB – AJUSTES SOLO PARA CELULAR
+   ================================ */
+@media (max-width:600px){
+
+  /* 1️⃣ Ocultar columnas de detalle (no críticas en móvil) */
+  /* Min brutos, comida, CO, 5S, mtto, otros, shared, UDT */
+  #wbTable th:nth-child(9),
+  #wbTable td:nth-child(9),
+  #wbTable th:nth-child(10),
+  #wbTable td:nth-child(10),
+  #wbTable th:nth-child(11),
+  #wbTable td:nth-child(11),
+  #wbTable th:nth-child(12),
+  #wbTable td:nth-child(12),
+  #wbTable th:nth-child(13),
+  #wbTable td:nth-child(13),
+  #wbTable th:nth-child(14),
+  #wbTable td:nth-child(14),
+  #wbTable th:nth-child(15),
+  #wbTable td:nth-child(15),
+  #wbTable th:nth-child(16),
+  #wbTable td:nth-child(16){
+    display:none;
+  }
+
+  /* 2️⃣ Compactar inputs y selects del WB */
+  #wbTable select,
+  #wbTable input{
+    font-size:0.72rem;
+    padding:2px 4px;
+    height:26px;
+  }
+
+  #wbTable td{
+    padding:4px 6px;
+  }
+}
 /* ===== Stat Focus: merge Process / Mode / N in mobile ===== */
 @media (max-width: 768px) {
   #secFocus .proc-sample {
