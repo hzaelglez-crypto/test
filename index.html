@@ -663,7 +663,7 @@ th{ white-space:normal; line-height:1.05; }
               <th data-i18n="wb.machines"># Máquinas</th>
               <th data-i18n="wb.pcsPerOp">Pzs/Op</th>
               <th data-i18n="wb.contract">Contrato (pzs/día)</th>
-
+              <th>Contrato %</th>
               <th data-i18n="wb.gross">Min brutos/día</th>
               <th data-i18n="wb.lunch">Comida min/día</th>
               <th data-i18n="wb.changeover">Changeover</th>
@@ -2275,12 +2275,14 @@ function yieldFromScrap(row){
   }
 
   function copyTextLocked(btn, txt){
-    lockBtn(btn,6000);
+    lockBtn(btn,500);
     copyText(txt);
   }
 
   function renderWB(){
     wbRows.forEach(r=>applyGlobalToRow(r));
+    wbRows.forEach(r=>{ if(r.contractPct==null) r.contractPct = 100; });
+
     saveWB();
 
     wbBody.innerHTML = '';
@@ -2302,7 +2304,10 @@ function yieldFromScrap(row){
       const {cur,wst,pot} = ctForRow(row);
       const {cap100, capOee, ctOee} = capPerDayFromRow(row);
 
-      const contract = clamp(parseFloat(row.contractPcd)||0,0,99999);
+      const contractRaw = clamp(parseFloat(row.contractPcd)||0,0,99999);
+      const contractPct = clamp(parseFloat(row.contractPct)||100,0,100);
+      const contract = contractRaw * (contractPct / 100);
+
       const vs = contract>0 ? (capOee/contract*100) : NaN;
 
       const ppo = clamp(parseFloat(row.pcsPerOp)||1, 1, 99);
@@ -2522,6 +2527,17 @@ function yieldFromScrap(row){
         });
         c.appendChild(inp);
         tr.appendChild(c);
+        // ✅ Contract distribution %
+selCell(
+  row.contractPct ?? 100,
+  buildNumericOptions(0,100,5),
+  v=>{
+    row.contractPct = clamp(parseFloat(v)||100,0,100);
+    saveWB(); renderAll(); scheduleSaveAll();
+  },
+  'wb-sel narrow'
+);
+
       }
 
       td(formatUnits(gGross));
@@ -2623,7 +2639,7 @@ function yieldFromScrap(row){
   });
 
   btnWbClear.addEventListener('click',()=>{
-    lockBtn(btnWbClear,6000);
+    lockBtn(btnWbClear,500);
     if(!confirm(currentLang==='es'?'¿Borrar WB completo?':'Clear WB entirely?')) return;
     wbRows = [];
     saveWB();
