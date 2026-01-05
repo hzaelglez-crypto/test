@@ -453,48 +453,49 @@ th{ white-space:normal; line-height:1.05; }
   /* ================================
    WB – MODO TARJETA (SOLO MÓVIL)
    ================================ */
+/* ================================
+   WB – MODO FORMULARIO EN MÓVIL
+   ================================ */
 @media (max-width:600px){
 
-  /* ocultar encabezado de tabla */
   #wbTable thead{
     display:none;
   }
 
-  /* cada fila es una tarjeta */
-  #wbTable tr{
+  #wbTable,
+  #wbTable tbody,
+  #wbTable tr,
+  #wbTable td{
     display:block;
-    border:2px solid rgba(20,30,50,.18);
+    width:100%;
+  }
+
+  #wbTable tr{
+    border:2px solid rgba(20,30,50,.15);
     border-radius:12px;
-    margin-bottom:12px;
     padding:8px 10px;
+    margin-bottom:12px;
     background:#fff;
   }
 
-  /* cada celda en formato label : value */
   #wbTable td{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    border:none;
     padding:6px 4px;
-    font-size:.75rem;
+    border:none;
   }
 
-  /* etiqueta de la columna */
   #wbTable td::before{
     content: attr(data-label);
+    font-size:.72rem;
     font-weight:600;
-    color:#555;
-    margin-right:8px;
+    color:#444;
+    padding-right:8px;
     white-space:nowrap;
   }
-
-  /* acciones al final */
-  #wbTable td:last-child{
-    justify-content:flex-end;
-    gap:6px;
-  }
 }
+
 
 </style>
 </head>
