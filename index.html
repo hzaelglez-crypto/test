@@ -193,18 +193,30 @@
   /* ✅ cards con marco pintado por acento */
 .section-card{
   background:var(--bg-card);
-  border-radius:18px;
-  border-left:12px solid var(--border-soft); /* 🔥 lateral dominante */
-  border-top:1px solid var(--border-soft);
-  border-right:1px solid var(--border-soft);
-  border-bottom:1px solid var(--border-soft);
-  padding:12px 14px 14px;
-  margin-bottom:16px;
+  border-radius:12px;
+  border:1px solid rgba(20,30,50,.12);   /* línea fina */
+  padding:10px 12px;
+  margin-bottom:14px;
   position:relative;
-  box-shadow:
-    0 6px 14px rgba(10,20,40,.08),
-    inset 0 1px 0 rgba(255,255,255,.6);
 }
+.section-head{
+  padding-bottom:6px;
+  margin-bottom:8px;
+  border-bottom:1px solid rgba(20,30,50,.12);
+}
+#wbTable{
+  border-collapse:collapse;
+}
+
+#wbTable th{
+  background:#f6f7f9;
+  border-bottom:1px solid rgba(20,30,50,.15);
+}
+
+#wbTable td{
+  border-bottom:1px solid rgba(20,30,50,.08);
+}
+
   .section-card[data-accent="blue"]{ border-color: rgba(57,189,245,.55); }
   .section-card[data-accent="green"]{ border-color: rgba(24,201,122,.45); }
   .section-card[data-accent="amber"]{ border-color: rgba(242,193,78,.55); }
@@ -378,6 +390,21 @@ th{ white-space:normal; line-height:1.05; }
       width: calc(var(--wb-op-w) - 14px);
       max-width: calc(var(--wb-op-w) - 14px);
     }
+    @media (max-width:600px){
+  .section-card{
+    border-radius:10px;
+    border:1px solid rgba(20,30,50,.08);
+  }
+
+  #wbTable th{
+    font-size:.68rem;
+  }
+
+  #wbTable td{
+    font-size:.68rem;
+  }
+}
+
   }
   /* ================================
    WB – AJUSTES SOLO PARA CELULAR
