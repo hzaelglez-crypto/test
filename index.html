@@ -191,14 +191,19 @@
   .content-section{margin-top:10px;}
 
   /* ✅ cards con marco pintado por acento */
-  .section-card{
+.section-card{
   background:var(--bg-card);
   border-radius:18px;
-  border:8px solid var(--border-soft);
-  padding:12px 14px 14px;   /* menos padding */
-  margin-bottom:14px;      /* menos separación entre secciones */
+  border-left:12px solid var(--border-soft); /* 🔥 lateral dominante */
+  border-top:1px solid var(--border-soft);
+  border-right:1px solid var(--border-soft);
+  border-bottom:1px solid var(--border-soft);
+  padding:12px 14px 14px;
+  margin-bottom:16px;
   position:relative;
-  box-shadow:0 10px 22px rgba(10,20,40,.06);
+  box-shadow:
+    0 6px 14px rgba(10,20,40,.08),
+    inset 0 1px 0 rgba(255,255,255,.6);
 }
   .section-card[data-accent="blue"]{ border-color: rgba(57,189,245,.55); }
   .section-card[data-accent="green"]{ border-color: rgba(24,201,122,.45); }
