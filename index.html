@@ -1800,7 +1800,6 @@ function applyTranslations(){
     updateLangButtons();
     applyTranslations();
     btnStart.textContent = running ? t('btn.pause') : t('btn.start');
-    renderAll();
     scheduleSaveAll();
   }
   langButtons.forEach(btn=>btn.addEventListener('click',()=>{ lockBtn(btn,6000); setLanguage(btn.dataset.lang); }));
@@ -3688,7 +3687,7 @@ function restoreState(){
   }
 
   currentLang = snap.lang || currentLang;
-  setLanguage(currentLang);
+
 
   processInput.value = snap.settings.processName || '';
   modeSelect.value   = snap.settings.mode || 'CT';
