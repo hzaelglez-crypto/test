@@ -280,6 +280,9 @@ th{ white-space:normal; line-height:1.05; }
     position:sticky;top:0;z-index:5;
   }
   tbody tr:nth-child(even){background:rgba(11,18,32,.015);}
+  #wbTable tbody tr{
+  border-bottom:2px solid rgba(11,18,32,.08);
+}
 
   .badge{
     display:inline-block;padding:2px 8px;border-radius:999px;
@@ -332,7 +335,7 @@ th{ white-space:normal; line-height:1.05; }
     width: calc(var(--wb-op-w) - 14px);
     max-width: calc(var(--wb-op-w) - 14px);
     background:#fff;border-radius:10px;border:1px solid var(--border-soft);
-    padding:4px 8px;color:var(--text-main);font-size:.72rem;
+    padding:4px 26px 4px 10px;color:var(--text-main);font-size:.72rem;
   }
   .wb-opbtn{
     border:1px solid rgba(11,18,32,.16);
@@ -384,7 +387,7 @@ th{ white-space:normal; line-height:1.05; }
 
     :root{
       --wb-on-w:52px;
-      --wb-op-w:190px;
+      --wb-op-w:160px;
     }
     .wb-opselect{
       width: calc(var(--wb-op-w) - 14px);
@@ -551,7 +554,7 @@ th{ white-space:normal; line-height:1.05; }
      INFORMACIÓN DEL ESTUDIO
      ========================= -->
 <hr style="margin:12px 0;border:none;border-top:1px dashed var(--border-soft);"/>
- <div class="section-head">
+ <div class="section-divider">
         <div class="section-title" data-i18n="section.measurementSetup">Configuración de Medición</div>
         <div class="section-tools">
           <button class="btn-small btn-small-copy" id="btnCopySetup" data-i18n="btn.copySection">Copiar</button>
