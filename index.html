@@ -443,6 +443,33 @@ th{ line-height:1.0; }
   min-width:64px;
   text-align:center;
 }
+/* ================================
+   WB – CONTRACT EN DOS FILAS
+   ================================ */
+
+/* Contract, Contract %, Gross, Lunch */
+#wbTable td:nth-child(8),
+#wbTable td:nth-child(9),
+#wbTable td:nth-child(10),
+#wbTable td:nth-child(11){
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:stretch;
+  gap:2px;              /* espacio entre fila 1 y fila 2 */
+  padding:3px 4px !important;
+}
+
+/* Inputs y selects internos */
+#wbTable td:nth-child(8) input,
+#wbTable td:nth-child(9) select,
+#wbTable td:nth-child(10) select,
+#wbTable td:nth-child(11) input{
+  width:100% !important;
+  height:22px !important;
+  font-size:.65rem !important;
+  padding:1px 4px !important;
+}
 
   @media (max-width:100px){
     .timer-display{font-size:2.2rem;}
