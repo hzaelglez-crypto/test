@@ -371,7 +371,7 @@ th{ line-height:1.0; }
   #wbTable th:nth-child(2), #wbTable td:nth-child(2){ width:var(--wb-op-w); min-width:var(--wb-op-w); }
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){
-    position:sticky; left:0;
+    position:sticky; center:0;
     z-index:30;
     background:#fff;
   }
@@ -382,6 +382,13 @@ th{ line-height:1.0; }
   }
   #wbTable thead th:nth-child(1),
   #wbTable thead th:nth-child(2){ z-index:40; }
+:root{
+  --wb-on-w:36px;
+  --wb-ops-w:64px;
+  --wb-shifts-w:64px;
+  --wb-hours-w:64px;
+  --wb-op-w:200px; /* Operation sigue siendo la grande */
+}
 
   @media (max-width:100px){
     .timer-display{font-size:2.2rem;}
