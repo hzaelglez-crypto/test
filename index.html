@@ -195,8 +195,8 @@
   background:var(--bg-card);
   border-radius:12px;
   border:5px solid rgba(20,30,50,.18);   /* línea fina */
-  padding:10px 12px;
-  margin-bottom:14px;
+  padding:8px 10px;
+  margin-bottom:10px;
   position:relative;
 }
 .section-head{
@@ -234,7 +234,7 @@
   .section-tools{display:flex;gap:8px;align-items:center;}
 
   .btn-small{
-    padding:10px 14px;
+    padding:7px 12px;
     border-radius:16px;
     font-size:.9rem;
     font-weight:950;
@@ -253,10 +253,10 @@
   .btn-small-wbadd{background:rgba(11,18,32,.03);color:var(--text-main);}
   .btn-small-wbclear{background:rgba(255,51,85,.10);border-color:rgba(255,51,85,.30);color:#6b0014;}
 
-  .mode-row{
-    display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;
-    font-size:.76rem;color:var(--text-soft);
-  }
+ .mode-row{
+  gap:6px;
+}
+
   .mode-row select,.mode-row input{
     background:#fff;border-radius:6px;border:1px solid var(--border-soft);
     padding:6px 10px;color:var(--text-main);font-size:.78rem;min-width:70px;
@@ -271,9 +271,10 @@ th,td{
   border-bottom:1px solid rgba(11,18,32,.06);
   white-space:nowrap;
   vertical-align:middle;
+  line-height:1.05;
 }
 /* ✅ headers pueden partirse en 2 líneas (sin afectar datos) */
-th{ white-space:normal; line-height:1.05; }
+th{ line-height:1.0; }
   th:first-child,td:first-child{text-align:left;}
   th{
     color:var(--text-soft);font-weight:800;background:rgba(11,18,32,.02);
@@ -553,7 +554,7 @@ th{ white-space:normal; line-height:1.05; }
           <!-- =========================
      INFORMACIÓN DEL ESTUDIO
      ========================= -->
-<hr style="margin:12px 0;border:none;border-top:1px dashed var(--border-soft);"/>
+<hr style="margin:6px 0;border:none;border-top:1px dashed var(--border-soft);"/>
  <div class="section-divider">
         <div class="section-title" data-i18n="section.measurementSetup">Configuración de Medición</div>
         <div class="section-tools">
