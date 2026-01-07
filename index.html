@@ -376,6 +376,25 @@ th{ line-height:1.0; }
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){ width:var(--wb-on-w); min-width:var(--wb-on-w); }
   #wbTable th:nth-child(2), #wbTable td:nth-child(2){ width:var(--wb-op-w); min-width:var(--wb-op-w); }
+/* ===== WB – COMPACTAR # MAQUINAS ===== */
+#wbTable th:nth-child(6),
+#wbTable td:nth-child(6){
+  width:52px !important;
+  min-width:52px !important;
+  max-width:52px !important;
+  text-align:center;
+  padding-left:4px;
+  padding-right:4px;
+}
+
+/* select interno de # maquinas */
+#wbTable td:nth-child(6) select{
+  width:100% !important;
+  min-width:100% !important;
+  padding:1px 2px !important;
+  height:22px !important;
+  font-size:.65rem !important;
+}
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){
     position:sticky; center:0;
