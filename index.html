@@ -330,6 +330,13 @@ th{ line-height:1.0; }
   .wb-inp.slim{width:56px;}
   .wb-sel{width:100px;}
   .wb-sel.narrow{width:60px;}
+/* Select compacto para # Máquinas */
+#wbTable td:nth-child(6) select{
+  width:100%;
+  padding:2px 4px;
+  font-size:.68rem;
+  height:24px;
+}
 
   .wb-opwrap{display:flex;gap:6px;align-items:center;justify-content:flex-start;}
   .wb-opselect{
@@ -388,6 +395,13 @@ th{ line-height:1.0; }
   --wb-shifts-w:64px;
   --wb-hours-w:64px;
   --wb-op-w:200px; /* Operation sigue siendo la grande */
+}
+/* # Máquinas */
+#wbTable th:nth-child(6),
+#wbTable td:nth-child(6){
+  width:64px;
+  min-width:64px;
+  text-align:center;
 }
 
   @media (max-width:100px){
