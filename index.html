@@ -385,6 +385,16 @@ th{ line-height:1.0; }
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){ width:var(--wb-on-w); min-width:var(--wb-on-w); }
   #wbTable th:nth-child(2), #wbTable td:nth-child(2){ width:var(--wb-op-w); min-width:var(--wb-op-w); }
+  /* 🔧 COMPACTAR COLUMNAS NUMÉRICAS */
+#wbTable th:nth-child(3), #wbTable td:nth-child(3), /* Operators */
+#wbTable th:nth-child(4), #wbTable td:nth-child(4), /* Shifts */
+#wbTable th:nth-child(5), #wbTable td:nth-child(5), /* Hours */
+#wbTable th:nth-child(6), #wbTable td:nth-child(6){ /* # Machines */
+  width:52px;
+  min-width:52px;
+  max-width:52px;
+}
+
 /* ===== WB – COMPACTAR # MAQUINAS ===== */
 #wbTable th:nth-child(6),
 #wbTable td:nth-child(6){
