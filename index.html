@@ -331,11 +331,11 @@ th{ line-height:1.0; }
   .wb-sel{width:100px;}
  /* ===== WB DENSO – columnas numéricas ===== */
 .wb-sel.narrow{
-  width:48px;
-  min-width:48px;
+  width:64px;
+  min-width:64px;
   max-width:48px;
   padding:1px 2px;
-  height:22px;
+  height:26px;
   font-size:.65rem;
 }
 
@@ -2740,32 +2740,54 @@ function yieldFromScrap(row){
       }, 'wb-sel narrow');
 
       // Contract editable
-      {
-        const c=document.createElement('td');
-        const inp=document.createElement('input');
-        inp.type='number';
-        inp.className='wb-inp';
-        inp.value = row.contractPcd ?? 0;
-        inp.min='0'; inp.max='99999'; inp.step='1';
-        inp.addEventListener('input',()=>{
-          row.contractPcd=clamp(parseFloat(inp.value)||0,0,99999);
-          row.contractAuto=false;
-          saveWB(); renderAll(); scheduleSaveAll();
-        });
-        c.appendChild(inp);
-        tr.appendChild(c);
-        // ✅ Contract distribution %
-selCell(
-  row.contractPct ?? 100,
-  buildNumericOptions(0,100,5),
-  v=>{
-    row.contractPct = clamp(parseFloat(v)||100,0,100);
-    saveWB(); renderAll(); scheduleSaveAll();
-  },
-  'wb-sel narrow'
-);
+      // Contract (pcs/day) + Contract % + resultado (STACK CORRECTO)
+{
+  const c = document.createElement('td');
 
-      }
+  const wrap = document.createElement('div');
+  wrap.className = 'wb-cell-stack';
+
+  // input contrato
+  const inp = document.createElement('input');
+  inp.type = 'number';
+  inp.className = 'wb-inp wb-compact';
+  inp.value = row.contractPcd ?? 0;
+  inp.min = '0';
+  inp.max = '99999';
+  inp.step = '1';
+  inp.addEventListener('input',()=>{
+    row.contractPcd = clamp(parseFloat(inp.value)||0,0,99999);
+    row.contractAuto = false;
+    saveWB(); renderAll(); scheduleSaveAll();
+  });
+
+  // select contrato %
+  const sel = document.createElement('select');
+  sel.className = 'wb-sel wb-compact';
+  for(let i=0;i<=100;i+=1){
+    const o=document.createElement('option');
+    o.value=i;
+    o.textContent=i;
+    if((row.contractPct ?? 100)===i) o.selected=true;
+    sel.appendChild(o);
+  }
+  sel.addEventListener('change',()=>{
+    row.contractPct = parseInt(sel.value);
+    saveWB(); renderAll(); scheduleSaveAll();
+  });
+
+  // resultado visual
+  const res = document.createElement('div');
+  res.className = 'wb-result';
+  res.textContent = formatUnits(gGross);
+
+  wrap.appendChild(inp);
+  wrap.appendChild(sel);
+  wrap.appendChild(res);
+
+  c.appendChild(wrap);
+  tr.appendChild(c);
+}
 
       td(formatUnits(gGross));
 
