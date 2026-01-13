@@ -35,8 +35,8 @@
     --badge-amber:rgba(242,193,78,.14);
 
     /* WB sticky sizing */
-    --wb-on-w:40px;
-    --wb-op-w:140px;
+    --wb-on-w:56px;
+    --wb-op-w:210px;
   }
 
   *{box-sizing:border-box;}
@@ -191,32 +191,15 @@
   .content-section{margin-top:10px;}
 
   /* ✅ cards con marco pintado por acento */
-.section-card{
+  .section-card{
   background:var(--bg-card);
-  border-radius:12px;
-  border:5px solid rgba(20,30,50,.18);   /* línea fina */
-  padding:8px 10px;
-  margin-bottom:10px;
+  border-radius:18px;
+  border:8px solid var(--border-soft);
+  padding:12px 14px 14px;   /* menos padding */
+  margin-bottom:14px;      /* menos separación entre secciones */
   position:relative;
+  box-shadow:0 10px 22px rgba(10,20,40,.06);
 }
-.section-head{
-  padding-bottom:6px;
-  margin-bottom:8px;
-  border-bottom:5px solid rgba(20,30,50,.18);
-}
-#wbTable{
-  border-collapse:collapse;
-}
-
-#wbTable th{
-  background:#f6f7f9;
-  border-bottom:3px solid rgba(20,30,50,.35);
-}
-
-#wbTable td{
-  border-bottom:1px solid rgba(20,30,50,.12);
-}
-
   .section-card[data-accent="blue"]{ border-color: rgba(57,189,245,.55); }
   .section-card[data-accent="green"]{ border-color: rgba(24,201,122,.45); }
   .section-card[data-accent="amber"]{ border-color: rgba(242,193,78,.55); }
@@ -234,7 +217,7 @@
   .section-tools{display:flex;gap:8px;align-items:center;}
 
   .btn-small{
-    padding:7px 12px;
+    padding:10px 14px;
     border-radius:16px;
     font-size:.9rem;
     font-weight:950;
@@ -253,48 +236,33 @@
   .btn-small-wbadd{background:rgba(11,18,32,.03);color:var(--text-main);}
   .btn-small-wbclear{background:rgba(255,51,85,.10);border-color:rgba(255,51,85,.30);color:#6b0014;}
 
-/* 🔧 FIX: Measurement Setup sin aire */
-/* ✅ Measurement Setup en 3 columnas */
-#secMeasurementSetup .mode-row{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap:8px;
-  max-width:720px;
-}
-
-#secMeasurementSetup .mode-row input,
-#secMeasurementSetup .mode-row select{
-  max-width:100%;
-}
-
-
+  .mode-row{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;
+    font-size:.76rem;color:var(--text-soft);
+  }
   .mode-row select,.mode-row input{
     background:#fff;border-radius:6px;border:1px solid var(--border-soft);
-    padding:6px 10px;color:var(--text-main);font-size:.75rem;min-width:0;
+    padding:6px 10px;color:var(--text-main);font-size:.78rem;min-width:70px;
     outline:none;
   }
   .mode-row input[type="number"]{width:88px;}
 
   table{width:100%;border-collapse:collapse;font-size:.72rem;}
 th,td{
-  padding:4px 6px; /* más compacto */
+  padding:6px 8px; /* más compacto */
   text-align:right;
   border-bottom:1px solid rgba(11,18,32,.06);
   white-space:nowrap;
   vertical-align:middle;
-  line-height:1.05;
 }
 /* ✅ headers pueden partirse en 2 líneas (sin afectar datos) */
-th{ line-height:1.0; }
+th{ white-space:normal; line-height:1.05; }
   th:first-child,td:first-child{text-align:left;}
   th{
     color:var(--text-soft);font-weight:800;background:rgba(11,18,32,.02);
     position:sticky;top:0;z-index:5;
   }
   tbody tr:nth-child(even){background:rgba(11,18,32,.015);}
-  #wbTable tbody tr{
-  border-bottom:2px solid rgba(11,18,32,.08);
-}
 
   .badge{
     display:inline-block;padding:2px 8px;border-radius:999px;
@@ -332,42 +300,22 @@ th{ line-height:1.0; }
   .btn-relink{color:#6a4a00;}
 
   .wb-inp, .wb-sel, .wb-chk{
-    background:#fff;border-radius:8px;border:1px solid var(--border-soft);
-    padding:2px 6px;height:26px; line-height:1;color:var(--text-main);font-size:.70rem;
+    background:#fff;border-radius:10px;border:1px solid var(--border-soft);
+    padding:3px 8px;color:var(--text-main);font-size:.70rem;
     outline:none;
   }
   .wb-inp{width:72px;}
   .wb-inp.wide{width:160px;}
   .wb-inp.slim{width:56px;}
-  .wb-sel{width:100px;}
- /* ===== WB DENSO – columnas numéricas ===== */
-.wb-sel.narrow{
-  width:64px;
-  min-width:64px;
-  max-width:48px;
-  padding:1px 2px;
-  height:26px;
-  font-size:.65rem;
-}
-
-/* Select compacto para # Máquinas */
-#wbTable td:nth-child(5) select{
-  width:100%;
-  padding:2px 4px;
-  font-size:.68rem;
-  height:24px;
-}
+  .wb-sel{width:120px;}
+  .wb-sel.narrow{width:92px;}
 
   .wb-opwrap{display:flex;gap:6px;align-items:center;justify-content:flex-start;}
   .wb-opselect{
     width: calc(var(--wb-op-w) - 14px);
     max-width: calc(var(--wb-op-w) - 14px);
-    background:#fff;border-radius:8px;border:1px solid var(--border-soft);
-   padding:2px 6px;
-  height:26px;
-  line-height:1;
-  color:var(--text-main);
-  font-size:.70rem;
+    background:#fff;border-radius:10px;border:1px solid var(--border-soft);
+    padding:4px 8px;color:var(--text-main);font-size:.72rem;
   }
   .wb-opbtn{
     border:1px solid rgba(11,18,32,.16);
@@ -396,40 +344,9 @@ th{ line-height:1.0; }
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){ width:var(--wb-on-w); min-width:var(--wb-on-w); }
   #wbTable th:nth-child(2), #wbTable td:nth-child(2){ width:var(--wb-op-w); min-width:var(--wb-op-w); }
-  /* 🔧 COMPACTAR COLUMNAS NUMÉRICAS */
-#wbTable th:nth-child(3), #wbTable td:nth-child(3), /* Operators */
-#wbTable th:nth-child(4), #wbTable td:nth-child(4), /* Shifts */
-#wbTable th:nth-child(5), #wbTable td:nth-child(5), /* Hours */
-#wbTable th:nth-child(5), #wbTable td:nth-child(5){ /* # Machines */
-  width:52px;
-  min-width:52px;
-  max-width:52px;
-}
-
-/* ===== WB – COMPACTAR # MAQUINAS ===== */
-#wbTable th:nth-child(5),
-#wbTable td:nth-child(5){
-  width:48px !important;
-  min-width:48px !important;
-  max-width:48px !important;
-  text-align:center;
-  padding-left:2px;
-  padding-right:2px;
-  text-align:center;
-}
-
-/* select interno de # maquinas */
-#wbTable td:nth-child(5) select{
-  width:100% !important;
-  min-width:100% !important;
-  padding:1px 2px !important;
-  height:22px !important;
-  font-size:.65rem !important;
-   padding:1px 2px !important;
-}
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){
-    position:sticky; center:0;
+    position:sticky; left:0;
     z-index:30;
     background:#fff;
   }
@@ -440,49 +357,8 @@ th{ line-height:1.0; }
   }
   #wbTable thead th:nth-child(1),
   #wbTable thead th:nth-child(2){ z-index:40; }
-:root{
-  --wb-on-w:36px;
-  --wb-ops-w:64px;
-  --wb-shifts-w:64px;
-  --wb-hours-w:64px;
-  --wb-op-w:200px; /* Operation sigue siendo la grande */
-}
-/* # Máquinas */
-#wbTable th:nth-child(5),
-#wbTable td:nth-child(5){
-  width:64px;
-  min-width:64px;
-  text-align:center;
-}
-/* ================================
-   WB – CONTRACT EN DOS FILAS
-   ================================ */
 
-/* Contract, Contract %, Gross, Lunch */
-#wbTable td:nth-child(8),
-#wbTable td:nth-child(9),
-#wbTable td:nth-child(10),
-#wbTable td:nth-child(11){
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:stretch;
-  gap:2px;              /* espacio entre fila 1 y fila 2 */
-  padding:3px 4px !important;
-}
-
-/* Inputs y selects internos */
-#wbTable td:nth-child(8) input,
-#wbTable td:nth-child(9) select,
-#wbTable td:nth-child(10) select,
-#wbTable td:nth-child(11) input{
-  width:100% !important;
-  height:22px !important;
-  font-size:.65rem !important;
-  padding:1px 4px !important;
-}
-
-  @media (max-width:100px){
+  @media (max-width:600px){
     .timer-display{font-size:2.2rem;}
     .btn-row-main{gap:6px;}
     .btn{font-size:.9rem;border-radius:14px;}
@@ -491,36 +367,18 @@ th{ line-height:1.0; }
 
     :root{
       --wb-on-w:52px;
-      --wb-op-w:160px;
+      --wb-op-w:190px;
     }
     .wb-opselect{
       width: calc(var(--wb-op-w) - 14px);
       max-width: calc(var(--wb-op-w) - 14px);
     }
-
   }
-  /* ================================
-   WB – AJUSTES SOLO PARA CELULAR
-   ================================ */
-@media (max-width:100px){
-
-  /* 2️⃣ Compactar inputs y selects del WB */
-  #wbTable select,
-  #wbTable input{
-    font-size:0.72rem;
-    padding:2px 4px;
-    height:26px;
-  }
-
-  #wbTable td{
-    padding:4px 6px;
-  }
-}
 /* ===== Stat Focus: merge Process / Mode / N in mobile ===== */
 @media (max-width: 768px) {
   #secFocus .proc-sample {
     margin-top: 6px;
-    padding: 6px 6px;
+    padding: 6px 8px;
     background: rgba(255, 51, 85, 0.08);
     border-left: 3px solid #ff3355;
     border-radius: 6px;
@@ -557,137 +415,6 @@ th{ line-height:1.0; }
   .sample-progress-wrap{
   margin-top:6px;
 }
-  /* ================================
-   WB – MODO TARJETA (SOLO MÓVIL)
-   ================================ */
-/* ================================
-   WB – MODO FORMULARIO EN MÓVIL
-   ================================ */
-@media (max-width:100px){
-
-  #wbTable thead{
-    display:none;
-  }
-
-  #wbTable,
-  #wbTable tbody,
-  #wbTable tr,
-  #wbTable td{
-    display:block;
-    width:100%;
-  }
-
-  #wbTable tr{
-    border:2px solid rgba(20,30,50,.15);
-    border-radius:12px;
-    padding:8px 10px;
-    margin-bottom:12px;
-    background:#fff;
-  }
-
-  #wbTable td{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:6px 4px;
-    border:none;
-  }
-
-  #wbTable td::before{
-    content: attr(data-label);
-    font-size:.72rem;
-    font-weight:600;
-    color:#444;
-    padding-right:8px;
-    white-space:nowrap;
-  }
-}
-/* ================================
-   WB – COLUMN WIDTH CONTROL
-   ================================ */
-
-#wbTable{
-  table-layout: fixed;
-}
-
-/* On */
-#wbTable th:nth-child(1),
-#wbTable td:nth-child(1){
-  width:44px;
-  text-align:center;
-}
-
-/* Operation */
-#wbTable th:nth-child(2),
-#wbTable td:nth-child(2){
-  width:110px;
-}
-
-/* Operators */
-#wbTable th:nth-child(3),
-#wbTable td:nth-child(3){
-  width:120px;
-}
-
-/* Hours */
-#wbTable th:nth-child(4),
-#wbTable td:nth-child(4){
-  width:120px;
-}
-
-/* # Machines */
-#wbTable th:nth-child(5),
-#wbTable td:nth-child(5){
-  width:90px;
-}
-
-/* Pcs/Op */
-#wbTable th:nth-child(6),
-#wbTable td:nth-child(6){
-  width:90px;
-}
-
-/* Contract */
-#wbTable th:nth-child(7),
-#wbTable td:nth-child(7){
-  width:140px;
-}
-
-/* Contract % */
-#wbTable th:nth-child(8),
-#wbTable td:nth-child(8){
-  width:110px;
-}
-
-/* Gross */
-#wbTable th:nth-child(9),
-#wbTable td:nth-child(9){
-  width:120px;
-}
-
-/* Lunch */
-#wbTable th:nth-child(10),
-#wbTable td:nth-child(10){
-  width:120px;
-}
-
-/* Inputs respetan la columna */
-.wb-sel,
-.wb-inp{
-  width:100%;
-  max-width:100%;
-  box-sizing:border-box;
-}
-
-/* Stack vertical limpio */
-.wb-cell-stack{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  align-items:stretch;
-}
-
-
 </style>
 </head>
 
@@ -741,8 +468,8 @@ th{ line-height:1.0; }
           <!-- =========================
      INFORMACIÓN DEL ESTUDIO
      ========================= -->
-<hr style="margin:6px 0;border:none;border-top:1px dashed var(--border-soft);"/>
- <div class="section-divider">
+<hr style="margin:12px 0;border:none;border-top:1px dashed var(--border-soft);"/>
+ <div class="section-head">
         <div class="section-title" data-i18n="section.measurementSetup">Configuración de Medición</div>
         <div class="section-tools">
           <button class="btn-small btn-small-copy" id="btnCopySetup" data-i18n="btn.copySection">Copiar</button>
@@ -925,19 +652,18 @@ th{ line-height:1.0; }
       </div>
 
       <div style="max-height:320px;overflow:auto;">
-<div class="wb-scroll">
-  <table id="wbTable">
+        <table id="wbTable">
           <thead>
             <tr>
               <th data-i18n="wb.enabled">On</th>
               <th data-i18n="wb.operation">Operación</th>
               <th data-i18n="wb.operators">Operadores</th>
-              
+              <th data-i18n="wb.shifts">Turnos</th>
               <th data-i18n="wb.hours">Horas</th>
               <th data-i18n="wb.machines"># Máquinas</th>
               <th data-i18n="wb.pcsPerOp">Pzs/Op</th>
               <th data-i18n="wb.contract">Contrato (pzs/día)</th>
-              <th data-i18n="wb.contractPct">Contrato %</th>
+
               <th data-i18n="wb.gross">Min brutos/día</th>
               <th data-i18n="wb.lunch">Comida min/día</th>
               <th data-i18n="wb.changeover">Changeover</th>
@@ -1153,7 +879,6 @@ function renderAll(){
   renderRaw();
   renderCharts();
   renderMethodGuide();
-  setLanguage(currentLang);
 }
  // =====================
 // ✅ DOM CACHE (GLOBAL)
@@ -1335,7 +1060,6 @@ const methodGuideText = document.getElementById('methodGuideText');
       'wb.machines':'# Machines',
       'wb.pcsPerOp':'Pcs/Op',
       'wb.contract':'Contract (pcs/day)',
-      'wb.contractPct':'Contract %',
       'wb.gross':'Gross min/day',
       'wb.lunch':'Lunch min/day',
       'wb.changeover':'Changeover',
@@ -1419,7 +1143,6 @@ const methodGuideText = document.getElementById('methodGuideText');
       'wb.machines':'# Máquinas',
       'wb.pcsPerOp':'Pzs/Op',
       'wb.contract':'Contrato (pzs/día)',
-      'wb.contractPct':'Contrato %',
       'wb.gross':'Min brutos/día',
       'wb.lunch':'Comida min/día',
       'wb.changeover':'Changeover',
@@ -2074,6 +1797,7 @@ function applyTranslations(){
     updateLangButtons();
     applyTranslations();
     btnStart.textContent = running ? t('btn.pause') : t('btn.start');
+    renderAll();
     scheduleSaveAll();
   }
   langButtons.forEach(btn=>btn.addEventListener('click',()=>{ lockBtn(btn,6000); setLanguage(btn.dataset.lang); }));
@@ -2268,9 +1992,11 @@ function applyTranslations(){
     return {
       id: 'wb_' + Math.random().toString(36).slice(2,9),
       enabled: true,
+
       operation: gOp || '',
       opAuto: true,
       opAutoKey: normOp(gOp || ''),
+
       operators: 1,     // 0-10 dropdown
       shifts: 1,        // 1-4 dropdown reference
       hours: globalHours, // 0-24 step .5
@@ -2549,14 +2275,12 @@ function yieldFromScrap(row){
   }
 
   function copyTextLocked(btn, txt){
-    lockBtn(btn,500);
+    lockBtn(btn,6000);
     copyText(txt);
   }
 
   function renderWB(){
     wbRows.forEach(r=>applyGlobalToRow(r));
-    wbRows.forEach(r=>{ if(r.contractPct==null) r.contractPct = 100; });
-
     saveWB();
 
     wbBody.innerHTML = '';
@@ -2578,10 +2302,7 @@ function yieldFromScrap(row){
       const {cur,wst,pot} = ctForRow(row);
       const {cap100, capOee, ctOee} = capPerDayFromRow(row);
 
-      const contractRaw = clamp(parseFloat(row.contractPcd)||0,0,99999);
-      const contractPct = clamp(parseFloat(row.contractPct)||100,0,100);
-      const contract = contractRaw * (contractPct / 100);
-
+      const contract = clamp(parseFloat(row.contractPcd)||0,0,99999);
       const vs = contract>0 ? (capOee/contract*100) : NaN;
 
       const ppo = clamp(parseFloat(row.pcsPerOp)||1, 1, 99);
@@ -2601,12 +2322,7 @@ function yieldFromScrap(row){
         }
       }
 
-    function td(html, label=''){
-  const c=document.createElement('td');
-  if(label) c.setAttribute('data-label', label);
-  c.innerHTML = html;
-  tr.appendChild(c);
-}
+      function td(html){ const c=document.createElement('td'); c.innerHTML=html; tr.appendChild(c); }
 
       function chkCell(checked, onChange){
         const c=document.createElement('td');
@@ -2766,54 +2482,11 @@ function yieldFromScrap(row){
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
 
-     // Hours COMPACTO = Turnos × Horas
-{
-  const c = document.createElement('td');
-  const wrap = document.createElement('div');
-  wrap.style.display = 'flex';
-  wrap.style.gap = '4px';
-  wrap.style.alignItems = 'center';
-
-  // shifts
-  const selSh = document.createElement('select');
-  selSh.className = 'wb-sel narrow';
-  buildNumericOptions(1,4,1).forEach(o=>{
-    const op = document.createElement('option');
-    op.value=o.value; op.textContent=o.label;
-    if(String(o.value)===String(row.shifts ?? 1)) op.selected=true;
-    selSh.appendChild(op);
-  });
-  selSh.addEventListener('change',()=>{
-    row.shifts = clamp(parseFloat(selSh.value)||1,1,4);
-    saveWB(); renderAll(); scheduleSaveAll();
-  });
-
-  // hours per shift
-  const selHr = document.createElement('select');
-  selHr.className = 'wb-sel narrow';
-  buildNumericOptions(0,12,0.5).forEach(o=>{
-    const op = document.createElement('option');
-    op.value=o.value; op.textContent=o.label;
-    if(String(o.value)===String(row.hours ?? 8)) op.selected=true;
-    selHr.appendChild(op);
-  });
-  selHr.addEventListener('change',()=>{
-    row.hours = clamp(parseFloat(selHr.value)||0,0,12);
-    row.hoursAuto=false;
-    saveWB(); renderAll(); scheduleSaveAll();
-  });
-
-  const x = document.createElement('span');
-  x.textContent = '×';
-  x.style.fontWeight = '800';
-  x.style.opacity = '.6';
-
-  wrap.appendChild(selSh);
-  wrap.appendChild(x);
-  wrap.appendChild(selHr);
-  c.appendChild(wrap);
-  tr.appendChild(c);
-}
+      // Shifts 1-4
+      selCell(String(row.shifts ?? 1), buildNumericOptions(1,4,1), v=>{
+        row.shifts = clamp(parseFloat(v)||1,1,4);
+        saveWB(); renderAll(); scheduleSaveAll();
+      }, 'wb-sel narrow');
 
       // Hours 0-24 step 0.5
       selCell(String(row.hours ?? 8), buildNumericOptions(0,24,0.5), v=>{
@@ -2835,17 +2508,21 @@ function yieldFromScrap(row){
       }, 'wb-sel narrow');
 
       // Contract editable
-      // Contract (pcs/day) + Contract % + resultado (STACK CORRECTO)
-      // Shifts 1–4
-selCell(
-  String(row.shifts ?? 1),
-  buildNumericOptions(1,4,1),
-  v=>{
-    row.shifts = clamp(parseFloat(v)||1,1,4);
-    saveWB(); renderAll(); scheduleSaveAll();
-  },
-  'wb-sel narrow'
-);
+      {
+        const c=document.createElement('td');
+        const inp=document.createElement('input');
+        inp.type='number';
+        inp.className='wb-inp';
+        inp.value = row.contractPcd ?? 0;
+        inp.min='0'; inp.max='99999'; inp.step='1';
+        inp.addEventListener('input',()=>{
+          row.contractPcd=clamp(parseFloat(inp.value)||0,0,99999);
+          row.contractAuto=false;
+          saveWB(); renderAll(); scheduleSaveAll();
+        });
+        c.appendChild(inp);
+        tr.appendChild(c);
+      }
 
       td(formatUnits(gGross));
 
@@ -2946,7 +2623,7 @@ selCell(
   });
 
   btnWbClear.addEventListener('click',()=>{
-    lockBtn(btnWbClear,500);
+    lockBtn(btnWbClear,6000);
     if(!confirm(currentLang==='es'?'¿Borrar WB completo?':'Clear WB entirely?')) return;
     wbRows = [];
     saveWB();
@@ -3992,7 +3669,7 @@ function restoreState(){
   }
 
   currentLang = snap.lang || currentLang;
-
+  setLanguage(currentLang);
 
   processInput.value = snap.settings.processName || '';
   modeSelect.value   = snap.settings.mode || 'CT';
