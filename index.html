@@ -2504,6 +2504,16 @@ const utilPct =
         row.machines = clamp(parseFloat(v)||1,1,50);
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
+// % Machine Use (NEW – manual)
+selCell(
+  String(row.machinePct ?? 100),
+  buildNumericOptions(0,100,1),   // 🔥 de 1 en 1 como pediste
+  v=>{
+    row.machinePct = clamp(parseFloat(v)||100,0,100);
+    saveWB(); renderAll(); scheduleSaveAll();
+  },
+  'wb-sel narrow'
+);
 
       // ✅ Pzs/Op dropdown 1-99
       selCell(String(row.pcsPerOp ?? 1), buildNumericOptions(1,99,1), v=>{
