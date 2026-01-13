@@ -2752,53 +2752,16 @@ function yieldFromScrap(row){
 
       // Contract editable
       // Contract (pcs/day) + Contract % + resultado (STACK CORRECTO)
-{
-  const c = document.createElement('td');
-
-  const wrap = document.createElement('div');
-  wrap.className = 'wb-cell-stack';
-
-  // input contrato
-  const inp = document.createElement('input');
-  inp.type = 'number';
-  inp.className = 'wb-inp wb-compact';
-  inp.value = row.contractPcd ?? 0;
-  inp.min = '0';
-  inp.max = '99999';
-  inp.step = '1';
-  inp.addEventListener('input',()=>{
-    row.contractPcd = clamp(parseFloat(inp.value)||0,0,99999);
-    row.contractAuto = false;
+      // Shifts 1–4
+selCell(
+  String(row.shifts ?? 1),
+  buildNumericOptions(1,4,1),
+  v=>{
+    row.shifts = clamp(parseFloat(v)||1,1,4);
     saveWB(); renderAll(); scheduleSaveAll();
-  });
-
-  // select contrato %
-  const sel = document.createElement('select');
-  sel.className = 'wb-sel wb-compact';
-  for(let i=0;i<=100;i+=1){
-    const o=document.createElement('option');
-    o.value=i;
-    o.textContent=i;
-    if((row.contractPct ?? 100)===i) o.selected=true;
-    sel.appendChild(o);
-  }
-  sel.addEventListener('change',()=>{
-    row.contractPct = parseInt(sel.value);
-    saveWB(); renderAll(); scheduleSaveAll();
-  });
-
-  // resultado visual
-  const res = document.createElement('div');
-  res.className = 'wb-result';
-  res.textContent = formatUnits(gGross);
-
-  wrap.appendChild(inp);
-  wrap.appendChild(sel);
-  wrap.appendChild(res);
-
-  c.appendChild(wrap);
-  tr.appendChild(c);
-}
+  },
+  'wb-sel narrow'
+);
 
       td(formatUnits(gGross));
 
