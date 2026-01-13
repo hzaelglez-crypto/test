@@ -660,7 +660,7 @@ th{ white-space:normal; line-height:1.05; }
               <th data-i18n="wb.operators">Operadores</th>
               <th data-i18n="wb.shifts">Turnos</th>
               <th data-i18n="wb.hours">Horas</th>
-              <th data-i18n="wb.machines"># Máquinas</th>
+              <th data-i18n="wb.machineUtil">% Uso Máq</th>
               <th data-i18n="wb.pcsPerOp">Pzs/Op</th>
               <th data-i18n="wb.contract">Contrato (pzs/día)</th>
 
@@ -2500,6 +2500,16 @@ function yieldFromScrap(row){
         row.machines = clamp(parseFloat(v)||1,1,50);
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
+// % Utilización de máquina (0–100)
+selCell(
+  String(row.machineUtil ?? 100),
+  buildNumericOptions(0,100,1),
+  v=>{
+    row.machineUtil = clamp(parseFloat(v)||100,0,100);
+    saveWB(); renderAll(); scheduleSaveAll();
+  },
+  'wb-sel narrow'
+);
 
       // ✅ Pzs/Op dropdown 1-99
       selCell(String(row.pcsPerOp ?? 1), buildNumericOptions(1,99,1), v=>{
