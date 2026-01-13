@@ -2175,7 +2175,9 @@ function applyTranslations(){
   // Gross = horas * 60 * máquinas
   const hours = clamp(parseFloat(row.hours)||0, 0, 24);
   const machines = clamp(parseFloat(row.machines)||1, 1, 50);
-  const gross = hours * 60 * machines;
+  const machineUse = clamp(parseFloat(row.machinePct)||100,0,100) / 100;
+const gross = hours * 60 * machines * machineUse;
+
 
   // Planned losses (min/día) — TODOS son por proceso (no por máquina)
   const planned =
@@ -2509,7 +2511,7 @@ selCell(
   String(row.machinePct ?? 100),
   buildNumericOptions(0,100,1),   // 🔥 de 1 en 1 como pediste
   v=>{
-    row.machinePct = clamp(parseFloat(v)||100,0,100);
+   row.machinePct = clamp(parseFloat(row.machinePct)||100,0,100);
     saveWB(); renderAll(); scheduleSaveAll();
   },
   'wb-sel narrow'
