@@ -2175,9 +2175,7 @@ function applyTranslations(){
   // Gross = horas * 60 * máquinas
   const hours = clamp(parseFloat(row.hours)||0, 0, 24);
   const machines = clamp(parseFloat(row.machines)||1, 1, 50);
-  const machineUse = clamp(parseFloat(row.machinePct)||100,0,100) / 100;
-const gross = hours * 60 * machines * machineUse;
-
+  const gross = hours * 60 * machines;
 
   // Planned losses (min/día) — TODOS son por proceso (no por máquina)
   const planned =
@@ -2303,10 +2301,6 @@ function yieldFromScrap(row){
       const oee = computeOEE(row);
       const {cur,wst,pot} = ctForRow(row);
       const {cap100, capOee, ctOee} = capPerDayFromRow(row);
-const utilPct = 
-  (isFinite(cap100) && cap100 > 0)
-    ? (capOee / cap100) * 100
-    : NaN;
 
       const contract = clamp(parseFloat(row.contractPcd)||0,0,99999);
       const vs = contract>0 ? (capOee/contract*100) : NaN;
@@ -2506,16 +2500,6 @@ const utilPct =
         row.machines = clamp(parseFloat(v)||1,1,50);
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
-// % Machine Use (NEW – manual)
-selCell(
-  String(row.machinePct ?? 100),
-  buildNumericOptions(0,100,1),   // 🔥 de 1 en 1 como pediste
-  v=>{
-   row.machinePct = clamp(parseFloat(row.machinePct)||100,0,100);
-    saveWB(); renderAll(); scheduleSaveAll();
-  },
-  'wb-sel narrow'
-);
 
       // ✅ Pzs/Op dropdown 1-99
       selCell(String(row.pcsPerOp ?? 1), buildNumericOptions(1,99,1), v=>{
@@ -2570,17 +2554,6 @@ selCell(
       ddMinutes(row.udtMinDay ?? 0, 0, 1440, 5, v=>{ row.udtMinDay=v; saveWB(); renderAll(); scheduleSaveAll(); });
 
       td(formatUnits(net));
-let utilBadge = 'badge-good';
-if (isFinite(utilPct)) {
-  if (utilPct >= 100) utilBadge = 'badge-bad';
-  else if (utilPct >= 90) utilBadge = 'badge-warn';
-}
-
-td(
-  isFinite(utilPct)
-    ? `<span class="badge ${utilBadge}">${pct(utilPct,0)}</span>`
-    : '-'
-);
 
       ddMinutes(row.scrapPct ?? 0, 0, 100, 5, v=>{ row.scrapPct=v; saveWB(); renderAll(); scheduleSaveAll(); }, 'wb-sel narrow');
       td(pct(y*100,1));
