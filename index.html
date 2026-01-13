@@ -2301,6 +2301,10 @@ function yieldFromScrap(row){
       const oee = computeOEE(row);
       const {cur,wst,pot} = ctForRow(row);
       const {cap100, capOee, ctOee} = capPerDayFromRow(row);
+const utilPct = 
+  (isFinite(cap100) && cap100 > 0)
+    ? (capOee / cap100) * 100
+    : NaN;
 
       const contract = clamp(parseFloat(row.contractPcd)||0,0,99999);
       const vs = contract>0 ? (capOee/contract*100) : NaN;
@@ -2554,6 +2558,17 @@ function yieldFromScrap(row){
       ddMinutes(row.udtMinDay ?? 0, 0, 1440, 5, v=>{ row.udtMinDay=v; saveWB(); renderAll(); scheduleSaveAll(); });
 
       td(formatUnits(net));
+let utilBadge = 'badge-good';
+if (isFinite(utilPct)) {
+  if (utilPct >= 100) utilBadge = 'badge-bad';
+  else if (utilPct >= 90) utilBadge = 'badge-warn';
+}
+
+td(
+  isFinite(utilPct)
+    ? `<span class="badge ${utilBadge}">${pct(utilPct,0)}</span>`
+    : '-'
+);
 
       ddMinutes(row.scrapPct ?? 0, 0, 100, 5, v=>{ row.scrapPct=v; saveWB(); renderAll(); scheduleSaveAll(); }, 'wb-sel narrow');
       td(pct(y*100,1));
