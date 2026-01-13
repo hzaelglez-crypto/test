@@ -602,6 +602,90 @@ th{ line-height:1.0; }
     white-space:nowrap;
   }
 }
+/* ================================
+   WB – COLUMN WIDTH CONTROL
+   ================================ */
+
+#wbTable{
+  table-layout: fixed;
+}
+
+/* On */
+#wbTable th:nth-child(1),
+#wbTable td:nth-child(1){
+  width:44px;
+  text-align:center;
+}
+
+/* Operation */
+#wbTable th:nth-child(2),
+#wbTable td:nth-child(2){
+  width:220px;
+}
+
+/* Operators */
+#wbTable th:nth-child(3),
+#wbTable td:nth-child(3){
+  width:90px;
+}
+
+/* Hours */
+#wbTable th:nth-child(4),
+#wbTable td:nth-child(4){
+  width:110px;
+}
+
+/* # Machines */
+#wbTable th:nth-child(5),
+#wbTable td:nth-child(5){
+  width:90px;
+}
+
+/* Pcs/Op */
+#wbTable th:nth-child(6),
+#wbTable td:nth-child(6){
+  width:90px;
+}
+
+/* Contract */
+#wbTable th:nth-child(7),
+#wbTable td:nth-child(7){
+  width:140px;
+}
+
+/* Contract % */
+#wbTable th:nth-child(8),
+#wbTable td:nth-child(8){
+  width:110px;
+}
+
+/* Gross */
+#wbTable th:nth-child(9),
+#wbTable td:nth-child(9){
+  width:120px;
+}
+
+/* Lunch */
+#wbTable th:nth-child(10),
+#wbTable td:nth-child(10){
+  width:120px;
+}
+
+/* Inputs respetan la columna */
+.wb-sel,
+.wb-inp{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+/* Stack vertical limpio */
+.wb-cell-stack{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  align-items:stretch;
+}
 
 
 </style>
