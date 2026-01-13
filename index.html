@@ -254,21 +254,23 @@
   .btn-small-wbclear{background:rgba(255,51,85,.10);border-color:rgba(255,51,85,.30);color:#6b0014;}
 
 /* 🔧 FIX: Measurement Setup sin aire */
+/* ✅ Measurement Setup en 3 columnas */
 #secMeasurementSetup .mode-row{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:8px;
+  max-width:720px;
 }
+
 #secMeasurementSetup .mode-row input,
 #secMeasurementSetup .mode-row select{
-  width:360px;
   max-width:100%;
 }
 
 
   .mode-row select,.mode-row input{
     background:#fff;border-radius:6px;border:1px solid var(--border-soft);
-    padding:4px 8px;color:var(--text-main);font-size:.75rem;min-width:70px;
+    padding:4px 8px;color:var(--text-main);font-size:.75rem;min-width:0;
     outline:none;
   }
   .mode-row input[type="number"]{width:88px;}
