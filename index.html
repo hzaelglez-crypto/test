@@ -253,13 +253,22 @@
   .btn-small-wbadd{background:rgba(11,18,32,.03);color:var(--text-main);}
   .btn-small-wbclear{background:rgba(255,51,85,.10);border-color:rgba(255,51,85,.30);color:#6b0014;}
 
- .mode-row{
+/* 🔧 FIX: Measurement Setup sin aire */
+#secMeasurementSetup .mode-row{
+  display:flex;
+  flex-direction:column;
   gap:6px;
 }
+#secMeasurementSetup .mode-row input,
+#secMeasurementSetup .mode-row select{
+  width:220px;
+  max-width:100%;
+}
+
 
   .mode-row select,.mode-row input{
     background:#fff;border-radius:6px;border:1px solid var(--border-soft);
-    padding:6px 10px;color:var(--text-main);font-size:.78rem;min-width:70px;
+    padding:4px 8px;color:var(--text-main);font-size:.75rem;min-width:70px;
     outline:none;
   }
   .mode-row input[type="number"]{width:88px;}
