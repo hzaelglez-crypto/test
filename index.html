@@ -2176,7 +2176,9 @@ function applyTranslations(){
   // Gross = horas * 60 * máquinas
   const hours = clamp(parseFloat(row.hours)||0, 0, 24);
   const machines = clamp(parseFloat(row.machines)||1, 1, 50);
-  const gross = hours * 60 * machines;
+  const util = clamp(parseFloat(row.machineUtil)||100,0,100) / 100;
+const gross = hours * 60 * machines * util;
+
 
   // Planned losses (min/día) — TODOS son por proceso (no por máquina)
   const planned =
@@ -2501,17 +2503,7 @@ function yieldFromScrap(row){
         row.machines = clamp(parseFloat(v)||1,1,50);
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
-      // % Uso Máquina 0–100
-selCell(
-  String(row.machineUtil ?? 100),
-  buildNumericOptions(0,100,1),
-  v=>{
-    row.machineUtil = clamp(parseFloat(v)||100,0,100);
-    saveWB(); renderAll(); scheduleSaveAll();
-  },
-  'wb-sel narrow'
-);
-
+    
 // % Utilización de máquina (0–100)
 selCell(
   String(row.machineUtil ?? 100),
