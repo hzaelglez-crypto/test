@@ -660,9 +660,7 @@ th{ white-space:normal; line-height:1.05; }
               <th data-i18n="wb.operators">Operadores</th>
               <th data-i18n="wb.shifts">Turnos</th>
               <th data-i18n="wb.hours">Horas</th>
-              <th data-i18n="wb.machines"># Máquinas</th>
-
-              <th data-i18n="wb.%MachineUtil">% Uso Máq</th>
+              <th data-i18n="wb.machineUtil">% Uso Máq</th>
               <th data-i18n="wb.pcsPerOp">Pzs/Op</th>
               <th data-i18n="wb.contract">Contrato (pzs/día)</th>
 
@@ -2005,7 +2003,6 @@ function applyTranslations(){
       hoursAuto: true,
 
       machines: 1,      // 1-50 dropdown
-      machineUtil:100,
 
       pcsPerOp: 1,      // ✅ dropdown 1-99
 
@@ -2178,9 +2175,7 @@ function applyTranslations(){
   // Gross = horas * 60 * máquinas
   const hours = clamp(parseFloat(row.hours)||0, 0, 24);
   const machines = clamp(parseFloat(row.machines)||1, 1, 50);
-  const util = clamp(parseFloat(row.machineUtil)||100,0,100) / 100;
-const gross = hours * 60 * machines * util;
-
+  const gross = hours * 60 * machines;
 
   // Planned losses (min/día) — TODOS son por proceso (no por máquina)
   const planned =
@@ -2505,7 +2500,6 @@ function yieldFromScrap(row){
         row.machines = clamp(parseFloat(v)||1,1,50);
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
-    
 // % Utilización de máquina (0–100)
 selCell(
   String(row.machineUtil ?? 100),
@@ -2854,7 +2848,7 @@ else if (i === 1 || i === 2) {
 
   tr.appendChild(td);
 });
-        statsBody.appendChild(tr);
+        focusBody.appendChild(tr);
       }
     });
 
