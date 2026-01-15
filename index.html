@@ -2502,16 +2502,6 @@ function yieldFromScrap(row){
         row.machines = clamp(parseFloat(v)||1,1,50);
         saveWB(); renderAll(); scheduleSaveAll();
       }, 'wb-sel narrow');
-      // % Uso Máquina 0–100
-selCell(
-  String(row.machineUtil ?? 100),
-  buildNumericOptions(0,100,1),
-  v=>{
-    row.machineUtil = clamp(parseFloat(v)||100,0,100);
-    saveWB(); renderAll(); scheduleSaveAll();
-  },
-  'wb-sel narrow'
-);
 
 // % Utilización de máquina (0–100)
 selCell(
