@@ -2174,15 +2174,17 @@ function applyTranslations(){
       clamp(parseFloat(row.otherMin)||0,0,1440)
     );
   }
-  function netMinPerDay(row){
-  // Gross = horas * 60 * máquinas
+ function netMinPerDay(row){
   const hours = clamp(parseFloat(row.hours)||0, 0, 24);
   const machines = clamp(parseFloat(row.machines)||1, 1, 50);
   const util = clamp(parseFloat(row.machineUtil)||100,0,100) / 100;
-const gross = hours * 60 * machines * util;
 
+  // tiempo nominal sin castigos
+  const grossNominal = hours * 60 * machines;
 
-  // Planned losses (min/día) — TODOS son por proceso (no por máquina)
+  // aplicación REAL del % uso máquina
+  const grossUtil = grossNominal * util;
+
   const planned =
     clamp(parseFloat(row.lunchMin)||0, 0, 1440) +
     clamp(parseFloat(row.changeoverMin)||0, 0, 1440) +
@@ -2190,14 +2192,15 @@ const gross = hours * 60 * machines * util;
     clamp(parseFloat(row.maintMin)||0, 0, 1440) +
     clamp(parseFloat(row.otherMin)||0, 0, 1440);
 
-  // SharedMin = min/día POR MÁQUINA → totaliza por máquinas
-  const sharedTotal = clamp(parseFloat(row.sharedMin)||0, 0, 1440) * machines;
+  const sharedTotal =
+    clamp(parseFloat(row.sharedMin)||0, 0, 1440) * machines;
 
-  // Unplanned DT (min/día) — tu campo real es udtMinDay
-  const unplanned = clamp(parseFloat(row.udtMinDay)||0, 0, 1440);
+  const unplanned =
+    clamp(parseFloat(row.udtMinDay)||0, 0, 1440);
 
-  return Math.max(0, gross - planned - sharedTotal - unplanned);
+  return Math.max(0, grossUtil - planned - sharedTotal - unplanned);
 }
+
 function yieldFromScrap(row){
   const scrap = clamp(parseFloat(row.scrapPct)||0,0,100);
   return (100 - scrap)/100;
