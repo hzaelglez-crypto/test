@@ -2326,8 +2326,8 @@ function yieldFromScrap(row){
 
       const contract = clamp(parseFloat(row.contractPcd)||0,0,99999);
       const vs = contract>0 ? (capOee/contract*100) : NaN;
-
-const util = clamp(parseFloat(row.machineUtil)||100,0,100) / 100;
+      const ppo = clamp(parseFloat(row.pcsPerOp)||1, 1, 99);
+      const util = clamp(parseFloat(row.machineUtil)||100,0,100) / 100;
 
 const inputReq = (contract > 0)
   ? (contract / (Math.max(y,0.0001) * ppo)) * util
