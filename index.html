@@ -2189,15 +2189,12 @@ function applyTranslations(){
       clamp(parseFloat(row.otherMin)||0,0,1440)
     );
   }
- function netMinPerDay(row){
+function netMinPerDay(row){
   const hours    = clamp(parseFloat(row.hours)||0, 0, 24);
   const machines = clamp(parseFloat(row.machines)||1, 1, 50);
 
-  // % uso real de máquina (0–100)
-  const util = clamp(parseFloat(row.machineUtil)||100, 0, 100) / 100;
-
-  // minutos disponibles reales
-  const grossUtil = hours * 60 * machines * util;
+  // minutos nominales (SIN %Util)
+  const gross = hours * 60 * machines;
 
   const planned =
     clamp(parseFloat(row.lunchMin)||0, 0, 1440) +
@@ -2212,7 +2209,7 @@ function applyTranslations(){
   const unplanned =
     clamp(parseFloat(row.udtMinDay)||0, 0, 1440);
 
-  return Math.max(0, grossUtil - planned - shared - unplanned);
+  return Math.max(0, gross - planned - shared - unplanned);
 }
 
 function yieldFromScrap(row){
