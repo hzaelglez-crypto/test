@@ -2166,6 +2166,10 @@ function applyTranslations(){
   });
 
   modeSelect.addEventListener('change',()=>{ pendingT1=null; updateSplitClocks(); scheduleSaveAll(); });
+capView.addEventListener('change', ()=>{
+  renderAll();
+  scheduleSaveAll();
+});
 
   function computeOEE(row){
     const A = clamp(parseFloat(row.oeeA)||0,0,100);
