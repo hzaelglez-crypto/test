@@ -344,6 +344,22 @@ th{ white-space:normal; line-height:1.05; }
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){ width:var(--wb-on-w); min-width:var(--wb-on-w); }
   #wbTable th:nth-child(2), #wbTable td:nth-child(2){ width:var(--wb-op-w); min-width:var(--wb-op-w); }
+  /* 🔧 WB column widths – critical numeric fields */
+#wbTable th:nth-child(9),
+#wbTable td:nth-child(9){
+  min-width:84px;   /* Contract (pcs/day) */
+}
+
+#wbTable th:nth-child(8),
+#wbTable td:nth-child(8){
+  min-width:64px;   /* Pcs/Op */
+}
+
+#wbTable th:nth-child(6),
+#wbTable td:nth-child(6){
+  min-width:64px;   /* # Machines */
+}
+
 
   #wbTable th:nth-child(1), #wbTable td:nth-child(1){
     position:sticky; left:0;
@@ -395,7 +411,7 @@ th{ white-space:normal; line-height:1.05; }
   width:100%;
   height:8px;
   background:#e0e0e0;
-  border-radius:7px;
+  border-radius:6px;
   overflow:hidden;
 }
 
