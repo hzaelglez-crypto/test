@@ -2745,8 +2745,6 @@ selCell(
     if(!st){
       sampleInfoFocus.textContent = (currentLang==='es' ? 'Tamaño de muestra: —' : 'Sample size: —');
       stdInfoFocus.textContent    = (currentLang==='es' ? 'Desv est: —' : 'Std dev: —');
-      distInfoFocus.textContent   = (currentLang==='es' ? 'Media vs Mediana: —' : 'Mean vs Median: —');
-      contractInfoFocus.textContent = (currentLang==='es' ? 'Sin contrato cargado' : 'No contract loaded');
       return;
     }
 const sampleLine = buildSampleCellCompact(st);
@@ -2758,11 +2756,6 @@ sampleInfoFocus.className = 'info-line sample-neutral';
       : `Std dev: ${formatSecs(st.std)} s · CV: ${(st.cv*100).toFixed(1)}%`
     );
 
-    const skew = (st.mean - st.median);
-    distInfoFocus.textContent = (currentLang==='es'
-      ? `Media vs Mediana: Δ ${formatSecs(skew)} s`
-      : `Mean vs Median: Δ ${formatSecs(skew)} s`
-    );
 
     const contractPcd = clamp(parseFloat(pcdInput.value)||0,0,99999);
     contractInfoFocus.textContent = contractPcd>0
