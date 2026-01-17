@@ -431,22 +431,6 @@ th{ white-space:normal; line-height:1.05; }
   .sample-progress-wrap{
   margin-top:6px;
 }
-.sample-badge{
-  margin:4px auto 0;
-  padding:6px 14px;
-  border-radius:999px;
-  font-size:.78rem;
-  font-weight:800;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  border:1px solid rgba(11,18,32,.15);
-  background:rgba(11,18,32,.03);
-}
-.sample-badge.good{background:rgba(24,201,122,.15); color:#0b5a33;}
-.sample-badge.warn{background:rgba(242,193,78,.18); color:#6a4a00;}
-.sample-badge.bad{background:rgba(255,51,85,.18); color:#6b0014;}
-
 </style>
 </head>
 
@@ -473,7 +457,6 @@ th{ white-space:normal; line-height:1.05; }
         <div class="split-pill t1"><span class="tag">T1</span><span class="val" id="t1Clock">00:00.00</span></div>
         <div class="split-pill t2"><span class="tag">T2</span><span class="val" id="t2Clock">00:00.00</span></div>
       </div>
-<div id="sampleBadge" class="sample-badge"></div>
 
       <div class="info-stack">
         <div class="info-line sample-neutral" id="sampleInfoTop">
@@ -640,6 +623,8 @@ th{ white-space:normal; line-height:1.05; }
       <div class="info-stack" style="margin-top:4px;">
         <div class="info-line sample-neutral" id="sampleInfoFocus">Tamaño de muestra: —</div>
         <div class="info-line sample-neutral" id="stdInfoFocus">Desv est: —</div>
+        <div class="info-line sample-neutral" id="distInfoFocus">Media vs Mediana: —</div>
+        <div class="info-line sample-neutral" id="contractInfoFocus">Sin contrato cargado</div>
       </div>
 
       <div style="font-size:.68rem;color:var(--text-muted);margin:6px 0 6px;">
